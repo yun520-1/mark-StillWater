@@ -23,15 +23,15 @@
   "test:key": {
     "value": "test value",
     "tags": [],
-    "accessCount": 16,
-    "lastAccessed": 1779113316355,
+    "accessCount": 19,
+    "lastAccessed": 1779113339220,
     "createdAt": 1779103745820
   },
   "test:searchable": {
     "value": "searchable content",
     "tags": [],
-    "accessCount": 16,
-    "lastAccessed": 1779113316355,
+    "accessCount": 19,
+    "lastAccessed": 1779113339221,
     "createdAt": 1779103745820
   },
   "lesson:test failure:1779103745821": {
@@ -371,5 +371,61 @@
     "accessCount": 0,
     "lastAccessed": 1779113316356,
     "createdAt": 1779113316356
+  },
+  "signal:frustrated_bug:1779113329085": {
+    "value": "{\"topic\":\"frustrated_bug\",\"emotion\":\"negative_high\",\"intent\":\"troubleshooting\",\"ts\":1779113329085,\"preview\":\"I am frustrated with this bug\"}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779113329085,
+    "createdAt": 1779113329085
+  },
+  "signal:frustrated_bug:1779113329086": {
+    "value": "{\"topic\":\"frustrated_bug\",\"emotion\":\"negative_high\",\"intent\":\"troubleshooting\",\"ts\":1779113329086,\"preview\":\"I am frustrated with this bug\"}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779113329086,
+    "createdAt": 1779113329086
+  },
+  "lesson:test failure:1779113329090": {
+    "value": "Task failed: test failure | Evidence: Error occurred | Handle the error case explicitly.",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779113329090,
+    "createdAt": 1779113329090
+  },
+  "signal:frustrated_bug:1779113338630": {
+    "value": "{\"topic\":\"frustrated_bug\",\"emotion\":\"negative_high\",\"intent\":\"troubleshooting\",\"ts\":1779113338630,\"preview\":\"I am frustrated with this bug\"}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779113338630,
+    "createdAt": 1779113338630
+  },
+  "signal:frustrated_bug:1779113338631": {
+    "value": "{\"topic\":\"frustrated_bug\",\"emotion\":\"negative_high\",\"intent\":\"troubleshooting\",\"ts\":1779113338631,\"preview\":\"I am frustrated with this bug\"}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779113338631,
+    "createdAt": 1779113338631
+  },
+  "lesson:test failure:1779113338635": {
+    "value": "Task failed: test failure | Evidence: Error occurred | Handle the error case explicitly.",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779113338635,
+    "createdAt": 1779113338635
+  },
+  "signal:frustrated_bug:1779113339217": {
+    "value": "{\"topic\":\"frustrated_bug\",\"emotion\":\"negative_high\",\"intent\":\"troubleshooting\",\"ts\":1779113339217,\"preview\":\"I am frustrated with this bug\"}",
+    "tags": [],
+    "accessCount": 1,
+    "lastAccessed": 1779113339217,
+    "createdAt": 1779113339217
+  },
+  "lesson:test failure:1779113339222": {
+    "value": "Task failed: test failure | Evidence: Error occurred | Handle the error case explicitly.",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779113339222,
+    "createdAt": 1779113339222
   }
 }
