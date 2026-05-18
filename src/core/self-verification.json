@@ -1,0 +1,25 @@
+{
+  "recentIssues": [
+    {
+      "reasoning": "Because it is raining, the ground is wet",
+      "conclusion": "The ground is wet",
+      "issues": [
+        "可能存在隐藏假设",
+        "未考虑替代推理路径"
+      ],
+      "timestamp": 1779107610674
+    },
+    {
+      "reasoning": "We should ship now because it works",
+      "conclusion": "ship it",
+      "issues": [
+        "可能存在隐藏假设",
+        "未考虑替代推理路径"
+      ],
+      "timestamp": 1779108608161
+    }
+  ],
+  "totalVerified": 2,
+  "passes": 0,
+  "fails": 2
+}
