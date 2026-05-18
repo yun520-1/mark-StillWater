@@ -23,15 +23,15 @@
   "test:key": {
     "value": "test value",
     "tags": [],
-    "accessCount": 14,
-    "lastAccessed": 1779112183952,
+    "accessCount": 16,
+    "lastAccessed": 1779113316355,
     "createdAt": 1779103745820
   },
   "test:searchable": {
     "value": "searchable content",
     "tags": [],
-    "accessCount": 14,
-    "lastAccessed": 1779112183953,
+    "accessCount": 16,
+    "lastAccessed": 1779113316355,
     "createdAt": 1779103745820
   },
   "lesson:test failure:1779103745821": {
@@ -329,5 +329,47 @@
     "accessCount": 0,
     "lastAccessed": 1779112183954,
     "createdAt": 1779112183954
+  },
+  "signal:frustrated_bug:1779113306217": {
+    "value": "{\"topic\":\"frustrated_bug\",\"emotion\":\"negative_high\",\"intent\":\"troubleshooting\",\"ts\":1779113306217,\"preview\":\"I am frustrated with this bug\"}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779113306218,
+    "createdAt": 1779113306218
+  },
+  "signal:frustrated_bug:1779113306219": {
+    "value": "{\"topic\":\"frustrated_bug\",\"emotion\":\"negative_high\",\"intent\":\"troubleshooting\",\"ts\":1779113306219,\"preview\":\"I am frustrated with this bug\"}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779113306219,
+    "createdAt": 1779113306219
+  },
+  "lesson:test failure:1779113306223": {
+    "value": "Task failed: test failure | Evidence: Error occurred | Handle the error case explicitly.",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779113306223,
+    "createdAt": 1779113306223
+  },
+  "signal:frustrated_bug:1779113316351": {
+    "value": "{\"topic\":\"frustrated_bug\",\"emotion\":\"negative_high\",\"intent\":\"troubleshooting\",\"ts\":1779113316351,\"preview\":\"I am frustrated with this bug\"}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779113316351,
+    "createdAt": 1779113316351
+  },
+  "signal:frustrated_bug:1779113316352": {
+    "value": "{\"topic\":\"frustrated_bug\",\"emotion\":\"negative_high\",\"intent\":\"troubleshooting\",\"ts\":1779113316352,\"preview\":\"I am frustrated with this bug\"}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779113316352,
+    "createdAt": 1779113316352
+  },
+  "lesson:test failure:1779113316356": {
+    "value": "Task failed: test failure | Evidence: Error occurred | Handle the error case explicitly.",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779113316356,
+    "createdAt": 1779113316356
   }
 }

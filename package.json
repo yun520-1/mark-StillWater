@@ -1,1 +1,26 @@
-{"type": "commonjs"}
+{
+  "name": "mark-stillwater",
+  "version": "1.1.0",
+  "description": "静水深流。Still water runs deep. AI psychological & philosophical foundation system.",
+  "main": "src/core/heartflow.js",
+  "keywords": [
+    "ai",
+    "psychology",
+    "philosophy",
+    "identity",
+    "memory",
+    "consciousness",
+    "heartflow",
+    "emotional-intelligence",
+    "reasoning"
+  ],
+  "author": "mark <mark@stillwater.ai>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yun520-1/mark-StillWater"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
