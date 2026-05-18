@@ -98,17 +98,14 @@ hf.stop();
 
 ## Installation
 
-For Claude Code agents:
-
 ```
-# Clone the repository
 git clone https://github.com/yun520-1/mark-StillWater.git ~/.claude/skills/mark-StillWater
 ```
 
-Then load in your conversation:
+Or for Claude Code:
 
 ```
-Use the mark-StillWater skill
+/skill mark-StillWater
 ```
 
 ## Public API
