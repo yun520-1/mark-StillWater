@@ -1,18 +1,48 @@
 /**
  * HeartFlow Memory System — Three-tier memory architecture
- * 
+ *
  * Inspired by MemGPT's tiered memory + MeaningfulMemory's lazy loading.
- * 
+ *
  * Tiers:
  *   CORE     — Immutable identity rules, never deleted
  *   LEARNED  — Accumulated knowledge (persisted, searchable, access-counted)
  *   EPHEMERAL — Session context (TTL-based, heat-protected, auto-consolidation)
+ *
+ * v1.2.3: Added Ebbinghaus forgetting curve for LEARNED memory decay.
+ *   - Retention-based automatic pruning
+ *   - Stability periods per tier
+ *   - Compression for low-retention memories
  */
 
 const fs = require('fs');
 const path = require('path');
 
 const TEMP_SUFFIX = '.tmp';
+
+// ─── Ebbinghaus Forgetting Curve (v1.2.3) ───────────────────────
+
+const FORGETTING_CONFIG = {
+  defaultStability: 10,    // hours, base stability for uncategorized
+  coreStability: 8760,     // 1 year, CORE is permanent
+  learnedStability: 720,    // 30 days, LEARNED tier
+  compressionThreshold: 0.3, // retention < 30% → compress
+  deletionThreshold: 0.1,   // retention < 10% → delete (LEARNED only)
+};
+
+/**
+ * Calculate retention using Ebbinghaus forgetting curve: R = e^(-t/S)
+ * @param {number} stabilityHours - Stability parameter (how fast we forget)
+ * @param {number} ageHours - How old the memory is
+ * @returns {{ retention: number, shouldCompress: boolean, shouldDelete: boolean }}
+ */
+function ebbinghausForget(stabilityHours, ageHours) {
+  const retention = Math.exp(-ageHours / stabilityHours);
+  return {
+    retention,
+    shouldCompress: retention < FORGETTING_CONFIG.compressionThreshold,
+    shouldDelete: retention < FORGETTING_CONFIG.deletionThreshold,
+  };
+}
 
 /**
  * Atomic write using temp file + rename (from mark-improving-agent).
@@ -318,6 +348,157 @@ class HeartFlowMemory {
     return { promoted, learnedCount: Object.keys(this._learnedStore).length };
   }
 
+  // ─── Ebbinghaus Forgetting Curve (v1.2.3) ────────────────
+
+  /**
+   * Get retention score for a memory entry (0-1).
+   * Higher = more likely to be retained.
+   * @param {string} key
+   * @returns {{ retention: number, ageHours: number, tier: string } | null}
+   */
+  getRetention(key) {
+    this._ensureCoreLoaded();
+    this._ensureLearnedLoaded();
+    this._ensureEphemeralLoaded();
+
+    const now = Date.now();
+    let entry = null;
+    let tier = null;
+    let stability = FORGETTING_CONFIG.defaultStability;
+
+    if (this._coreStore[key]) {
+      entry = this._coreStore[key];
+      tier = 'core';
+      stability = FORGETTING_CONFIG.coreStability;
+    } else if (this._learnedStore[key]) {
+      entry = this._learnedStore[key];
+      tier = 'learned';
+      stability = FORGETTING_CONFIG.learnedStability;
+    } else if (this._ephemeralStore[key]) {
+      entry = this._ephemeralStore[key];
+      tier = 'ephemeral';
+      stability = FORGETTING_CONFIG.defaultStability;
+    }
+
+    if (!entry) return null;
+
+    const createdAt = entry.createdAt || entry.timestamp || now;
+    const ageHours = (now - createdAt) / (1000 * 60 * 60);
+    const { retention, shouldCompress, shouldDelete } = ebbinghausForget(stability, ageHours);
+
+    return {
+      retention,
+      ageHours: Math.round(ageHours * 10) / 10,
+      tier,
+      shouldCompress,
+      shouldDelete,
+      createdAt,
+    };
+  }
+
+  /**
+   * Apply forgetting curve to LEARNED memories.
+   * Compresses low-retention entries, deletes very low ones.
+   * @returns {{ compressed: string[], deleted: string[], stats: Object }}
+   */
+  applyForgetting() {
+    this._ensureLearnedLoaded();
+
+    const now = Date.now();
+    const toDelete = [];
+    const toCompress = [];
+
+    for (const [key, entry] of Object.entries(this._learnedStore)) {
+      const createdAt = entry.createdAt || entry.timestamp || now;
+      const ageHours = (now - createdAt) / (1000 * 60 * 60);
+      const { shouldDelete, shouldCompress } = ebbinghausForget(FORGETTING_CONFIG.learnedStability, ageHours);
+
+      if (shouldDelete) {
+        toDelete.push(key);
+      } else if (shouldCompress && !entry.compressed) {
+        entry.compressed = true;
+        entry.compressedAt = now;
+        toCompress.push(key);
+      }
+    }
+
+    for (const key of toDelete) {
+      delete this._learnedStore[key];
+    }
+
+    if (toDelete.length > 0 || toCompress.length > 0) {
+      this._saveLearned();
+    }
+
+    return {
+      compressed: toCompress,
+      deleted: toDelete,
+      stats: {
+        totalLearned: Object.keys(this._learnedStore).length,
+        compressionThreshold: FORGETTING_CONFIG.compressionThreshold,
+        deletionThreshold: FORGETTING_CONFIG.deletionThreshold,
+      },
+    };
+  }
+
+  /**
+   * Get memory health based on average retention.
+   * @returns {{ verdict: string, avgRetention: number, layers: Object }}
+   */
+  getMemoryHealth() {
+    this._ensureLearnedLoaded();
+
+    const learnedEntries = Object.entries(this._learnedStore);
+    if (learnedEntries.length === 0) {
+      return {
+        verdict: '🟢 健康',
+        avgRetention: 1.0,
+        layers: {
+          CORE: { count: Object.keys(this._coreStore).length, retention: 1.0, status: '永久' },
+          LEARNED: { count: 0, retention: 1.0, status: '空' },
+          EPHEMERAL: { count: Object.keys(this._ephemeralStore).length, retention: 'session', status: '会话级' },
+        },
+      };
+    }
+
+    let totalRetention = 0;
+    let compressedCount = 0;
+
+    for (const [, entry] of learnedEntries) {
+      const createdAt = entry.createdAt || entry.timestamp || Date.now();
+      const ageHours = (Date.now() - createdAt) / (1000 * 60 * 60);
+      const { retention } = ebbinghausForget(FORGETTING_CONFIG.learnedStability, ageHours);
+      totalRetention += retention;
+      if (entry.compressed) compressedCount++;
+    }
+
+    const avgRetention = totalRetention / learnedEntries.length;
+
+    let verdict = '🟢 健康';
+    if (avgRetention < 0.4) verdict = '🔴 需清理';
+    else if (avgRetention < 0.7) verdict = '🟡 注意';
+
+    return {
+      verdict,
+      avgRetention: Math.round(avgRetention * 1000) / 1000,
+      layers: {
+        CORE: { count: Object.keys(this._coreStore).length, retention: 1.0, status: '永久' },
+        LEARNED: {
+          count: learnedEntries.length,
+          retention: Math.round(avgRetention * 1000) / 1000,
+          compressed: compressedCount,
+          status: avgRetention >= 0.7 ? '健康' : avgRetention >= 0.4 ? '注意' : '需清理',
+        },
+        EPHEMERAL: { count: Object.keys(this._ephemeralStore).length, retention: 'session', status: '会话级' },
+      },
+      forgettingConfig: {
+        learnedStabilityDays: Math.round(FORGETTING_CONFIG.learnedStability / 24),
+        compressionThreshold: FORGETTING_CONFIG.compressionThreshold,
+        deletionThreshold: FORGETTING_CONFIG.deletionThreshold,
+      },
+    };
+  }
+
   // ─── Search ────────────────────────────────────────────────
 
   search(query) {
@@ -356,11 +537,32 @@ class HeartFlowMemory {
     this._ensureEphemeralLoaded();
     this._cleanEphemeral();
 
+    const learnedEntries = Object.entries(this._learnedStore);
+    let totalRetention = 0;
+    let compressedCount = 0;
+
+    for (const [, entry] of learnedEntries) {
+      const createdAt = entry.createdAt || entry.timestamp || Date.now();
+      const ageHours = (Date.now() - createdAt) / (1000 * 60 * 60);
+      const { retention } = ebbinghausForget(FORGETTING_CONFIG.learnedStability, ageHours);
+      totalRetention += retention;
+      if (entry.compressed) compressedCount++;
+    }
+
+    const avgRetention = learnedEntries.length > 0 ? totalRetention / learnedEntries.length : 1;
+
     return {
       core: Object.keys(this._coreStore).length,
-      learned: Object.keys(this._learnedStore).length,
+      learned: learnedEntries.length,
       ephemeral: Object.keys(this._ephemeralStore).length,
-      total: Object.keys(this._coreStore).length + Object.keys(this._learnedStore).length + Object.keys(this._ephemeralStore).length,
+      total: Object.keys(this._coreStore).length + learnedEntries.length + Object.keys(this._ephemeralStore).length,
+      avgRetention: Math.round(avgRetention * 1000) / 1000,
+      compressedCount,
+      forgetting: {
+        learnedStabilityDays: Math.round(FORGETTING_CONFIG.learnedStability / 24),
+        compressionThreshold: FORGETTING_CONFIG.compressionThreshold,
+        deletionThreshold: FORGETTING_CONFIG.deletionThreshold,
+      },
     };
   }
 

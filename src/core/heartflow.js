@@ -1,5 +1,5 @@
 /**
- * mark-StillWater v1.1.0 — AI Psychological & Philosophical Foundation System
+ * mark-StillWater v1.2.3 — AI Psychological & Philosophical Foundation System
  *
  * A quiet presence with depth. Still water runs deep.
  *
@@ -32,6 +32,10 @@
  *   - DreamWeaver: dream content generation from memory recombination (v1.1.0)
  *   - Planner: memory-based action planning from reflections (v1.1.0)
  *   - ChildPsychology: developmental psychology (Piaget, Erikson, Attachment) (v1.1.1)
+ *   - DreamQuality: Dream Quality Score (DQS) with 5 weighted components (v1.2.0)
+ *   - MetaJudgment: L1/L2/L3 meta-judgment with TGB review (v1.2.1)
+ *   - SelfCorrections: user correction tracking with 3x pattern promotion (v1.2.2)
+ *   - Ebbinghaus: forgetting curve for LEARNED memory decay (v1.2.3)
  *
  * Identity: StillWater — calm, deep, present.
  * Soul: cultivated through real conversations.
@@ -70,7 +74,7 @@ const { DreamQualityTracker, interpretDQS } = require('./dream-quality.js');
 const { MetaJudgment } = require('./meta-judgment.js');
 const { SelfCorrections } = require('./self-corrections.js');
 
-const VERSION = '1.2.2';
+const VERSION = '1.2.3';
 
 // TTL constants
 const TTL_4_HOURS = 4 * 60 * 60 * 1000; // 14400000ms
@@ -342,6 +346,36 @@ function createHeartFlow(config = {}) {
     getMemoryStats() {
       this._ensureStarted();
       return memory.getMemoryStats();
+    },
+
+    /**
+     * Get retention score for a memory entry (v1.2.3).
+     * Uses Ebbinghaus forgetting curve: R = e^(-t/S)
+     * @param {string} key
+     * @returns {{ retention: number, ageHours: number, tier: string } | null}
+     */
+    getRetention(key) {
+      this._ensureStarted();
+      return memory.getRetention(key);
+    },
+
+    /**
+     * Apply Ebbinghaus forgetting curve to LEARNED memories (v1.2.3).
+     * Compresses low-retention entries, deletes very low ones.
+     * @returns {{ compressed: string[], deleted: string[], stats: Object }}
+     */
+    applyForgetting() {
+      this._ensureStarted();
+      return memory.applyForgetting();
+    },
+
+    /**
+     * Get memory health based on average retention (v1.2.3).
+     * @returns {{ verdict: string, avgRetention: number, layers: Object }}
+     */
+    getMemoryHealth() {
+      this._ensureStarted();
+      return memory.getMemoryHealth();
     },
 
     // ─── Evolution ─────────────────────────────────────────

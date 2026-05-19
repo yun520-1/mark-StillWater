@@ -595,5 +595,19 @@
     "accessCount": 0,
     "lastAccessed": 1779180897276,
     "createdAt": 1779180897276
+  },
+  "signal:frustrated_bug:1779184102248": {
+    "value": "{\"topic\":\"frustrated_bug\",\"emotion\":\"negative_high\",\"intent\":\"troubleshooting\",\"ts\":1779184102248,\"preview\":\"I am frustrated with this bug\"}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779184102248,
+    "createdAt": 1779184102248
+  },
+  "test:ebbinghaus": {
+    "value": "test value",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779184111560,
+    "createdAt": 1779184111560
   }
 }
