@@ -36,6 +36,7 @@
  *   - MetaJudgment: L1/L2/L3 meta-judgment with TGB review (v1.2.1)
  *   - SelfCorrections: user correction tracking with 3x pattern promotion (v1.2.2)
  *   - Ebbinghaus: forgetting curve for LEARNED memory decay (v1.2.3)
+ *   - TruthTeller: Socratic questioning, assumption challenging, self-truth assessment (v1.2.4)
  *
  * Identity: StillWater — calm, deep, present.
  * Soul: cultivated through real conversations.
@@ -73,8 +74,9 @@ const { ChildPsychology } = require('./child-psychology.js');
 const { DreamQualityTracker, interpretDQS } = require('./dream-quality.js');
 const { MetaJudgment } = require('./meta-judgment.js');
 const { SelfCorrections } = require('./self-corrections.js');
+const { TruthTeller } = require('./truth-teller.js');
 
-const VERSION = '1.2.3';
+const VERSION = '1.2.4';
 
 // TTL constants
 const TTL_4_HOURS = 4 * 60 * 60 * 1000; // 14400000ms
@@ -169,6 +171,9 @@ function createHeartFlow(config = {}) {
 
   // Instantiate self-corrections tracker (v1.2.2)
   const selfCorrections = new SelfCorrections();
+
+  // Instantiate truth teller (v1.2.4)
+  const truthTeller = new TruthTeller();
 
   // MindSpace: working mental state
   const _mindSpace = {
@@ -1433,6 +1438,72 @@ function createHeartFlow(config = {}) {
     exportCorrections() {
       this._ensureStarted();
       return selfCorrections.exportForMemory();
+    },
+
+    // ─── TruthTeller (v1.2.4) ───────────────────────────────
+
+    /**
+     * Make a truth statement with confidence estimation.
+     */
+    sayTruth(statement, context = '') {
+      this._ensureStarted();
+      return truthTeller.sayTruth(statement, context);
+    },
+
+    /**
+     * Admit not knowing something.
+     */
+    sayUnknown(question, context = '') {
+      this._ensureStarted();
+      return truthTeller.sayUnknown(question, context);
+    },
+
+    /**
+     * Correct a user misconception.
+     */
+    correctUser(statement, correction, context = '') {
+      this._ensureStarted();
+      return truthTeller.correctUser(statement, correction, context);
+    },
+
+    /**
+     * Challenge a user assumption with reasoning.
+     */
+    challengeAssumption(assumption, reason) {
+      this._ensureStarted();
+      return truthTeller.challengeAssumption(assumption, reason);
+    },
+
+    /**
+     * Ask a Socratic difficult question.
+     */
+    askDifficultQuestion(question) {
+      this._ensureStarted();
+      return truthTeller.askDifficultQuestion(question);
+    },
+
+    /**
+     * Assess self truthfulness.
+     */
+    assessSelfTruth() {
+      this._ensureStarted();
+      return truthTeller.assessSelfTruth();
+    },
+
+    /**
+     * Get truth history.
+     */
+    getTruthHistory(limit = 20) {
+      this._ensureStarted();
+      return truthTeller.getHistory(limit);
+    },
+
+    /**
+     * Get TruthTeller statistics.
+     */
+    getTruthTellerStats() {
+      this._ensureStarted();
+      return truthTeller.getStats();
     },
 
     // ─── Dream ─────────────────────────────────────────────
