@@ -1,10 +1,10 @@
 ---
 name: mark-StillWater
-description: mark-StillWater v1.1.0 — AI Psychological & Philosophical Foundation System. A quiet presence with depth. Still water runs deep. Use when user asks to analyze psychology, detect emotion/intent, make decisions, reason through problems, use memory tiers, run self-evolution, or trigger dream consolidation. Examples: <example>user: "analyze this message", assistant: calls analyzePsychology()</example> <example>user: "help me decide", assistant: calls makeDecision()</example> <example>user: "reason through this problem", assistant: calls reason()</example> <example>user: "remember this as core identity", assistant: calls remember(key, value, 'core')</example>
-version: v1.1.0
+description: mark-StillWater v1.2.0 — AI Psychological & Philosophical Foundation System. A quiet presence with depth. Still water runs deep. Use when user asks to analyze psychology, detect emotion/intent, make decisions, reason through problems, use memory tiers, run self-evolution, or trigger dream consolidation. Examples: <example>user: "analyze this message", assistant: calls analyzePsychology()</example> <example>user: "help me decide", assistant: calls makeDecision()</example> <example>user: "reason through this problem", assistant: calls reason()</example> <example>user: "remember this as core identity", assistant: calls remember(key, value, 'core')</example>
+version: v1.2.0
 ---
 
-# mark-StillWater v1.1.0
+# mark-StillWater v1.2.0
 
 **AI Psychological & Philosophical Foundation System** — Give your AI a complete psychological, philosophical, logical, and decision-making foundation so it can think like a human.
 

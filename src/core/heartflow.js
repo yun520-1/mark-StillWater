@@ -31,6 +31,7 @@
  *   - SleepStages: NREM/REM sleep cycle simulation (v1.1.0)
  *   - DreamWeaver: dream content generation from memory recombination (v1.1.0)
  *   - Planner: memory-based action planning from reflections (v1.1.0)
+ *   - ChildPsychology: developmental psychology (Piaget, Erikson, Attachment) (v1.1.1)
  *
  * Identity: StillWater — calm, deep, present.
  * Soul: cultivated through real conversations.
@@ -64,8 +65,10 @@ const { LogicVerifier } = require('./logic-verifier.js');
 const { SleepStages } = require('./sleep-stages.js');
 const { DreamWeaver } = require('./dream-weaver.js');
 const { Planner } = require('./planner.js');
+const { ChildPsychology } = require('./child-psychology.js');
+const { DreamQualityTracker, interpretDQS } = require('./dream-quality.js');
 
-const VERSION = '1.1.0';
+const VERSION = '1.2.0';
 
 // TTL constants
 const TTL_4_HOURS = 4 * 60 * 60 * 1000; // 14400000ms
@@ -146,8 +149,14 @@ function createHeartFlow(config = {}) {
   // Instantiate dream weaver (v1.1.0)
   const dreamWeaver = new DreamWeaver(memory);
 
+  // Instantiate dream quality tracker (v1.2.0)
+  const dreamQuality = new DreamQualityTracker();
+
   // Instantiate planner (v1.1.0)
   const planner = new Planner();
+
+  // Instantiate child psychology (v1.1.1)
+  const childPsychology = new ChildPsychology();
 
   // MindSpace: working mental state
   const _mindSpace = {
@@ -215,7 +224,9 @@ function createHeartFlow(config = {}) {
         logicVerifier: logicVerifier.getStats(),
         sleepStages: sleepStages.getStats(),
         dreamWeaver: dreamWeaver.getStats(),
+        dreamQuality: dreamQuality.getStats(),
         planner: planner.getStats(),
+        childPsychology: childPsychology.getStats(),
       };
     },
 
@@ -1139,6 +1150,32 @@ function createHeartFlow(config = {}) {
       return dreamWeaver.getStats();
     },
 
+    /**
+     * Track a dream cycle outcome for quality scoring (v1.2.0).
+     * @param {Object} params - Dream outcome parameters
+     * @returns {Object} Dream outcome with DQS score
+     */
+    trackDreamOutcome(params) {
+      this._ensureStarted();
+      const outcome = dreamQuality.track(params);
+      return {
+        ...outcome,
+        quality: interpretDQS(outcome.dqs),
+      };
+    },
+
+    /**
+     * Get dream quality statistics (v1.2.0).
+     */
+    getDreamQualityStats() {
+      this._ensureStarted();
+      const stats = dreamQuality.getStats();
+      return {
+        ...stats,
+        quality: interpretDQS(stats.avgDQS),
+      };
+    },
+
     // ─── Planner (v1.1.0) ───────────────────────────────
 
     /**
@@ -1211,6 +1248,48 @@ function createHeartFlow(config = {}) {
     getPlannerStats() {
       this._ensureStarted();
       return planner.getStats();
+    },
+
+    // ─── ChildPsychology (v1.1.1) ───────────────────────────────
+
+    /**
+     * Get Piaget cognitive development stage for age
+     */
+    getPiagetStage(ageYears) {
+      this._ensureStarted();
+      return childPsychology.getPiagetStage(ageYears);
+    },
+
+    /**
+     * Get Erikson psychosocial stage for age
+     */
+    getEriksonStage(ageYears) {
+      this._ensureStarted();
+      return childPsychology.getEriksonStage(ageYears);
+    },
+
+    /**
+     * Get AI interaction guidance for cognitive stage
+     */
+    getChildInteractionGuidance(ageYears) {
+      this._ensureStarted();
+      return childPsychology.getInteractionGuidance(ageYears);
+    },
+
+    /**
+     * Detect attachment style from behavioral patterns
+     */
+    detectAttachment(patterns) {
+      this._ensureStarted();
+      return childPsychology.detectAttachmentStyle(patterns);
+    },
+
+    /**
+     * Get emotional milestone expectations for age range
+     */
+    getEmotionalMilestone(ageRange) {
+      this._ensureStarted();
+      return childPsychology.getEmotionalMilestone(ageRange);
     },
 
     // ─── Dream ─────────────────────────────────────────────

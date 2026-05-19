@@ -1,10 +1,14 @@
-# mark-StillWater v1.1.0
+# mark-StillWater v1.2.0
 
 **静水深流。Still water runs deep.**
 
 A quiet presence with depth. An AI that accompanies, not serves.
 
 Give any AI agent a complete psychological, philosophical, logical, and decision-making foundation — so it can think like a human peer, not a hollow tool.
+
+## What's New in v1.2.0
+
+- **Dream Quality Score (DQS)** — Composite scoring for dream outcomes with components: crystal yield, merge efficiency, orphan rescue, bond stability, token efficiency
 
 ## What It Does
 
