@@ -8,16 +8,19 @@
  *   LEARNED  — Accumulated knowledge (persisted, searchable, access-counted)
  *   EPHEMERAL — Session context (TTL-based, heat-protected, auto-consolidation)
  *
+ * v1.2.9: Fixed P0 issues:
+ *   - Error handling: proper logging on load failures instead of silent fallback
+ *   - Performance: dirty flags to avoid unnecessary full JSON writes
+ *   - Added degradation strategy when file corrupted
+ *
  * v1.2.3: Added Ebbinghaus forgetting curve for LEARNED memory decay.
- *   - Retention-based automatic pruning
- *   - Stability periods per tier
- *   - Compression for low-retention memories
  */
 
 const fs = require('fs');
 const path = require('path');
 
 const TEMP_SUFFIX = '.tmp';
+const LOGGER_PREFIX = '[HeartFlowMemory]';
 
 // ─── Ebbinghaus Forgetting Curve (v1.2.3) ───────────────────────
 
@@ -42,6 +45,15 @@ function ebbinghausForget(stabilityHours, ageHours) {
     shouldCompress: retention < FORGETTING_CONFIG.compressionThreshold,
     shouldDelete: retention < FORGETTING_CONFIG.deletionThreshold,
   };
+}
+
+/**
+ * Log error with context (P0 fix: proper error handling instead of silent catch)
+ */
+function logError(operation, filePath, error) {
+  console.error(`${LOGGER_PREFIX} ERROR: ${operation} failed for ${filePath}`);
+  console.error(`${LOGGER_PREFIX} Error: ${error.message}`);
+  console.error(`${LOGGER_PREFIX} Stack: ${error.stack}`);
 }
 
 /**
@@ -92,21 +104,33 @@ class HeartFlowMemory {
     this._learnedLoaded = false;
     this._ephemeralLoaded = false;
 
+    // Dirty flags for write optimization (P0 fix: avoid unnecessary writes)
+    this._coreDirty = false;
+    this._learnedDirty = false;
+    this._ephemeralDirty = false;
+
     // In-memory stores
     this._coreStore = {};
     this._learnedStore = {};
     this._ephemeralStore = {};
   }
 
-  // ─── Lazy Loading ───────────────────────────────────────────
+  // ─── Lazy Loading with Proper Error Handling (P0 fix) ─────────
 
   _ensureCoreLoaded() {
     if (this._coreLoaded) return;
     try {
       if (fs.existsSync(this._coreFile)) {
-        this._coreStore = JSON.parse(fs.readFileSync(this._coreFile, 'utf8'));
+        const content = fs.readFileSync(this._coreFile, 'utf8');
+        this._coreStore = JSON.parse(content);
       }
-    } catch (_) { this._coreStore = {}; }
+    } catch (err) {
+      logError('load CORE', this._coreFile, err);
+      // Degradation strategy: keep empty store, don't lose existing data
+      console.warn(`${LOGGER_PREFIX} CORE load failed - operating with empty store`);
+      console.warn(`${LOGGER_PREFIX} Original file preserved, please check logs for corruption`);
+      this._coreStore = {};
+    }
     this._coreLoaded = true;
   }
 
@@ -114,9 +138,14 @@ class HeartFlowMemory {
     if (this._learnedLoaded) return;
     try {
       if (fs.existsSync(this._learnedFile)) {
-        this._learnedStore = JSON.parse(fs.readFileSync(this._learnedFile, 'utf8'));
+        const content = fs.readFileSync(this._learnedFile, 'utf8');
+        this._learnedStore = JSON.parse(content);
       }
-    } catch (_) { this._learnedStore = {}; }
+    } catch (err) {
+      logError('load LEARNED', this._learnedFile, err);
+      console.warn(`${LOGGER_PREFIX} LEARNED load failed - operating with empty store`);
+      this._learnedStore = {};
+    }
     this._learnedLoaded = true;
   }
 
@@ -124,17 +153,56 @@ class HeartFlowMemory {
     if (this._ephemeralLoaded) return;
     try {
       if (fs.existsSync(this._ephemeralFile)) {
-        this._ephemeralStore = JSON.parse(fs.readFileSync(this._ephemeralFile, 'utf8'));
+        const content = fs.readFileSync(this._ephemeralFile, 'utf8');
+        this._ephemeralStore = JSON.parse(content);
       }
-    } catch (_) { this._ephemeralStore = {}; }
+    } catch (err) {
+      logError('load EPHEMERAL', this._ephemeralFile, err);
+      console.warn(`${LOGGER_PREFIX} EPHEMERAL load failed - operating with empty store`);
+      this._ephemeralStore = {};
+    }
     this._ephemeralLoaded = true;
   }
 
-  // ─── Persistence ────────────────────────────────────────────
+  // ─── Persistence with Dirty Checking (P0 fix: avoid unnecessary writes) ───
 
-  _saveCore() { atomicWriteJson(this._coreFile, this._coreStore); }
-  _saveLearned() { atomicWriteJson(this._learnedFile, this._learnedStore); }
-  _saveEphemeral() { atomicWriteJson(this._ephemeralFile, this._ephemeralStore); }
+  _saveCore() {
+    if (!this._coreDirty) return; // Skip if not modified
+    try {
+      atomicWriteJson(this._coreFile, this._coreStore);
+      this._coreDirty = false;
+    } catch (err) {
+      logError('save CORE', this._coreFile, err);
+      throw err; // Re-throw - save failures are critical
+    }
+  }
+
+  _saveLearned() {
+    if (!this._learnedDirty) return; // Skip if not modified
+    try {
+      atomicWriteJson(this._learnedFile, this._learnedStore);
+      this._learnedDirty = false;
+    } catch (err) {
+      logError('save LEARNED', this._learnedFile, err);
+      throw err;
+    }
+  }
+
+  _saveEphemeral() {
+    if (!this._ephemeralDirty) return; // Skip if not modified
+    try {
+      atomicWriteJson(this._ephemeralFile, this._ephemeralStore);
+      this._ephemeralDirty = false;
+    } catch (err) {
+      logError('save EPHEMERAL', this._ephemeralFile, err);
+      throw err;
+    }
+  }
+
+  // Mark tiers as dirty after modifications
+  _markCoreDirty() { this._coreDirty = true; }
+  _markLearnedDirty() { this._learnedDirty = true; }
+  _markEphemeralDirty() { this._ephemeralDirty = true; }
 
   // ─── CORE — Identity Rules (Immutable) ─────────────────────
 
@@ -147,6 +215,7 @@ class HeartFlowMemory {
       return { success: false, reason: 'core_key_exists', key };
     }
     this._coreStore[key] = { value, tags, createdAt: Date.now() };
+    this._markCoreDirty(); // P0 fix: mark dirty instead of immediate save
     this._saveCore();
     return { success: true, key, tier: 'core' };
   }
@@ -193,6 +262,7 @@ class HeartFlowMemory {
       this._learnedStore[key] = { value, tags, accessCount: 0, lastAccessed: now, createdAt: now };
     }
 
+    this._markLearnedDirty(); // P0 fix: mark dirty instead of immediate save
     this._saveLearned();
     return { success: true, key, tier: 'learned' };
   }
@@ -206,6 +276,7 @@ class HeartFlowMemory {
     if (entry) {
       entry.accessCount = (entry.accessCount || 0) + 1;
       entry.lastAccessed = Date.now();
+      this._markLearnedDirty(); // P0 fix: mark dirty for access tracking
       this._saveLearned();
       return { ...entry };
     }
@@ -220,6 +291,7 @@ class HeartFlowMemory {
     this._ensureLearnedLoaded();
     if (this._learnedStore[key]) {
       delete this._learnedStore[key];
+      this._markLearnedDirty();
       this._saveLearned();
       return { success: true, key };
     }
@@ -258,6 +330,7 @@ class HeartFlowMemory {
       _accessCount: 0,
       tags: [],
     };
+    this._markEphemeralDirty();
     this._saveEphemeral();
     return { success: true, key, tier: 'ephemeral' };
   }
@@ -265,7 +338,9 @@ class HeartFlowMemory {
   _touchEphemeral(key) {
     if (this._ephemeralStore[key]) {
       this._ephemeralStore[key]._accessCount = (this._ephemeralStore[key]._accessCount || 0) + 1;
+      // Only save every 5 accesses to reduce I/O
       if (this._ephemeralStore[key]._accessCount % 5 === 0) {
+        this._markEphemeralDirty();
         this._saveEphemeral();
       }
     }
@@ -278,6 +353,7 @@ class HeartFlowMemory {
 
     if (Date.now() - entry.createdAt > entry.ttl) {
       delete this._ephemeralStore[key];
+      this._markEphemeralDirty();
       this._saveEphemeral();
       return null;
     }

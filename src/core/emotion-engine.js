@@ -21,7 +21,10 @@ class EmotionEngine {
       surprise: ['惊讶', '意外', '震惊', 'surprised', 'shock']
     };
     
-    console.log('[EmotionEngine] 可解释情感引擎初始化');
+    // Initialization trace removed for production — only log on explicit debug flag
+    if (process.env.HEARTFLOW_DEBUG) {
+      console.log('[EmotionEngine] 可解释情感引擎初始化');
+    }
   }
 
   /**

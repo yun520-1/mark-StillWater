@@ -609,5 +609,19 @@
     "accessCount": 0,
     "lastAccessed": 1779184111560,
     "createdAt": 1779184111560
+  },
+  "signal:frustrated_bug:1779186436856": {
+    "value": "{\"topic\":\"frustrated_bug\",\"emotion\":\"negative_high\",\"intent\":\"troubleshooting\",\"ts\":1779186436856,\"preview\":\"I am frustrated with this bug\"}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779186436856,
+    "createdAt": 1779186436856
+  },
+  "signal:frustrated_bug:1779191301795": {
+    "value": "{\"topic\":\"frustrated_bug\",\"emotion\":\"negative_high\",\"intent\":\"troubleshooting\",\"ts\":1779191301795,\"preview\":\"I am frustrated with this bug\"}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779191301795,
+    "createdAt": 1779191301795
   }
 }

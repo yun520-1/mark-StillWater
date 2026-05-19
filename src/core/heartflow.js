@@ -1,5 +1,5 @@
 /**
- * mark-StillWater v1.2.3 — AI Psychological & Philosophical Foundation System
+ * mark-StillWater v1.3.0 — AI Psychological & Philosophical Foundation System
  *
  * A quiet presence with depth. Still water runs deep.
  *
@@ -40,6 +40,13 @@
  *   - Calibration: confidence calibration tracking, bias detection (v1.2.5)
  *   - OutcomeMemory: outcome-weighted memory with success/failure weighting (v1.2.6)
  *   - IncentiveAnalyzer: stakeholder incentive analysis, Gustavus Swift principle (v1.2.7)
+ *   - DreamConnections: cross-domain connection discovery in dream loop (v1.2.8)
+ *   - DreamContradictions: contradiction detection in dream synthesis (v1.2.8)
+ *   - MetaLearningAnalytics: pattern recording, best strategy detection (v1.2.8)
+ *   - SecurityHardening: path traversal protection, API blacklist, sandbox disabled (v1.2.8)
+ *   - MemoryErrorHandling: proper error logging instead of silent failure (v1.3.0)
+ *   - MemoryPerformance: dirty flags to avoid unnecessary JSON writes (v1.3.0)
+ *   - ArchiveDuplicates: removed 6 duplicate heartflow files to archive/ (v1.3.0)
  *
  * Identity: StillWater — calm, deep, present.
  * Soul: cultivated through real conversations.
@@ -82,7 +89,7 @@ const { Calibration } = require('./calibration.js');
 const { OutcomeMemory } = require('./outcome-memory.js');
 const { IncentiveAnalyzer } = require('./incentive-analyzer.js');
 
-const VERSION = '1.2.7';
+const VERSION = '1.3.0';
 
 // TTL constants
 const TTL_4_HOURS = 4 * 60 * 60 * 1000; // 14400000ms

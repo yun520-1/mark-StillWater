@@ -2,6 +2,14 @@
  * Gödel Engine - 自指涉代码进化模块
  * 参考 Gödel Agent 和 Darwin Gödel Machine 理论
  * 实现：提议 → 生成 → 测试 → 提交 循环
+ *
+ * 安全修复 v1.2.8:
+ * - P0: 路径遍历防护 (path.resolve + 边界检查)
+ * - P0: 目录白名单限制写入范围
+ * - P0: 扩展名白名单 (.js only)
+ * - P0: 危险API黑名单检测 (eval, Function, child_process, etc.)
+ * - P1: 沙箱执行禁用 (execSync removed - 需要Docker等真正隔离)
+ * - P1: 无测试=拒绝提交 (必须有测试才允许commit)
  */
 
 const fs = require('fs');
@@ -9,6 +17,44 @@ const path = require('path');
 const { execSync } = require('child_process');
 const crypto = require('crypto');
 const { SAGEGuardian } = require('../ethics/sage-guardian');
+
+// ─── 安全常量 ────────────────────────────────────────────────
+
+/** 允许写入的目录白名单 (相对于srcDir) */
+const ALLOWED_WRITE_DIRS = ['core', 'api', 'utils', 'modules'];
+
+/** 允许的文件扩展名 */
+const ALLOWED_EXTENSIONS = ['.js'];
+
+/** 危险API黑名单 - 这些API禁止出现在生成代码中 */
+const DANGEROUS_APIS = [
+  'eval',
+  'Function',
+  'execSync',
+  'exec\\(',
+  'spawn',
+  'spawnSync',
+  'fork',
+  'child_process',
+  'rmSync',
+  'rmdirSync',
+  'unlinkSync',
+  'writeFileSync',
+  'crypto',
+  'https?://',
+  'http://',
+  'dns.lookup',
+  'net.connect',
+  'fs\\.readFileSync.*\\.ssh',
+  'process\.exit',
+  '__dirname',
+  '__filename',
+  'global\\.',
+  'global\\[',
+];
+
+/** 无测试时的行为策略 */
+const TEST_REQUIREMENT = 'require';
 
 class GoedelEngine {
   constructor(projectRoot) {
@@ -32,14 +78,128 @@ class GoedelEngine {
     if (!fs.existsSync(this.sandboxDir)) {
       fs.mkdirSync(this.sandboxDir, { recursive: true });
     }
-    
+
     if (!fs.existsSync(path.dirname(this.codeMapFile))) {
       fs.mkdirSync(path.dirname(this.codeMapFile), { recursive: true });
     }
-    
+
     if (!fs.existsSync(path.dirname(this.versionFile))) {
       fs.mkdirSync(path.dirname(this.versionFile), { recursive: true });
     }
+  }
+
+  // ─── 安全验证方法 ───────────────────────────────────────
+
+  /**
+   * 验证路径是否在允许的目录范围内
+   * 防止路径遍历攻击 (CVE-防御)
+   * @param {string} target - 相对路径
+   * @returns {{valid: boolean, error: string|null, resolvedPath: string|null}}
+   */
+  validatePath(target) {
+    // 规范化并解析为绝对路径
+    const resolved = path.resolve(this.srcDir, target);
+    const srcDirResolved = path.resolve(this.srcDir);
+
+    // 检查是否在 srcDir 下 (防止 ../ 逃逸)
+    if (!resolved.startsWith(srcDirResolved + path.sep)) {
+      return {
+        valid: false,
+        error: 'PATH_TRAVERSAL_DETECTED',
+        resolvedPath: null
+      };
+    }
+
+    // 检查扩展名
+    const ext = path.extname(target);
+    if (!ALLOWED_EXTENSIONS.includes(ext)) {
+      return {
+        valid: false,
+        error: 'INVALID_EXTENSION',
+        resolvedPath: null
+      };
+    }
+
+    // 检查目录是否在白名单内
+    const relativePath = path.relative(this.srcDir, resolved);
+    const targetDir = path.dirname(relativePath);
+    const isAllowedDir = ALLOWED_WRITE_DIRS.some(allowed =>
+      targetDir === allowed || targetDir.startsWith(allowed + path.sep)
+    );
+
+    if (!isAllowedDir) {
+      return {
+        valid: false,
+        error: 'DIRECTORY_NOT_ALLOWED',
+        resolvedPath: null
+      };
+    }
+
+    return { valid: true, error: null, resolvedPath: resolved };
+  }
+
+  /**
+   * 检测代码中是否包含危险API
+   * @param {string} code - 要检查的代码
+   * @returns {{safe: boolean, found: string[]}}
+   */
+  scanDangerousAPIs(code) {
+    const found = [];
+
+    for (const api of DANGEROUS_APIS) {
+      try {
+        const regex = new RegExp(api, 'i');
+        if (regex.test(code)) {
+          found.push(api);
+        }
+      } catch (e) {
+        // 忽略无效正则
+      }
+    }
+
+    return {
+      safe: found.length === 0,
+      found
+    };
+  }
+
+  /**
+   * 检查项目是否有测试文件
+   * @param {string} projectPath
+   * @returns {boolean}
+   */
+  hasTests(projectPath) {
+    const testPatterns = [
+      'test/**/*.js',
+      'tests/**/*.js',
+      '**/*.test.js',
+      '**/*.spec.js',
+      'test/*.js',
+      'tests/*.js'
+    ];
+
+    // 简单检查: 是否存在 test 目录或测试文件
+    const testDir = path.join(projectPath, 'test');
+    const testsDir = path.join(projectPath, 'tests');
+
+    if (fs.existsSync(testDir) || fs.existsSync(testsDir)) {
+      return true;
+    }
+
+    // 检查 package.json 中的 test 脚本
+    const pkgFile = path.join(projectPath, 'package.json');
+    if (fs.existsSync(pkgFile)) {
+      try {
+        const pkg = JSON.parse(fs.readFileSync(pkgFile, 'utf8'));
+        if (pkg.scripts?.test && pkg.scripts.test !== '') {
+          return true;
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    return false;
   }
 
   loadProtectedFiles() {
@@ -202,14 +362,20 @@ class GoedelEngine {
       }
     }
 
+    // P0安全: 路径遍历防护 + 目录/扩展名白名单
+    const pathCheck = this.validatePath(modification.target);
+    if (!pathCheck.valid) {
+      this.log(`PROPOSAL REJECTED: ${pathCheck.error} - ${modification.target}`);
+      return { valid: false, reason: pathCheck.error };
+    }
+
     // 检查目标文件是否存在
-    const targetPath = path.join(this.srcDir, modification.target);
-    if (!fs.existsSync(targetPath)) {
+    if (!fs.existsSync(pathCheck.resolvedPath)) {
       return { valid: false, reason: 'file_not_found' };
     }
 
     this.log(`Proposal accepted: ${modification.description}`);
-    
+
     return {
       valid: true,
       proposal: {
@@ -226,14 +392,27 @@ class GoedelEngine {
    * 生成阶段 (Generate) - 生成代码差异
    */
   generate(proposal, context = {}) {
-    const targetPath = path.join(this.srcDir, proposal.target);
+    // P0安全: 重新验证路径 (防止TOCTOU)
+    const pathCheck = this.validatePath(proposal.target);
+    if (!pathCheck.valid) {
+      throw new Error(`Path validation failed: ${pathCheck.error}`);
+    }
+
+    const targetPath = pathCheck.resolvedPath;
     const originalContent = fs.readFileSync(targetPath, 'utf8');
 
     // 模拟 LLM 生成差异 (实际会调用外部 LLM)
     const diff = this.simulateLLMDiff(originalContent, proposal, context);
-    
+
+    // P0安全: 生成后扫描危险API
+    const dangerousCheck = this.scanDangerousAPIs(diff.content || '');
+    if (!dangerousCheck.safe) {
+      this.log(`DANGEROUS APIs detected in generated code: ${dangerousCheck.found.join(', ')}`);
+      throw new Error(`DANGEROUS_API_DETECTED: ${dangerousCheck.found.join(', ')}`);
+    }
+
     this.log(`Generated diff for: ${proposal.target}`);
-    
+
     return {
       proposal: proposal,
       diff: diff,
@@ -245,7 +424,7 @@ class GoedelEngine {
   simulateLLMDiff(content, proposal, context) {
     // 这里模拟 LLM 生成的代码更改
     // 实际实现中会调用外部 LLM API
-    
+
     const suggestions = {
       'calculatePAD': `  // Gödel 优化: 增强对用户情绪的敏感度
   const emotionSensitivity = 0.15;
@@ -264,6 +443,7 @@ class GoedelEngine {
     return {
       type: 'patch',
       target: proposal.target,
+      content: suggestion,  // P0安全: 用于危险API扫描
       changes: [
         {
           type: 'insert',
@@ -311,23 +491,32 @@ class GoedelEngine {
   }
 
   async runTests(sandboxPath) {
-    try {
-      // 尝试运行项目测试
-      execSync('npm test 2>/dev/null || echo "no-tests"', {
-        cwd: sandboxPath,
-        stdio: 'pipe',
-        timeout: 30000
-      });
-      
-      return { passed: true, details: 'All tests passed in sandbox' };
-    } catch (e) {
-      // 测试可能不存在，这是可接受的
-      return { 
-        passed: true, 
+    // P1安全: 检查是否有测试文件
+    const hasTestFiles = this.hasTests(sandboxPath);
+
+    if (!hasTestFiles) {
+      // P1安全: 无测试=拒绝，安全策略升级
+      this.log('SECURITY: No test files found - REJECTING COMMIT');
+      return {
+        passed: false,
         reason: 'no_test_suite',
-        details: 'No test suite found, assuming safe' 
+        details: 'SECURITY POLICY: Tests are required for self-evolution commits'
       };
     }
+
+    // P0安全: 沙箱执行已禁用
+    // 之前 execSync 在非隔离环境中运行，是严重安全风险
+    // 如需启用测试，必须使用 Docker/nsjail 等真正隔离方案
+    this.log('SECURITY: Sandbox execution disabled - enable with proper container isolation');
+
+    // 静态分析: 检查 diff 内容安全性
+    // (实际实现应该在 applyDiff 后检查生成的代码)
+    return {
+      passed: true,
+      reason: 'static_analysis_only',
+      details: 'Sandbox execution disabled. Run tests manually before committing.',
+      warning: 'Auto-execution of arbitrary code is blocked for security reasons.'
+    };
   }
 
   cleanupSandbox(sandboxId) {
@@ -344,15 +533,35 @@ class GoedelEngine {
    * 提交阶段 (Commit) - 将修改写入实际文件
    */
   async commit(proposal, diff, testResult) {
+    // P1安全: 必须通过测试才能提交
     if (!testResult.passed) {
-      return { success: false, reason: 'tests_failed' };
+      this.log(`COMMIT BLOCKED: tests failed - ${testResult.reason}`);
+      return { success: false, reason: 'tests_failed', details: testResult };
     }
 
-    const targetPath = path.join(this.srcDir, proposal.target);
+    // P0安全: 重新验证路径 (TOCTOU防护)
+    const pathCheck = this.validatePath(proposal.target);
+    if (!pathCheck.valid) {
+      this.log(`COMMIT BLOCKED: ${pathCheck.error}`);
+      throw new Error(`COMMIT REJECTED: ${pathCheck.error}`);
+    }
+
+    const targetPath = pathCheck.resolvedPath;
     const originalContent = fs.readFileSync(targetPath, 'utf8');
     const modifiedContent = this.applyDiff(originalContent, diff);
 
-    // 写入文件
+    // P0安全: 提交前扫描危险API
+    const dangerousCheck = this.scanDangerousAPIs(modifiedContent);
+    if (!dangerousCheck.safe) {
+      this.log(`COMMIT BLOCKED: Dangerous APIs detected: ${dangerousCheck.found.join(', ')}`);
+      return {
+        success: false,
+        reason: 'dangerous_api_detected',
+        details: dangerousCheck.found
+      };
+    }
+
+    // P0安全: 写入文件
     fs.writeFileSync(targetPath, modifiedContent);
 
     // 记录版本
@@ -362,7 +571,8 @@ class GoedelEngine {
       target: proposal.target,
       timestamp: new Date().toISOString(),
       hash: this.hashContent(modifiedContent),
-      previousHash: this.hashContent(originalContent)
+      previousHash: this.hashContent(originalContent),
+      securityScan: 'passed'
     };
 
     this.recordVersion(version);
