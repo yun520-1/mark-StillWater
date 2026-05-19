@@ -23,15 +23,15 @@
   "test:key": {
     "value": "test value",
     "tags": [],
-    "accessCount": 26,
-    "lastAccessed": 1779113394954,
+    "accessCount": 27,
+    "lastAccessed": 1779114435286,
     "createdAt": 1779103745820
   },
   "test:searchable": {
     "value": "searchable content",
     "tags": [],
-    "accessCount": 26,
-    "lastAccessed": 1779113394955,
+    "accessCount": 27,
+    "lastAccessed": 1779114435287,
     "createdAt": 1779103745820
   },
   "lesson:test failure:1779103745821": {
@@ -560,5 +560,40 @@
     "accessCount": 0,
     "lastAccessed": 1779113394955,
     "createdAt": 1779113394955
+  },
+  "signal:frustrated_bug:1779114435282": {
+    "value": "{\"topic\":\"frustrated_bug\",\"emotion\":\"negative_high\",\"intent\":\"troubleshooting\",\"ts\":1779114435282,\"preview\":\"I am frustrated with this bug\"}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779114435282,
+    "createdAt": 1779114435282
+  },
+  "signal:frustrated_bug:1779114435283": {
+    "value": "{\"topic\":\"frustrated_bug\",\"emotion\":\"negative_high\",\"intent\":\"troubleshooting\",\"ts\":1779114435283,\"preview\":\"I am frustrated with this bug\"}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779114435283,
+    "createdAt": 1779114435283
+  },
+  "lesson:test failure:1779114435287": {
+    "value": "Task failed: test failure | Evidence: Error occurred | Handle the error case explicitly.",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779114435287,
+    "createdAt": 1779114435287
+  },
+  "signal:frustrated_bug:1779180891189": {
+    "value": "{\"topic\":\"frustrated_bug\",\"emotion\":\"negative_high\",\"intent\":\"troubleshooting\",\"ts\":1779180891189,\"preview\":\"I am frustrated with this bug\"}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779180891189,
+    "createdAt": 1779180891189
+  },
+  "signal:frustrated_bug:1779180897276": {
+    "value": "{\"topic\":\"frustrated_bug\",\"emotion\":\"negative_high\",\"intent\":\"troubleshooting\",\"ts\":1779180897276,\"preview\":\"I am frustrated with this bug\"}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779180897276,
+    "createdAt": 1779180897276
   }
 }

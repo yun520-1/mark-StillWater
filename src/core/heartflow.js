@@ -67,8 +67,10 @@ const { DreamWeaver } = require('./dream-weaver.js');
 const { Planner } = require('./planner.js');
 const { ChildPsychology } = require('./child-psychology.js');
 const { DreamQualityTracker, interpretDQS } = require('./dream-quality.js');
+const { MetaJudgment } = require('./meta-judgment.js');
+const { SelfCorrections } = require('./self-corrections.js');
 
-const VERSION = '1.2.0';
+const VERSION = '1.2.2';
 
 // TTL constants
 const TTL_4_HOURS = 4 * 60 * 60 * 1000; // 14400000ms
@@ -158,6 +160,12 @@ function createHeartFlow(config = {}) {
   // Instantiate child psychology (v1.1.1)
   const childPsychology = new ChildPsychology();
 
+  // Instantiate meta-judgment (v1.2.1)
+  const metaJudgment = new MetaJudgment();
+
+  // Instantiate self-corrections tracker (v1.2.2)
+  const selfCorrections = new SelfCorrections();
+
   // MindSpace: working mental state
   const _mindSpace = {
     rules: [],
@@ -227,6 +235,8 @@ function createHeartFlow(config = {}) {
         dreamQuality: dreamQuality.getStats(),
         planner: planner.getStats(),
         childPsychology: childPsychology.getStats(),
+        metaJudgment: metaJudgment.getStats(),
+        selfCorrections: selfCorrections.getStats(),
       };
     },
 
@@ -1290,6 +1300,105 @@ function createHeartFlow(config = {}) {
     getEmotionalMilestone(ageRange) {
       this._ensureStarted();
       return childPsychology.getEmotionalMilestone(ageRange);
+    },
+
+    // ─── MetaJudgment (v1.2.1) ───────────────────────────────
+
+    /**
+     * Perform L1/L2/L3 meta-judgment on text.
+     * L1: Initial judgment at 50% threshold
+     * L2: TGB (真善美) review
+     * L3: Goal progress check
+     */
+    judge(params) {
+      this._ensureStarted();
+      return metaJudgment.judge(params);
+    },
+
+    /**
+     * Judge a decision outcome (success/failure).
+     */
+    judgeOutcome(decision, success, context = {}) {
+      this._ensureStarted();
+      return metaJudgment.judgeOutcome(decision, success, context);
+    },
+
+    /**
+     * Get recent judgment history.
+     */
+    getJudgmentHistory(count = 10) {
+      this._ensureStarted();
+      return metaJudgment.getHistory(count);
+    },
+
+    /**
+     * Get meta-judgment statistics.
+     */
+    getJudgmentStats() {
+      this._ensureStarted();
+      return metaJudgment.getStats();
+    },
+
+    // ─── SelfCorrections (v1.2.2) ───────────────────────────────
+
+    /**
+     * Detect if text contains a correction signal.
+     */
+    isCorrection(text) {
+      this._ensureStarted();
+      return selfCorrections.isCorrection(text);
+    },
+
+    /**
+     * Log a user correction.
+     * Patterns seen 3x are promoted to memory.
+     */
+    logCorrection(correction, context = '', domain = 'behavior') {
+      this._ensureStarted();
+      return selfCorrections.logCorrection(correction, context, domain);
+    },
+
+    /**
+     * Get corrections by status (new/tracking/promoted/archived).
+     */
+    getCorrections(status = null) {
+      this._ensureStarted();
+      if (status) {
+        return selfCorrections.getByStatus(status);
+      }
+      return selfCorrections.corrections;
+    },
+
+    /**
+     * Get promoted corrections (patterns learned from user).
+     */
+    getPromotedCorrections() {
+      this._ensureStarted();
+      return selfCorrections.getPromoted();
+    },
+
+    /**
+     * Archive a correction.
+     */
+    archiveCorrection(id) {
+      this._ensureStarted();
+      selfCorrections.archive(id);
+    },
+
+    /**
+     * Get self-corrections statistics.
+     */
+    getCorrectionStats() {
+      this._ensureStarted();
+      return selfCorrections.getStats();
+    },
+
+    /**
+     * Export corrections for memory integration.
+     */
+    exportCorrections() {
+      this._ensureStarted();
+      return selfCorrections.exportForMemory();
     },
 
     // ─── Dream ─────────────────────────────────────────────
