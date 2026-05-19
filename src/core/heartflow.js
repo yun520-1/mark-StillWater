@@ -37,6 +37,7 @@
  *   - SelfCorrections: user correction tracking with 3x pattern promotion (v1.2.2)
  *   - Ebbinghaus: forgetting curve for LEARNED memory decay (v1.2.3)
  *   - TruthTeller: Socratic questioning, assumption challenging, self-truth assessment (v1.2.4)
+ *   - Calibration: confidence calibration tracking, bias detection (v1.2.5)
  *
  * Identity: StillWater — calm, deep, present.
  * Soul: cultivated through real conversations.
@@ -75,8 +76,9 @@ const { DreamQualityTracker, interpretDQS } = require('./dream-quality.js');
 const { MetaJudgment } = require('./meta-judgment.js');
 const { SelfCorrections } = require('./self-corrections.js');
 const { TruthTeller } = require('./truth-teller.js');
+const { Calibration } = require('./calibration.js');
 
-const VERSION = '1.2.4';
+const VERSION = '1.2.5';
 
 // TTL constants
 const TTL_4_HOURS = 4 * 60 * 60 * 1000; // 14400000ms
@@ -174,6 +176,9 @@ function createHeartFlow(config = {}) {
 
   // Instantiate truth teller (v1.2.4)
   const truthTeller = new TruthTeller();
+
+  // Instantiate calibration tracker (v1.2.5)
+  const calibration = new Calibration();
 
   // MindSpace: working mental state
   const _mindSpace = {
@@ -1504,6 +1509,68 @@ function createHeartFlow(config = {}) {
     getTruthTellerStats() {
       this._ensureStarted();
       return truthTeller.getStats();
+    },
+
+    // ─── Calibration (v1.2.5) ───────────────────────────────
+
+    /**
+     * Record a prediction with confidence (0-1).
+     * Returns prediction ID for later resolution.
+     */
+    predict(statement, confidence, domain = 'judgment') {
+      this._ensureStarted();
+      return calibration.predict(statement, confidence, domain);
+    },
+
+    /**
+     * Resolve a pending prediction.
+     * @param {string} id - prediction id
+     * @param {boolean} correct - was the prediction correct?
+     */
+    resolvePrediction(id, correct) {
+      this._ensureStarted();
+      return calibration.resolve(id, correct);
+    },
+
+    /**
+     * Resolve the most recent pending prediction.
+     */
+    resolveLastPrediction(correct) {
+      this._ensureStarted();
+      return calibration.resolveLast(correct);
+    },
+
+    /**
+     * Get calibration statistics.
+     * Shows calibration score, bias type, per-bin analysis.
+     */
+    getCalibrationStats() {
+      this._ensureStarted();
+      return calibration.getStats();
+    },
+
+    /**
+     * Get calibration stats for a specific domain.
+     */
+    getCalibrationByDomain(domain) {
+      this._ensureStarted();
+      return calibration.getDomainStats(domain);
+    },
+
+    /**
+     * Get recent predictions.
+     */
+    getPredictions(count = 20) {
+      this._ensureStarted();
+      return calibration.getRecent(count);
+    },
+
+    /**
+     * Get pending predictions awaiting resolution.
+     */
+    getPendingPredictions() {
+      this._ensureStarted();
+      return calibration.getPending();
     },
 
     // ─── Dream ─────────────────────────────────────────────
