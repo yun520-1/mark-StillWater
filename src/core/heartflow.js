@@ -39,6 +39,7 @@
  *   - TruthTeller: Socratic questioning, assumption challenging, self-truth assessment (v1.2.4)
  *   - Calibration: confidence calibration tracking, bias detection (v1.2.5)
  *   - OutcomeMemory: outcome-weighted memory with success/failure weighting (v1.2.6)
+ *   - IncentiveAnalyzer: stakeholder incentive analysis, Gustavus Swift principle (v1.2.7)
  *
  * Identity: StillWater — calm, deep, present.
  * Soul: cultivated through real conversations.
@@ -79,8 +80,9 @@ const { SelfCorrections } = require('./self-corrections.js');
 const { TruthTeller } = require('./truth-teller.js');
 const { Calibration } = require('./calibration.js');
 const { OutcomeMemory } = require('./outcome-memory.js');
+const { IncentiveAnalyzer } = require('./incentive-analyzer.js');
 
-const VERSION = '1.2.6';
+const VERSION = '1.2.7';
 
 // TTL constants
 const TTL_4_HOURS = 4 * 60 * 60 * 1000; // 14400000ms
@@ -184,6 +186,9 @@ function createHeartFlow(config = {}) {
 
   // Instantiate outcome memory (v1.2.6)
   const outcomeMemory = new OutcomeMemory(rootPath);
+
+  // Instantiate incentive analyzer (v1.2.7)
+  const incentiveAnalyzer = new IncentiveAnalyzer();
 
   // MindSpace: working mental state
   const _mindSpace = {
@@ -1637,6 +1642,64 @@ function createHeartFlow(config = {}) {
     pruneOutcomes() {
       this._ensureStarted();
       return outcomeMemory.prune();
+    },
+
+    // ─── IncentiveAnalyzer (v1.2.7) ────────────────────────
+
+    /**
+     * Add a stakeholder for incentive tracking.
+     */
+    addStakeholder(name, incentives = [], statedGoals = [], power = 0.5) {
+      this._ensureStarted();
+      return incentiveAnalyzer.addStakeholder(name, incentives, statedGoals, power);
+    },
+
+    /**
+     * Update stakeholder information.
+     */
+    updateStakeholder(id, updates) {
+      this._ensureStarted();
+      return incentiveAnalyzer.updateStakeholder(id, updates);
+    },
+
+    /**
+     * Analyze a decision for incentive alignment.
+     */
+    analyzeIncentives(decision, stakeholderIds = []) {
+      this._ensureStarted();
+      return incentiveAnalyzer.analyze(decision, stakeholderIds);
+    },
+
+    /**
+     * Detect hidden incentives in a statement.
+     */
+    detectIncentiveSignal(statement) {
+      this._ensureStarted();
+      return incentiveAnalyzer.detectIncentiveSignal(statement);
+    },
+
+    /**
+     * Check Gustavus Swift principle (self-interest drives outcomes).
+     */
+    checkGustavusSwiftPrinciple(action, claimedPurpose) {
+      this._ensureStarted();
+      return incentiveAnalyzer.checkGustavusSwiftPrinciple(action, claimedPurpose);
+    },
+
+    /**
+     * Get incentive analysis history.
+     */
+    getIncentiveHistory(count = 10) {
+      this._ensureStarted();
+      return incentiveAnalyzer.getHistory(count);
+    },
+
+    /**
+     * Get incentive analyzer statistics.
+     */
+    getIncentiveStats() {
+      this._ensureStarted();
+      return incentiveAnalyzer.getStats();
     },
 
     // ─── Dream ─────────────────────────────────────────────
