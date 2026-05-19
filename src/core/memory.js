@@ -18,9 +18,71 @@
 
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const TEMP_SUFFIX = '.tmp';
 const LOGGER_PREFIX = '[HeartFlowMemory]';
+
+// Encryption config (AES-256-GCM)
+const ENCRYPTION_CONFIG = {
+  algorithm: 'aes-256-gcm',
+  keyEnvVar: 'HEARTFLOW_ENCRYPTION_KEY',
+  getKey: function() {
+    const key = process.env[this.keyEnvVar];
+    if (!key) return null;
+    // Key should be 32 bytes (256 bits), hex encoded (64 chars) or raw 32 bytes
+    if (key.length === 64) {
+      return Buffer.from(key, 'hex');
+    }
+    return Buffer.from(key.slice(0, 32), 'utf8');
+  }
+};
+
+/**
+ * Encrypt data using AES-256-GCM
+ * @param {string} data - plaintext
+ * @param {Buffer} key - 32-byte encryption key
+ * @returns {string} - hex encoded: iv:authTag:ciphertext
+ */
+function encrypt(data, key) {
+  if (!key) return data;
+  try {
+    const iv = crypto.randomBytes(16);
+    const cipher = crypto.createCipheriv(ENCRYPTION_CONFIG.algorithm, key, iv);
+    let encrypted = cipher.update(data, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    const authTag = cipher.getAuthTag();
+    return iv.toString('hex') + ':' + authTag.toString('hex') + ':' + encrypted;
+  } catch (err) {
+    logError('encrypt', 'memory', err);
+    return data; // Fallback to plaintext on error
+  }
+}
+
+/**
+ * Decrypt data using AES-256-GCM
+ * @param {string} data - hex encoded: iv:authTag:ciphertext
+ * @param {Buffer} key - 32-byte encryption key
+ * @returns {string} - plaintext
+ */
+function decrypt(data, key) {
+  if (!key) return data;
+  try {
+    const parts = data.split(':');
+    if (parts.length !== 3) return data; // Not encrypted format
+    const iv = Buffer.from(parts[0], 'hex');
+    const authTag = Buffer.from(parts[1], 'hex');
+    const ciphertext = parts[2];
+    const decipher = crypto.createDecipheriv(ENCRYPTION_CONFIG.algorithm, key, iv);
+    decipher.setAuthTag(authTag);
+    let decrypted = decipher.update(ciphertext, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    return decrypted;
+  } catch (err) {
+    logError('decrypt', 'memory', err);
+    return data; // Fallback to plaintext on decryption failure
+  }
+}
 
 // ─── Ebbinghaus Forgetting Curve (v1.2.3) ───────────────────────
 
@@ -59,13 +121,20 @@ function logError(operation, filePath, error) {
 /**
  * Atomic write using temp file + rename (from mark-improving-agent).
  * Prevents data corruption on write interruption.
+ * Optionally encrypts data for LEARNED tier.
  */
-function atomicWriteJson(filePath, data) {
+function atomicWriteJson(filePath, data, encryptData = false) {
   const dir = path.dirname(filePath);
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 
   const tmpPath = `${filePath}${TEMP_SUFFIX}`;
-  const content = JSON.stringify(data, null, 2);
+  let content = JSON.stringify(data, null, 2);
+
+  // Encrypt if requested and key is available
+  const key = ENCRYPTION_CONFIG.getKey();
+  if (encryptData && key) {
+    content = encrypt(content, key);
+  }
 
   let attempts = 0;
   const maxAttempts = 3;
@@ -85,6 +154,23 @@ function atomicWriteJson(filePath, data) {
       const start = Date.now();
       while (Date.now() - start < 10 * attempts) {} // spin wait
     }
+  }
+}
+
+/**
+ * Read and optionally decrypt JSON file
+ */
+function readJsonFile(filePath, decryptData = false) {
+  if (!fs.existsSync(filePath)) return null;
+  try {
+    const content = fs.readFileSync(filePath, 'utf8');
+    const key = ENCRYPTION_CONFIG.getKey();
+    if (decryptData && key) {
+      return JSON.parse(decrypt(content, key));
+    }
+    return JSON.parse(content);
+  } catch (err) {
+    return null;
   }
 }
 
@@ -108,6 +194,9 @@ class HeartFlowMemory {
     this._coreDirty = false;
     this._learnedDirty = false;
     this._ephemeralDirty = false;
+
+    // Encryption enabled for LEARNED tier (requires HEARTFLOW_ENCRYPTION_KEY env var)
+    this._encryptionEnabled = !!ENCRYPTION_CONFIG.getKey();
 
     // In-memory stores
     this._coreStore = {};
@@ -137,9 +226,9 @@ class HeartFlowMemory {
   _ensureLearnedLoaded() {
     if (this._learnedLoaded) return;
     try {
-      if (fs.existsSync(this._learnedFile)) {
-        const content = fs.readFileSync(this._learnedFile, 'utf8');
-        this._learnedStore = JSON.parse(content);
+      const data = readJsonFile(this._learnedFile, this._encryptionEnabled);
+      if (data) {
+        this._learnedStore = data;
       }
     } catch (err) {
       logError('load LEARNED', this._learnedFile, err);
@@ -180,7 +269,7 @@ class HeartFlowMemory {
   _saveLearned() {
     if (!this._learnedDirty) return; // Skip if not modified
     try {
-      atomicWriteJson(this._learnedFile, this._learnedStore);
+      atomicWriteJson(this._learnedFile, this._learnedStore, this._encryptionEnabled);
       this._learnedDirty = false;
     } catch (err) {
       logError('save LEARNED', this._learnedFile, err);

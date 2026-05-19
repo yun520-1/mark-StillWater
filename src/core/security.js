@@ -147,6 +147,25 @@ class SecurityChecker {
     return true;
   }
 
+  /**
+   * Sanitize text for safe logging - redact sensitive info
+   */
+  sanitizeForLog(text) {
+    const infos = this.scan(text);
+    if (infos.length === 0) return text;
+
+    let sanitized = text;
+    // Sort by startIndex descending to preserve indices during replacement
+    const sorted = [...infos].sort((a, b) => b.startIndex - a.startIndex);
+
+    for (const info of sorted) {
+      const redacted = '[' + info.type.toUpperCase() + '_REDACTED]';
+      sanitized = sanitized.slice(0, info.startIndex) + redacted + sanitized.slice(info.endIndex);
+    }
+
+    return sanitized;
+  }
+
   getStats() {
     return { ...this._stats };
   }

@@ -80,12 +80,28 @@ class HeartFlowPsychology {
     ];
   }
 
+  // Input validation limits
+  static MAX_INPUT_LENGTH = 10240; // 10KB max
+
   /**
    * Main entry: perceive all psychological signals
    */
   perceive(input) {
     if (!input || typeof input !== 'string') {
       return { intent: null, emotion: null, needs: [], defenses: [], confidence: 0 };
+    }
+
+    // Input length validation (DoS protection)
+    if (input.length > HeartFlowPsychology.MAX_INPUT_LENGTH) {
+      return {
+        intent: null,
+        emotion: null,
+        needs: [],
+        defenses: [],
+        confidence: 0,
+        error: 'input_too_long',
+        message: `Input exceeds maximum length of ${HeartFlowPsychology.MAX_INPUT_LENGTH} characters`
+      };
     }
 
     const lower = input.toLowerCase();

@@ -6,6 +6,8 @@
  */
 
 class HeartFlowLogic {
+  static MAX_INPUT_LENGTH = 10240; // 10KB max
+
   constructor(memory) {
     this.memory = memory;
   }
@@ -14,6 +16,23 @@ class HeartFlowLogic {
    * Reason through a problem with optional options
    */
   reason(problem, options = null) {
+    // Input length validation (DoS protection)
+    if (!problem || typeof problem !== 'string' || problem.length > HeartFlowLogic.MAX_INPUT_LENGTH) {
+      return {
+        chain: [],
+        conclusion: 'error',
+        confidence: 0,
+        error: 'input_too_long',
+        message: problem && problem.length > HeartFlowLogic.MAX_INPUT_LENGTH
+          ? `Input exceeds maximum length of ${HeartFlowLogic.MAX_INPUT_LENGTH} characters`
+          : 'Invalid problem input'
+      };
+    }
+
+    if (options && options.length > 100) {
+      options = options.slice(0, 100); // Limit options array
+    }
+
     const chain = [];
     
     // Step 1: Parse problem
