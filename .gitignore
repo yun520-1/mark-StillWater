@@ -1,1 +1,6 @@
  CORE_IDENTITY.md
+internal/
+data/
+.DS_Store
+pre-launch-check*.md
+CORE_VALUES.md
