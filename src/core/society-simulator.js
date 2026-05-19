@@ -141,7 +141,7 @@ class SocietySimulator {
     this.history.push({
       generation: this.generation,
       roundResults,
-      avgFitness: this.population.reduce((a, a) => a.fitness, 0) / this.population.length
+      avgFitness: this.population.reduce((acc, agent) => acc + agent.fitness, 0) / this.population.length
     });
     
     return this.evaluateEthicsEmergence();

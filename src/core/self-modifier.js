@@ -13,23 +13,13 @@ class SelfModifier {
     this.configFile = path.join(projectRoot, '.opencode', 'config.json');
     this.patchDir = path.join(projectRoot, 'logs', 'patches');
     this.enabled = this.isEnabled();
-<<<<<<< HEAD
-    
-    this.ensureDirectories();
-  }
-
-  ensureDirectories() {
-=======
     this.changeLog = path.join(projectRoot, 'logs', 'self-modifier.log');
     this.patchDir = path.join(projectRoot, 'patches');
     this.init();
   }
 
   init() {
->>>>>>> a37b306 (feat: 升级到 v2.2.3 - 三维经验大脑 + 具身认知核心)
-    if (!fs.existsSync(this.patchDir)) {
-      fs.mkdirSync(this.patchDir, { recursive: true });
-    }
+    fs.mkdirSync(this.patchDir, { recursive: true });
   }
 
   isEnabled() {
@@ -278,7 +268,6 @@ class SelfModifier {
   }
 
   /**
-<<<<<<< HEAD
    * 获取状态
    */
   getStatus() {
@@ -291,10 +280,6 @@ class SelfModifier {
 
   /**
    * 启用功能
-   */
-=======
-   * 元认知自我修改 - 生成补丁文件而非直接应用
-   * 核心要求：所有修改必须生成 .patch 文件交由用户审查
    */
   async metacognitiveModify(suggestion) {
     if (!this.enabled) {
@@ -518,7 +503,6 @@ ${diff}
     return { success: true };
   }
 
->>>>>>> a37b306 (feat: 升级到 v2.2.3 - 三维经验大脑 + 具身认知核心)
   enable() {
     this.setConfig(true);
     this.enabled = true;

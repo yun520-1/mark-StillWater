@@ -424,11 +424,8 @@ class AutonomousLoop {
          actions: ['review_history', 'identify_patterns', 'plan_improvement']
        })
      };
-        results.push(result);
-      }
-    }
-    
-    return { success: true, results };
+
+    return plans;
   }
 
   async executeGoalSetting(goals) {
@@ -518,24 +515,6 @@ class AutonomousLoop {
      
      this.state.reflection.lastReflection = Date.now();
      return { success: true, reflections };
-   }
-      if (action === 'identify_patterns') {
-        const patterns = this.identifyPatterns();
-        reflections.push({ type: 'patterns', patterns });
-      }
-      if (action === 'plan_improvement') {
-        this.state.selfEvaluation.improvement.push({
-          timestamp: Date.now(),
-          area: 'autonomy',
-          change: 0.05
-        });
-        reflections.push({ type: 'improvement_plan', created: true });
-      }
-    });
-    
-    this.state.reflection.lastReflection = Date.now();
-    
-    return { success: true, reflections };
   }
 
   /**
