@@ -1,6 +1,6 @@
 {
   "name": "mark-stillwater",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "静水深流。Still water runs deep. AI psychological & philosophical foundation system.",
   "main": "src/core/heartflow.js",
   "keywords": [
