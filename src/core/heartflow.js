@@ -38,6 +38,7 @@
  *   - Ebbinghaus: forgetting curve for LEARNED memory decay (v1.2.3)
  *   - TruthTeller: Socratic questioning, assumption challenging, self-truth assessment (v1.2.4)
  *   - Calibration: confidence calibration tracking, bias detection (v1.2.5)
+ *   - OutcomeMemory: outcome-weighted memory with success/failure weighting (v1.2.6)
  *
  * Identity: StillWater — calm, deep, present.
  * Soul: cultivated through real conversations.
@@ -77,8 +78,9 @@ const { MetaJudgment } = require('./meta-judgment.js');
 const { SelfCorrections } = require('./self-corrections.js');
 const { TruthTeller } = require('./truth-teller.js');
 const { Calibration } = require('./calibration.js');
+const { OutcomeMemory } = require('./outcome-memory.js');
 
-const VERSION = '1.2.5';
+const VERSION = '1.2.6';
 
 // TTL constants
 const TTL_4_HOURS = 4 * 60 * 60 * 1000; // 14400000ms
@@ -179,6 +181,9 @@ function createHeartFlow(config = {}) {
 
   // Instantiate calibration tracker (v1.2.5)
   const calibration = new Calibration();
+
+  // Instantiate outcome memory (v1.2.6)
+  const outcomeMemory = new OutcomeMemory(rootPath);
 
   // MindSpace: working mental state
   const _mindSpace = {
@@ -1571,6 +1576,67 @@ function createHeartFlow(config = {}) {
     getPendingPredictions() {
       this._ensureStarted();
       return calibration.getPending();
+    },
+
+    // ─── OutcomeMemory (v1.2.6) ────────────────────────────
+
+    /**
+     * Store an outcome-weighted lesson.
+     * @param {Object} params
+     * @returns {OutcomeEntry}
+     */
+    storeOutcome({ content, outcome, outcomeScore = 0.8, tags = [], taskId = null, contextSnapshot = null }) {
+      this._ensureStarted();
+      return outcomeMemory.store({ content, outcome, outcomeScore, tags, taskId, contextSnapshot });
+    },
+
+    /**
+     * Retrieve weighted lessons sorted by priority.
+     * @param {Object} params - {query, tags, minWeight, limit, outcomeFilter}
+     */
+    retrieveOutcomes({ query = null, tags = null, minWeight = null, limit = 10, outcomeFilter = null } = {}) {
+      this._ensureStarted();
+      return outcomeMemory.retrieve({ query, tags, minWeight, limit, outcomeFilter });
+    },
+
+    /**
+     * Record that a lesson was accessed.
+     */
+    accessOutcome(id) {
+      this._ensureStarted();
+      return outcomeMemory.access(id);
+    },
+
+    /**
+     * Update outcome score for an existing lesson.
+     */
+    updateOutcomeScore(id, newScore, newOutcome) {
+      this._ensureStarted();
+      return outcomeMemory.updateOutcome(id, newScore, newOutcome);
+    },
+
+    /**
+     * Get outcome memory statistics.
+     */
+    getOutcomeStats() {
+      this._ensureStarted();
+      return outcomeMemory.getStats();
+    },
+
+    /**
+     * Get lessons by outcome type.
+     */
+    getOutcomesByType(outcome) {
+      this._ensureStarted();
+      return outcomeMemory.getByOutcome(outcome);
+    },
+
+    /**
+     * Prune low-weight entries.
+     */
+    pruneOutcomes() {
+      this._ensureStarted();
+      return outcomeMemory.prune();
     },
 
     // ─── Dream ─────────────────────────────────────────────
