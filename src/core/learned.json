@@ -826,5 +826,12 @@
     "accessCount": 0,
     "lastAccessed": 1779290070605,
     "createdAt": 1779290070605
+  },
+  "signal:我最近总是出错心情很糟很累压力好大:1779291457408": {
+    "value": "{\"topic\":\"我最近总是出错心情很糟很累压力好大\",\"emotion\":\"negative_high\",\"intent\":\"troubleshooting\",\"ts\":1779291457408,\"preview\":\"我最近总是出错，心情很糟，很累，压力好大\"}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779291457409,
+    "createdAt": 1779291457409
   }
 }
