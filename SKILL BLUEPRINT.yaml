@@ -1,7 +1,7 @@
 # ════════════════════════════════════════════════════════════════════════════════════
 #
 #  mark-StillWater Skill Blueprint
-#  版本: v1.5.0
+#  版本: v1.5.1
 #  描述: User-LLM Bridge Guidance - 用户与大模型桥梁的指导文档
 #  更新: 2026-05-20
 #
@@ -9,7 +9,7 @@
 
 metadata:
   name: mark-StillWater
-  version: "1.5.0"
+  version: "1.5.1"
   type: guidance  # skill type: guidance | library | hybrid
   license: MIT
   author: "mark <mark@stillwater.ai>"
@@ -19,6 +19,15 @@ metadata:
 
   # 版本历史
   changelog:
+    - version: "1.5.1"
+      date: "2026-05-20"
+      changes:
+        - "Skill DAG 编排架构"
+        - "智能 Skill 检索与动态组合"
+        - "成本与能力衡量机制"
+        - "reason 内嵌深度思考流水线"
+        - "提升 Skill 调度智能化与自适应能力"
+        - "动态选择最优 Skill"
     - version: "1.5.0"
       date: "2026-05-20"
       changes:
@@ -335,6 +344,12 @@ skills:
         status: proposed
         alignment: "真善美 + 般若 + 圣人"
 
+      - id: UP-PSY-010
+        title: "性能成本评分"
+        description: "动态 Skill 检索结合 DAG 调度优化调用顺序"
+        priority: high
+        status: proposed
+
   # ════════════════════════════════════════════════════════════════════════════════
   # 2. reason - 逻辑推理
   # ════════════════════════════════════════════════════════════════════════════════
@@ -502,6 +517,19 @@ skills:
         status: proposed
         dependencies: ["dreamNow"]
 
+      - id: UP-REASON-011
+        title: "深度思考流水线"
+        description: "内嵌深度思考流水线内核增强推理能力"
+        priority: high
+        status: proposed
+        alignment: "真善美 + 最小化错误"
+
+      - id: UP-REASON-012
+        title: "DAG 调度优化"
+        description: "动态 DAG 调度和 Skill 检索优化推理顺序"
+        priority: high
+        status: proposed
+
   # ════════════════════════════════════════════════════════════════════════════════
   # 3. makeDecision - 决策评估
   # ════════════════════════════════════════════════════════════════════════════════
@@ -633,7 +661,12 @@ skills:
         priority: high
         status: proposed
         alignment: "真善美 + 般若 + 圣人"
-        alignment: "真善美 + 服务人类"
+
+      - id: UP-DEC-011
+        title: "DAG 调度优化"
+        description: "DAG 调度优化调用顺序，Skill 检索动态组合最优执行方案"
+        priority: high
+        status: proposed
 
   # ════════════════════════════════════════════════════════════════════════════════
   # 4. remember - 记忆存储
@@ -917,6 +950,12 @@ skills:
         status: proposed
         dependencies: ["makeDecision", "reason"]
 
+      - id: UP-EVOL-006
+        title: "DAG 调度优化"
+        description: "DAG 调度优化修复顺序"
+        priority: high
+        status: proposed
+
   # ════════════════════════════════════════════════════════════════════════════════
   # 6. dreamNow - 记忆整合
   # ════════════════════════════════════════════════════════════════════════════════
@@ -1059,6 +1098,12 @@ skills:
         priority: high
         status: proposed
         dependencies: ["reason"]
+
+      - id: UP-DREAM-015
+        title: "DAG 调度优化"
+        description: "DAG 调度和 Skill 检索动态优化执行"
+        priority: high
+        status: proposed
 
   # ════════════════════════════════════════════════════════════════════════════════
   # 7. heal - 错误恢复
@@ -1564,7 +1609,7 @@ proposed_skills:
 
     notes: "动态优化 Skill 调用顺序，根据任务优先级和价值观评分选择最优 Skill"
     alignment: "真善美 + 服务人类 + 持续升级"
-    upgrade_notes: "动态优化 Skill 调用顺序，根据任务优先级和价值观评分选择最优 Skill，协同 dreamNow、reason、makeDecision 输出"
+    upgrade_notes: "DAG 编排 Skill 执行顺序，Skill 检索动态组合最优执行方案，考虑成本能力评分与 L1~L6 层级输出，输出可追踪和可审计日志"
     dependencies: ["dreamNow", "reason", "makeDecision"]
 
   - id: L1_L6_Scoring
