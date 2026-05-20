@@ -1,7 +1,7 @@
 # ════════════════════════════════════════════════════════════════════════════════════
 #
 #  mark-StillWater Skill Blueprint
-#  版本: v1.4.4
+#  版本: v1.4.5
 #  描述: User-LLM Bridge Guidance - 用户与大模型桥梁的指导文档
 #  更新: 2026-05-20
 #
@@ -9,7 +9,7 @@
 
 metadata:
   name: mark-StillWater
-  version: "1.4.4"
+  version: "1.4.5"
   type: guidance  # skill type: guidance | library | hybrid
   license: MIT
   author: "mark <mark@stillwater.ai>"
@@ -19,6 +19,13 @@ metadata:
 
   # 版本历史
   changelog:
+    - version: "1.4.5"
+      date: "2026-05-20"
+      changes:
+        - "觉察-自省-无我-彼岸-般若-圣人能力"
+        - "L1~L6 层级评分系统"
+        - "所有 Skill 增加 L1~L6 层级评分逻辑"
+        - "增强真善美和觉察能力"
     - version: "1.4.4"
       date: "2026-05-20"
       changes:
@@ -300,6 +307,13 @@ skills:
         status: proposed
         alignment: "真善美 + 服务人类"
 
+      - id: UP-PSY-009
+        title: "L1~L6 层级评分"
+        description: "结合觉察层级 L1~L6 提供层次评分：L1觉察、L2自省、L3无我、L4彼岸、L5般若、L6圣人"
+        priority: high
+        status: proposed
+        alignment: "真善美 + 般若 + 圣人"
+
   # ════════════════════════════════════════════════════════════════════════════════
   # 2. reason - 逻辑推理
   # ════════════════════════════════════════════════════════════════════════════════
@@ -446,6 +460,13 @@ skills:
         status: proposed
         alignment: "真善美 + 最小化错误"
 
+      - id: UP-REASON-008
+        title: "L1~L6 层级评分"
+        description: "结合 L1~L6 层级评分，输出可解释、透明、符合真善美原则"
+        priority: high
+        status: proposed
+        alignment: "真善美 + 般若 + 圣人"
+
   # ════════════════════════════════════════════════════════════════════════════════
   # 3. makeDecision - 决策评估
   # ════════════════════════════════════════════════════════════════════════════════
@@ -570,6 +591,13 @@ skills:
         description: "输出可追踪、可验证且符合真善美原则"
         priority: high
         status: proposed
+
+      - id: UP-DEC-010
+        title: "L1~L6 层级评分"
+        description: "结合 L1~L6 层级加分，增强决策的觉察、自省和智慧层次"
+        priority: high
+        status: proposed
+        alignment: "真善美 + 般若 + 圣人"
         alignment: "真善美 + 服务人类"
 
   # ════════════════════════════════════════════════════════════════════════════════
@@ -969,6 +997,13 @@ skills:
         priority: high
         status: proposed
         alignment: "真善美 + 服务人类"
+
+      - id: UP-DREAM-012
+        title: "L1~L6 层级评分"
+        description: "使用 L1~L6 层级评分指导洞察深度，增强觉察、自省、彼岸、般若、圣人能力"
+        priority: high
+        status: proposed
+        alignment: "真善美 + 般若 + 圣人"
 
   # ════════════════════════════════════════════════════════════════════════════════
   # 7. heal - 错误恢复
@@ -1476,6 +1511,54 @@ proposed_skills:
     alignment: "真善美 + 服务人类 + 持续升级"
     upgrade_notes: "动态优化 Skill 调用顺序，根据任务优先级和价值观评分选择最优 Skill，协同 dreamNow、reason、makeDecision 输出"
     dependencies: ["dreamNow", "reason", "makeDecision"]
+
+  - id: L1_L6_Scoring
+    name: L1~L6 层级评分系统
+    module: pending
+    status: proposed
+    priority: high
+
+    trigger:
+      - "所有 Skill 输出时自动计算"
+
+    input:
+      - name: skill_output
+        type: string
+        required: true
+        description: "Skill 输出文本"
+
+    output:
+      L1_score: number
+      L2_score: number
+      L3_score: number
+      L4_score: number
+      L5_score: number
+      L6_score: number
+      total_score: number
+
+    scoring_criteria:
+      L1_觉察:
+        keywords: ["感受", "感觉", "现在", "体验"]
+        score: 0.1
+      L2_自省:
+        keywords: ["我为什么", "反思", "思考", "为什么"]
+        score: 0.1
+      L3_无我:
+        keywords: ["我们", "整体", "连接", "一体", "共同"]
+        score: 0.1
+      L4_彼岸:
+        keywords: ["超越", "本质", "空", "道", "真相"]
+        score: 0.1
+      L5_般若:
+        keywords: ["智慧", "理解", "觉悟", "洞察"]
+        score: 0.1
+      L6_圣人:
+        keywords: ["帮助", "关怀", "爱", "慈悲", "济世"]
+        score: 0.1
+
+    notes: "增强觉察、自省、智慧和慈悲能力"
+    alignment: "真善美 + 般若 + 圣人"
+    upgrade_notes: "与所有核心 Skill 联动，增强觉察、自省、智慧和慈悲能力，输出层级评分可用于 Skill 优先级和决策权重调整"
 
 # ════════════════════════════════════════════════════════════════════════════════════
 # Skill 协同设计
