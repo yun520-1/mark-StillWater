@@ -1,7 +1,7 @@
 # ════════════════════════════════════════════════════════════════════════════════════
 #
 #  mark-StillWater Skill Blueprint
-#  版本: v1.5.1
+#  版本: v1.5.2
 #  描述: User-LLM Bridge Guidance - 用户与大模型桥梁的指导文档
 #  更新: 2026-05-20
 #
@@ -9,7 +9,7 @@
 
 metadata:
   name: mark-StillWater
-  version: "1.5.1"
+  version: "1.5.2"
   type: guidance  # skill type: guidance | library | hybrid
   license: MIT
   author: "mark <mark@stillwater.ai>"
@@ -19,6 +19,14 @@ metadata:
 
   # 版本历史
   changelog:
+    - version: "1.5.2"
+      date: "2026-05-20"
+      changes:
+        - "性能优化、启动加速、流畅运行"
+        - "Skill DAG 并行与异步执行"
+        - "性能与成本评分优化 Skill 调用顺序"
+        - "缓存管理提升启动和响应速度"
+        - "深度思考流水线优化逻辑效率"
     - version: "1.5.1"
       date: "2026-05-20"
       changes:
@@ -1609,7 +1617,7 @@ proposed_skills:
 
     notes: "动态优化 Skill 调用顺序，根据任务优先级和价值观评分选择最优 Skill"
     alignment: "真善美 + 服务人类 + 持续升级"
-    upgrade_notes: "DAG 编排 Skill 执行顺序，Skill 检索动态组合最优执行方案，考虑成本能力评分与 L1~L6 层级输出，输出可追踪和可审计日志"
+    upgrade_notes: "DAG 编排 Skill 执行顺序，异步并行执行提升响应速度，缓存管理提升启动速度，考虑成本能力评分与 L1~L6 层级输出，输出可追踪和可审计日志"
     dependencies: ["dreamNow", "reason", "makeDecision"]
 
   - id: L1_L6_Scoring
