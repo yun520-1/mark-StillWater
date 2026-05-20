@@ -777,5 +777,40 @@
     "accessCount": 0,
     "lastAccessed": 1779289714743,
     "createdAt": 1779289714743
+  },
+  "paper:Reflexion": {
+    "value": "{\"id\":\"paper:Reflexion\",\"title\":\"Reflexion: Language Agents with Verbal Reinforcement Learning\",\"arxiv\":\"2303.11366\",\"keyInsights\":[\"语言 Agent 的口头强化学习\",\"失败后生成口头反思存入记忆\",\"无需权重更新即可自我改进\",\"Reflexion-style learning loop\"]}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779289903269,
+    "createdAt": 1779289903269
+  },
+  "paper:MemGPT": {
+    "value": "{\"id\":\"paper:MemGPT\",\"title\":\"MemGPT: Towards LLMs as Operating Systems\",\"arxiv\":\"2310.08560\",\"keyInsights\":[\"LLM 作为操作系统\",\"层级记忆管理 (类似 OS 的内存层次)\",\"虚拟上下文管理\",\"长期对话记忆\"]}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779289903270,
+    "createdAt": 1779289903270
+  },
+  "paper:AgentOrchestra": {
+    "value": "{\"id\":\"paper:AgentOrchestra\",\"title\":\"AgentOrchestra: Orchestrating Multi-Agent Intelligence\",\"arxiv\":\"2506.12508\",\"keyInsights\":[\"多 Agent 协调编排\",\"工具-环境协同\",\"动态 Agent 调度\",\"55页详细内容\"]}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779289903270,
+    "createdAt": 1779289903270
+  },
+  "paper:PsyCoT": {
+    "value": "{\"id\":\"paper:PsyCoT\",\"title\":\"PsyCoT: Psychological Questionnaire as Chain-of-Thought\",\"arxiv\":\"2023.findings-emnlp.216\",\"keyInsights\":[\"心理问卷作为思维链\",\"人格特征推理\",\"Chain-of-Thought 的心理应用\"]}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779289903271,
+    "createdAt": 1779289903271
+  },
+  "paper:ContextReasoningHierarchy": {
+    "value": "{\"id\":\"paper:ContextReasoningHierarchy\",\"title\":\"Context, Reasoning, and Hierarchy: Compound LLM Agents\",\"arxiv\":\"2605.16205\",\"keyInsights\":[\"成本-性能权衡\",\"Compound Agent 架构\",\"层级推理\"]}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779289903271,
+    "createdAt": 1779289903271
   }
 }

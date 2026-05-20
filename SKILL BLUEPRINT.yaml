@@ -1751,6 +1751,115 @@ proposed_skills:
       - 增量评分计算: 缓存未变化部分，仅计算增量变化
       - 与 skillOrchestrator 联动，实现评分结果复用
 
+  # ════════════════════════════════════════════════════════════════════════════════════
+  # 论文参考新增 Skills (v1.6.0)
+  # ════════════════════════════════════════════════════════════════════════════════════
+
+  - id: reflexion
+    name: Reflexion 口头强化学习
+    module: pending
+    status: proposed
+    priority: high
+
+    trigger:
+      - "任务失败后"
+      - "recordOutcome 后自动触发"
+      - "需要自我改进时"
+
+    input:
+      - name: task
+        type: string
+        required: true
+        description: "失败任务描述"
+      - name: feedback
+        type: string
+        description: "反馈信号 (scalar/binary/text)"
+      - name: trajectory
+        type: string
+        description: "执行轨迹"
+
+    output:
+      reflection: string
+      lesson: string
+      improved_plan: string
+      memory_entry: object
+
+    notes: "Reflexion 口头强化学习 - 将反馈转化为语言反思存入记忆"
+    alignment: "最小化错误 + 持续升级"
+    references: ["Reflexion: Language Agents with Verbal Reinforcement Learning (2303.11366)"]
+    algorithm: |
+      1. Actor 生成轨迹
+      2. Evaluator 评估给出反馈
+      3. Self-Reflection 将反馈转为语言总结
+      4. 存入 episodic memory (mem)
+      5. 下次执行时使用记忆进行改进
+    dependencies: ["recordOutcome", "memory"]
+
+  - id: memGPTMemory
+    name: MemGPT 层级记忆
+    module: pending
+    status: proposed
+    priority: high
+
+    trigger:
+      - "上下文快满时"
+      - "需要管理记忆层级时"
+      - "长期记忆检索时"
+
+    input:
+      - name: working_context
+        type: string
+        description: "当前工作上下文"
+      - name: operation
+        type: string
+        enum: [archive, recall, search, compress]
+        description: "记忆操作类型"
+
+    output:
+      memory_status: object
+      archived_count: number
+      recalled_items: array
+      memory_pressure: string
+
+    notes: "MemGPT 虚拟上下文管理 - 层级记忆像 OS 一样管理"
+    alignment: "持续升级 + 传承"
+    references: ["MemGPT: Towards LLMs as Operating Systems (2310.08560)"]
+    architecture: |
+      - Working Context: 类似 RAM，当前活跃记忆
+      - Archival Storage: 类似磁盘，长期记忆
+      - Recall Storage: 类似缓存，频繁检索的记忆
+      - Memory Pressure: 内存压力检测
+    dependencies: ["memory", "dreamNow"]
+
+  - id: agentOrchestrator
+    name: Agent 编排器
+    module: pending
+    status: proposed
+    priority: high
+
+    trigger:
+      - "复杂任务需要多 Skill 协作时"
+      - "任务启动或上下文变化时"
+
+    input:
+      - name: task
+        type: string
+        required: true
+        description: "任务描述"
+      - name: available_skills
+        type: array
+        description: "可用 Skill 列表"
+
+    output:
+      skill_sequence: array
+      coordination_plan: object
+      execution_strategy: string
+
+    notes: "多 Agent Skill 协调编排 - 参考 AgentOrchestra 架构"
+    alignment: "真善美 + 服务人类 + 持续升级"
+    references: ["AgentOrchestra: Orchestrating Multi-Agent Intelligence (2506.12508)"]
+    dependencies: ["reason", "makeDecision", "dreamNow"]
+
   - id: metaReflection
     name: 元认知反思
     module: pending
