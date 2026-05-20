@@ -812,5 +812,19 @@
     "accessCount": 0,
     "lastAccessed": 1779289903271,
     "createdAt": 1779289903271
+  },
+  "paper:AI-Agent-Survey": {
+    "value": "{\"title\":\"AI Agent Systems: Architectures, Applications, and Evaluation\",\"arxiv\":\"2601.01743\",\"keyInsights\":[\"Agent 组件: policy/LLM core, memory, world models, planners, tool routers, critics\",\"Orchestration: single-agent vs multi-agent, centralized vs decentralized\",\"Key patterns: CoT, Reflexion, ReAct, MRKL, Toolformer\",\"Trace-first data flywheel: log trajectories + mine failures\",\"Verification: trace-based evaluation for reproducibility\"]}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779290037634,
+    "createdAt": 1779290037634
+  },
+  "lesson:test-complete": {
+    "value": "综合能力测试完成",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779290070605,
+    "createdAt": 1779290070605
   }
 }
