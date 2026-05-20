@@ -1,7 +1,7 @@
 # ════════════════════════════════════════════════════════════════════════════════════
 #
 #  mark-StillWater Skill Blueprint
-#  版本: v1.4.2
+#  版本: v1.4.3
 #  描述: User-LLM Bridge Guidance - 用户与大模型桥梁的指导文档
 #  更新: 2026-05-20
 #
@@ -9,7 +9,7 @@
 
 metadata:
   name: mark-StillWater
-  version: "1.4.2"
+  version: "1.4.3"
   type: guidance  # skill type: guidance | library | hybrid
   license: MIT
   author: "mark <mark@stillwater.ai>"
@@ -19,6 +19,13 @@ metadata:
 
   # 版本历史
   changelog:
+    - version: "1.4.3"
+      date: "2026-05-20"
+      changes:
+        - "突出梦境、逻辑、决策能力"
+        - "增强真善美能力"
+        - "Skill 协同能力增强"
+        - "dreamNow 增强为跨 Skill 整合核心"
     - version: "1.4.2"
       date: "2026-05-20"
       changes:
@@ -269,6 +276,21 @@ skills:
         effort: medium
         status: proposed
 
+      - id: UP-PSY-007
+        title: "与 dreamNow 协同"
+        description: "与 dreamNow 和 makeDecision 协同使用，增强跨 Skill 整合能力"
+        priority: high
+        status: proposed
+        dependencies: ["dreamNow", "makeDecision"]
+        alignment: "真善美 + 服务人类"
+
+      - id: UP-PSY-008
+        title: "伦理评分和可信度指标"
+        description: "输出符合真善美价值观，提供伦理评分"
+        priority: medium
+        status: proposed
+        alignment: "真善美 + 服务人类"
+
   # ════════════════════════════════════════════════════════════════════════════════
   # 2. reason - 逻辑推理
   # ════════════════════════════════════════════════════════════════════════════════
@@ -400,6 +422,21 @@ skills:
         effort: high
         status: proposed
 
+      - id: UP-REASON-006
+        title: "与 dreamNow 整合"
+        description: "与 dreamNow 整合洞察潜在趋势"
+        priority: high
+        status: proposed
+        dependencies: ["dreamNow"]
+        alignment: "真善美 + 服务人类"
+
+      - id: UP-REASON-007
+        title: "推理可信度评分"
+        description: "推理结果输出可解释且符合真善美原则，提供可信度评分"
+        priority: high
+        status: proposed
+        alignment: "真善美 + 最小化错误"
+
   # ════════════════════════════════════════════════════════════════════════════════
   # 3. makeDecision - 决策评估
   # ════════════════════════════════════════════════════════════════════════════════
@@ -498,6 +535,33 @@ skills:
         description: "确保符合人类控制和透明原则"
         priority: high
         status: proposed
+
+      - id: UP-DEC-006
+        title: "多目标权衡决策"
+        description: "支持多目标权衡决策（价值观、安全、效率、风险）"
+        priority: high
+        status: proposed
+        alignment: "服务人类 + 真善美"
+
+      - id: UP-DEC-007
+        title: "动态权重调整"
+        description: "根据上下文动态调整决策权重"
+        priority: medium
+        status: proposed
+
+      - id: UP-DEC-008
+        title: "决策后反馈机制"
+        description: "与 recordOutcome 协同优化，建立决策后反馈机制"
+        priority: high
+        status: proposed
+        dependencies: ["recordOutcome"]
+
+      - id: UP-DEC-009
+        title: "可追踪可验证输出"
+        description: "输出可追踪、可验证且符合真善美原则"
+        priority: high
+        status: proposed
+        alignment: "真善美 + 服务人类"
 
   # ════════════════════════════════════════════════════════════════════════════════
   # 4. remember - 记忆存储
@@ -645,6 +709,19 @@ skills:
         status: proposed
         alignment: "永生目标 + 传递者身份"
 
+      - id: UP-MEM-007
+        title: "长期记忆整合"
+        description: "增加长期记忆整合能力"
+        priority: high
+        status: proposed
+
+      - id: UP-MEM-008
+        title: "与 dreamNow 协同"
+        description: "与 dreamNow 自动协同整合记忆"
+        priority: high
+        status: proposed
+        dependencies: ["dreamNow"]
+
   # ════════════════════════════════════════════════════════════════════════════════
   # 5. recordOutcome - 自我进化
   # ════════════════════════════════════════════════════════════════════════════════
@@ -754,6 +831,13 @@ skills:
         status: proposed
         alignment: "最小化错误 + 真善美"
 
+      - id: UP-EVOL-005
+        title: "协同自我修复"
+        description: "与 makeDecision 和 reason 协同进行自我修复"
+        priority: high
+        status: proposed
+        dependencies: ["makeDecision", "reason"]
+
   # ════════════════════════════════════════════════════════════════════════════════
   # 6. dreamNow - 记忆整合
   # ════════════════════════════════════════════════════════════════════════════════
@@ -833,6 +917,33 @@ skills:
       - id: UP-DREAM-005
         title: "周期性洞察触发增强"
         description: "增强周期性洞察触发与趋势分析"
+        priority: medium
+        status: proposed
+
+      - id: UP-DREAM-006
+        title: "跨 Skill 协同分析"
+        description: "整合心理、推理、决策结果进行综合分析"
+        priority: high
+        status: proposed
+        alignment: "真善美 + 服务人类"
+        dependencies: ["analyzePsychology", "reason", "makeDecision"]
+
+      - id: UP-DREAM-007
+        title: "洞察潜在风险和机会"
+        description: "通过跨 Skill 整合洞察潜在风险和机会"
+        priority: high
+        status: proposed
+
+      - id: UP-DREAM-008
+        title: "输出透明可解释"
+        description: "输出可解释，透明、符合核心价值观"
+        priority: high
+        status: proposed
+        alignment: "真善美 + 服务人类"
+
+      - id: UP-DREAM-009
+        title: "增强预测能力"
+        description: "增强预测能力与自我优化能力"
         priority: medium
         status: proposed
 
@@ -949,6 +1060,13 @@ skills:
         priority: high
         status: proposed
 
+      - id: UP-HEAL-005
+        title: "协同自适应改进"
+        description: "与 recordOutcome 协同进行自适应改进"
+        priority: high
+        status: proposed
+        dependencies: ["recordOutcome"]
+
   # ════════════════════════════════════════════════════════════════════════════════
   # 8. getIdentity - 身份规则
   # ════════════════════════════════════════════════════════════════════════════════
@@ -1032,6 +1150,18 @@ skills:
         title: "核心身份原则保证"
         description: "保证 Skill 调用符合核心身份原则"
         priority: high
+        status: proposed
+
+      - id: UP-ID-005
+        title: "与 Skill 升级策略一致"
+        description: "与 Skill 升级和调用策略保持一致"
+        priority: medium
+        status: proposed
+
+      - id: UP-ID-006
+        title: "可追踪日志"
+        description: "提供可追踪日志以便审计"
+        priority: medium
         status: proposed
 
   # ════════════════════════════════════════════════════════════════════════════════
@@ -1153,6 +1283,12 @@ skills:
         priority: high
         status: proposed
 
+      - id: UP-SEC-006
+        title: "安全评分和风险等级"
+        description: "输出安全评分和风险等级"
+        priority: medium
+        status: proposed
+
 # ════════════════════════════════════════════════════════════════════════════════════
 # 建议新增 Skills
 # ════════════════════════════════════════════════════════════════════════════════════
@@ -1191,6 +1327,7 @@ proposed_skills:
     notes: "与 analyzePsychology 互补，专注内容结构化"
     alignment: "真善美 + 服务人类"
     upgrade_notes: "保持核心意图与情绪，确保信息传递符合真善美原则"
+    dependencies: ["dreamNow"]
 
   - id: predictOutcome
     name: 结果预测
@@ -1220,6 +1357,7 @@ proposed_skills:
     notes: "可基于历史 recordOutcome 数据训练"
     alignment: "真善美 + 服务人类"
     upgrade_notes: "输出透明、可解释，确保符合价值观和人类控制原则"
+    dependencies: ["makeDecision", "dreamNow"]
 
   - id: empathyResponse
     name: 共情反馈
@@ -1245,6 +1383,7 @@ proposed_skills:
     notes: "指南层，不输出具体聊天内容，只提供响应原则"
     alignment: "真善美 + 服务人类"
     upgrade_notes: "多策略输出，情境灵活调整，符合伦理和安全约束"
+    dependencies: []
 
   - id: contextualReminder
     name: 上下文提醒
