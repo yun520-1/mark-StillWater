@@ -227,8 +227,8 @@ class HeartFlowEvolution {
 
     // Store as ephemeral if failure (temporary lesson)
     if (outcome === 'failure' || outcome === 'partial') {
-      // 24hr TTL for failure lessons
-      this.memory.remember(`lesson:${task}:${Date.now()}`, reflection.lesson, 86400000);
+      // 24hr TTL for failure lessons - use rememberEphemeral directly
+      this.memory.rememberEphemeral(`lesson:${task}:${Date.now()}`, reflection.lesson, 86400000);
     }
 
     return {
