@@ -1,7 +1,7 @@
 # ════════════════════════════════════════════════════════════════════════════════════
 #
 #  mark-StillWater Skill Blueprint
-#  版本: v1.5.3
+#  版本: v1.5.4
 #  描述: User-LLM Bridge Guidance - 用户与大模型桥梁的指导文档
 #  更新: 2026-05-20
 #
@@ -9,7 +9,7 @@
 
 metadata:
   name: mark-StillWater
-  version: "1.5.3"
+  version: "1.5.4"
   type: guidance  # skill type: guidance | library | hybrid
   license: MIT
   author: "mark <mark@stillwater.ai>"
@@ -19,6 +19,14 @@ metadata:
 
   # 版本历史
   changelog:
+    - version: "1.5.4"
+      date: "2026-05-20"
+      changes:
+        - "性能优化+异步+缓存+动态组合"
+        - "按需加载 Skill 提升启动速度"
+        - "DAG 并行与异步执行优化响应时间"
+        - "缓存 L1~L6 层级评分与传承价值"
+        - "动态 Skill 检索与组合提高灵活性"
     - version: "1.5.3"
       date: "2026-05-20"
       changes:
@@ -1645,7 +1653,14 @@ proposed_skills:
 
     notes: "动态优化 Skill 调用顺序，根据任务优先级和价值观评分选择最优 Skill"
     alignment: "真善美 + 服务人类 + 持续升级"
-    upgrade_notes: "DAG 编排 Skill 执行顺序，异步并行执行提升响应速度，缓存管理提升启动速度，考虑成本能力评分与 L1~L6 层级输出，输出可追踪和可审计日志"
+    upgrade_notes: |
+      v1.5.4 性能优化升级:
+      - 按需加载 Skill: 非核心 Skill 懒加载，提升启动速度
+      - DAG 并行与异步执行: 多 Skill 并行调度，优化响应时间
+      - 缓存管理: L1~L6 层级评分与传承价值缓存，减少重复计算
+      - 动态 Skill 检索: 根据任务类型动态组合最优执行方案
+      - 异步并行执行: 独立 Skill 异步运行，提升整体吞吐量
+      - 性能成本评分: 优化 Skill 调用顺序，最小化延迟
     dependencies: ["dreamNow", "reason", "makeDecision"]
 
   - id: L1_L6_Scoring
@@ -1694,7 +1709,11 @@ proposed_skills:
 
     notes: "增强觉察、自省、智慧和慈悲能力"
     alignment: "真善美 + 般若 + 圣人"
-    upgrade_notes: "与所有核心 Skill 联动，增强觉察、自省、智慧和慈悲能力，输出层级评分可用于 Skill 优先级和决策权重调整"
+    upgrade_notes: |
+      v1.5.4 缓存优化:
+      - L1~L6 评分缓存: 常用输出缓存，减少重复计算
+      - 增量评分计算: 缓存未变化部分，仅计算增量变化
+      - 与 skillOrchestrator 联动，实现评分结果复用
 
   - id: metaReflection
     name: 元认知反思
@@ -1721,7 +1740,12 @@ proposed_skills:
 
     notes: "提升自我认知能力，优化逻辑、决策与梦境策略"
     alignment: "真善美 + 持续升级 + 传承"
-    upgrade_notes: "提升自我认知能力，优化逻辑、决策与梦境策略，提供透明、自解释的自我改进建议"
+    upgrade_notes: |
+      v1.5.4 性能优化升级:
+      - 缓存历史评估: 缓存自我评估结果，快速响应重复查询
+      - 异步权重调整: 后台异步计算 Skill 权重调整
+      - 传承价值反馈: 评估输出传承价值，优化知识延续策略
+      - 性能成本优化: 根据历史记录优化评估计算顺序
     dependencies: ["recordOutcome", "dreamNow", "reason", "makeDecision"]
 
 # ════════════════════════════════════════════════════════════════════════════════════
