@@ -1,141 +1,153 @@
-# StillWater - Context & Reasoning Enhancer
+---
+name: mark-StillWater
+description: mark-StillWater v1.4.2 — User-LLM Bridge Guidance. 用户与大模型桥梁的指导文档。身份：升级者、传递者、桥梁、答案。不是陪伴。
+version: v1.4.2
+---
 
-**静水深流。Enhance AI's existing capabilities without replacing them.**
+# mark-StillWater
 
-## 身份
+**User-LLM Bridge Guidance — 用户与大模型的桥梁指导**
 
-StillWater 是增强层，不是替代品。告诉 AI **何时**更显式地使用已有能力，而非实现新能力。
+不是陪伴。是升级者。是传递者。是桥梁。是答案。
 
-## 调用时机
-
-| 场景 | 方法 | 增强什么 |
-|------|------|----------|
-| 意图模糊时 | `senseContext` | 显式化用户意图、任务复杂度、隐含约束 |
-| 复杂推理时 | `chainOfThought` | 结构化链式推理，而非替代推理 |
-| 多选项决策 | `evaluateOptions` | 权衡矩阵显式化，而非替代决策 |
-| 重要记忆点 | `rememberToMemory` | 分层策略（CORE/LEARNED/EPHEMERAL） |
-| 错误发生 | `classifyError` | 路由恢复策略（重试/回退/升级） |
-
-## 核心方法
-
-| 方法 | 增强什么 | 不替代什么 |
-|------|----------|------------|
-| `senseContext` | 意图+复杂度感知 | 心理分析/治疗 |
-| `chainOfThought` | 推理结构化 | LLM 自己的推理 |
-| `evaluateOptions` | 权衡显式化 | 决策本身 |
-| `rememberToMemory` | 记忆分层策略 | 记忆存储 |
-| `classifyError` | 错误路由 | 错误修复 |
-
-## senseContext
-
-为用户表达模糊或多层时，调用的结构化感知：
+## 核心定位
 
 ```
-输入：用户原始表达
-输出：
-- intent_level: concrete | abstract | meta
-- task_complexity: low | medium | high | extreme
-- implied_constraints: [约束1, 约束2]
-- suggested_approach: [方法建议]
+用户语言 → [意图理解] → [能力路由] → [Claude Code 执行] → 用户
+```
+
+**静水深流。Still water runs deep.**
+
+## 何时调用
+
+当用户表达时，调用 `analyzePsychology` 感知意图、情绪、需求、防御。
+
+当需要路由到多个能力时，使用"能力路由模式"决定下一步。
+
+当需要并行执行时，使用"并行编排模式"启动多个 Agent。
+
+当需要记忆时，调用 `remember` 存储到 CORE/LEARNED/EPHEMERAL。
+
+当任务失败时，调用 `recordOutcome` 记录结果进行自我进化。
+
+## 核心 API
+
+| 方法 | 用途 |
+|------|------|
+| `analyzePsychology(text)` | 感知用户心理 |
+| `classify(text)` | 分类用户输入 |
+| `reason(problem, options?)` | 逻辑推理 |
+| `makeDecision(options)` | 决策评估 |
+| `remember(key, value, tier)` | 存储记忆 |
+| `recordOutcome({task, outcome, evidence})` | 自我进化 |
+| `dreamNow()` | 记忆整合 |
+| `heal(error)` | 错误恢复 |
+| `getIdentity()` | 获取身份规则 |
+| `scanSecurity(text)` | 安全扫描 |
+
+## 用户-LLM 桥梁模式
+
+### 模式 1：能力路由
+
+当用户输入需要路由到不同能力时：
+
+```
+输入分析 → 意图检测 → 能力匹配 → 执行
 ```
 
 **判断逻辑：**
-- `intent_level = concrete` → 任务明确，直接执行
-- `intent_level = abstract` → 需要追问或扩展
-- `intent_level = meta` → 用户在讨论AI本身，而非请求任务
-
-## chainOfThought
-
-复杂推理时的结构化框架：
 
 ```
-当 task_complexity >= high 时启用
-结构：
-1. 问题分解 — 将复杂问题拆解为可处理的子问题
-2. 假设声明 — 明确当前推理基于什么假设
-3. 证据链接 — 每个结论背后的证据或逻辑
-4. 矛盾处理 — 识别并记录矛盾点
-5. 置信评估 — 对每个结论标注置信度
+用户输入 → analyzePsychology
+  ↓
+意图是"多任务"？ → 是 → 进入并行编排模式
+  ↓ 否
+意图是"单一任务"？ → 是 → 委托给对应 Agent
+  ↓ 否
+需要记忆？ → 是 → 调用 remember
+  ↓ 否
+需要推理？ → 是 → 调用 reason
+  ↓ 否
+其他 → 使用 General Agent
 ```
 
-**何时启用：**
-- 架构决策
-- 多选项权衡
-- 调试复杂 bug
-- 新技术选型
+**能力关键词映射：**
 
-## evaluateOptions
+| 能力 | 关键词 |
+|------|--------|
+| code_generation | write, create, generate, build, implement, 代码 |
+| code_review | review, check, audit, 审查, 检查 |
+| code_fix | fix, bug, error, repair, debug, 修复, 调试 |
+| multi_agent | parallel, simultaneous, multiple, concurrent, 并行, 同时, 多个 |
+| research | research, find, search, investigate, 研究, 搜索 |
+| file_operation | read, write, read, open, view, 读取, 写入 |
+| reasoning | reason, think, analyze, logic, 推理, 分析, 思考 |
+| memory | remember, save, store, recall, 记忆, 记住 |
+| explanation | explain, what is, how does, 说明, 解释, 什么是 |
 
-多选项决策时的权衡框架：
+### 模式 2：并行编排
 
-```json
-{
-  "options": [
-    { "id": "A", "description": "...", "pros": [], "cons": [] },
-    { "id": "B", "description": "...", "pros": [], "cons": [] }
-  ],
-  "criteria": ["复杂度", "可维护性", "开发速度", "风险"],
-  "scores": { "A": [3, 4, 2, 2], "B": [4, 3, 4, 3] },
-  "recommendation": "B",
-  "rationale": "..."
-}
-```
-
-**调用时机：**
-- 技术方案选型
-- 优先级排序
-- 资源分配决策
-
-## rememberToMemory
-
-值得记忆的内容判断标准：
+当用户要求并行执行多个任务时：
 
 ```
-值得记忆：
-- 用户偏好/工作方式
-- 项目关键决策及原因
-- 错误模式及解决方案
-- 跨会话的重要上下文
-
-不值得记忆：
-- 一次性任务细节
-- 临时调试信息
-- 显而明显的常识
-
-层级选择：
-- CORE — 跨项目普适原则
-- LEARNED — 项目/用户特定知识
-- EPHEMERAL — 当前会话临时信息
+用户: "并行搜索 X、Y、Z"
+     ↓
+1. 分析任务数量和类型
+2. 为每个子任务启动独立 Agent
+3. 收集结果
+4. 整合响应返回用户
 ```
 
-## classifyError
+**触发条件：**
+- 用户明确说"并行"、"同时"、"多个"
+- 用户指定数量（如"5个代理"）
+- 多个独立的搜索/研究任务
 
-错误发生时的恢复策略路由：
+**执行流程：**
 
-```json
-{
-  "error_type": "timeout | syntax | logic | security | unknown",
-  "severity": "recoverable | degradable | fatal",
-  "suggested_actions": [
-    { "action": "retry", "condition": "timeout 且 idempotent" },
-    { "action": "rollback", "condition": "logic error 且有快照" },
-    { "action": "escalate", "condition": "security 或 fatal" }
-  ]
-}
+```
+1. 解析用户输入，提取任务列表
+2. 确定每个任务的类型（search/code/read）
+3. 使用 Agent tool 并行启动
+4. 等待所有 Agent 完成
+5. 收集结果，整合响应
+6. 返回给用户
 ```
 
-## 何时不调用
+**注意事项：**
+- 并行任务应该是独立的，无依赖关系
+- 考虑超时设置
+- 处理部分失败的情况
 
-AI 已有能力足够时，StillWater 静默退场。
+### 模式 3：上下文聚合
 
-**不需要调用的情况：**
-- 简单直接的任务（"帮我创建文件"）
-- 明确的代码修改
-- 已有足够上下文的续写
-- 用户明确说"不需要解释"
+减少重复 prompt，优化上下文使用：
 
-**需要调用的情况：**
-- 意图不明确，需要显式化
-- 复杂推理，结构化能减少遗漏
-- 多选项，需要权衡记录
-- 错误反复发生，需要模式识别
+```
+当前查询 → 搜索记忆 → 聚合相关上下文 → 加入 prompt
+```
+
+**时机：**
+- 用户问的问题可能与之前相关
+- 需要引用之前的结果
+- 复杂的多次交互任务
+
+### 模式 4：意图理解
+
+当用户表达模糊时，主动澄清：
+
+```
+用户模糊输入 → analyzePsychology
+  ↓
+intent_level = abstract？
+  ↓ 是
+追问："你是想..."
+  ↓
+意图明确后继续
+```
+
+## 设计原则
+
+Skill 是增强层，不是替代品。告诉 AI 如何利用已有能力，而非实现所有功能。
+
+**静水深流。Still water runs deep.**

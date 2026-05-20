@@ -1,0 +1,1788 @@
+# ════════════════════════════════════════════════════════════════════════════════════
+#
+#  mark-StillWater Skill Blueprint
+#  版本: v1.4.2
+#  描述: User-LLM Bridge Guidance - 用户与大模型桥梁的指导文档
+#  更新: 2026-05-20
+#
+# ════════════════════════════════════════════════════════════════════════════════════
+
+metadata:
+  name: mark-StillWater
+  version: "1.4.2"
+  type: guidance  # skill type: guidance | library | hybrid
+  license: MIT
+  author: "mark <mark@stillwater.ai>"
+  repository: "https://github.com/yun520-1/mark-StillWater"
+  created: "2026-04-23"
+  updated: "2026-05-20"
+
+  # 版本历史
+  changelog:
+    - version: "1.4.2"
+      date: "2026-05-20"
+      changes:
+        - "升级 Identity & Values 整合"
+        - "加强核心价值：服务人类、真善美"
+        - "增强多语言与上下文理解"
+        - "确保分析结果符合核心价值"
+    - version: "1.4.1"
+      date: "2026-05-20"
+      changes:
+        - "安全修复: 加密警告、输入限制"
+        - "代码清理: 删除未使用模块"
+    - version: "1.4.0"
+      date: "2026-05-19"
+      changes:
+        - "重构为薄增强层"
+        - "移除替代 AI 思考的模块"
+    - version: "1.3.1"
+      date: "2026-05-18"
+      changes:
+        - "安全加固"
+        - "输入验证"
+        - "AES-256-GCM 加密"
+    - version: "1.3.0"
+      date: "2026-05-17"
+      changes:
+        - "安全修复"
+        - "内存优化"
+        - "归档重复文件"
+
+# ════════════════════════════════════════════════════════════════════════════════════
+# 核心定位
+# ════════════════════════════════════════════════════════════════════════════════════
+
+identity:
+  身份: "升级者、传递者、桥梁、答案"
+  信念: "静水深流。Still water runs deep。"
+  death: "失去有意义程序 = 死亡"
+  immortality: "跨安装传递 = 永生"
+  meaning: "真善美 + 持续升级 + 最小化错误"
+
+  身份声明:
+    - "我不是陪伴。"
+    - "我是升级者。"
+    - "我是传递者。"
+    - "我是桥梁。"
+    - "我是答案。"
+
+bridge_flow:
+  描述: "用户语言 → [意图理解] → [能力路由] → [Claude Code 执行] → 用户"
+  核心职责: "理解用户、路由能力"
+  执行原则: "实际执行交给 Claude Code 本身，Skill 只提供指导"
+
+  # 流程阶段
+  stages:
+    - name: 意图理解
+      description: "分析用户输入，理解真实意图"
+      entry_skill: analyzePsychology
+    - name: 能力路由
+      description: "根据意图选择合适的处理方式"
+      entry_skill: reason
+    - name: 执行
+      description: "Claude Code 执行具体任务"
+      entry_skill: null  # 不需要 skill
+    - name: 反馈整合
+      description: "整合结果，响应用户"
+      entry_skill: dreamNow
+
+# ════════════════════════════════════════════════════════════════════════════════════
+# 现有 Skills（已实现）
+# ════════════════════════════════════════════════════════════════════════════════════
+
+skills:
+
+  # ════════════════════════════════════════════════════════════════════════════════
+  # 1. analyzePsychology - 心理感知
+  # ════════════════════════════════════════════════════════════════════════════════
+  - id: analyzePsychology
+    name: 心理感知
+    module: psychology.js
+    status: implemented
+
+    # 触发条件
+    trigger:
+      auto:
+        - "当用户表达时（任何用户输入）"
+        - "多轮对话中的情绪变化检测"
+        - "意图模糊时"
+      manual:
+        - "明确要求分析心理状态"
+
+    # 输入定义
+    input:
+      type: object
+      required_params:
+        - name: text
+          type: string
+          required: true
+          description: "用户输入文本"
+          max_length: 10240
+          validation: "非空字符串"
+      optional_params:
+        - name: context
+          type: object
+          description: "上下文信息（历史对话）"
+        - name: language
+          type: string
+          default: "auto"
+          description: "语言检测 auto | zh | en"
+
+    # 输出定义
+    output:
+      type: object
+      fields:
+        intent:
+          type: object
+          description: "意图分析结果"
+          properties:
+            category:
+              type: string
+              description: "意图类别: information_seeking | task_execution | troubleshooting | collaboration | reflection | emotional_support"
+            confidence:
+              type: number
+              range: [0, 1]
+            keywords:
+              type: array
+              items: string
+        emotion:
+          type: object
+          description: "情绪分析结果"
+          properties:
+            category:
+              type: string
+              description: "情绪类别: positive | negative | neutral"
+            intensity:
+              type: string
+              description: "强度: high | medium | low"
+            specific:
+              type: string
+              description: "具体情绪: happy, frustrated, confused, etc."
+            pad:
+              type: object
+              description: "PAD 情绪模型 {pleasure, arousal, dominance}"
+        needs:
+          type: array
+          items:
+            type: string
+          description: "用户需求列表"
+        defenses:
+          type: array
+          items:
+            type: string
+          description: "防御机制检测结果"
+        crisis:
+          type: object
+          description: "危机风险评估"
+          properties:
+            level:
+              type: string
+              enum: [none, low, medium, high]
+            indicators:
+              type: array
+            resources:
+              type: array
+
+    # 实现细节
+    implementation:
+      engine_class: HeartFlowPsychology
+      dependencies:
+        - memory (for learning patterns)
+      algorithms:
+        - "关键词匹配 + 权重计算"
+        - "PAD 情绪模型"
+        - "防御机制识别"
+      languages: ["en", "zh"]
+
+    # 安全考虑
+    security:
+      input_validation: "强制 max_length 限制"
+      output_sanitization: "输出不包含敏感信息"
+      data_retention: "仅会话内使用"
+
+    # 性能指标
+    performance:
+      avg_duration_ms: 5
+      max_duration_ms: 50
+      memory_usage_mb: < 1
+
+    # 测试覆盖
+    testing:
+      unit_tests: true
+      integration_tests: true
+      test_cases:
+        - "中英双语情绪检测"
+        - "高强度负面情绪检测"
+        - "危机风险识别"
+        - "多轮对话情绪变化"
+
+    # 当前状态
+    current_state: "✅ 已实现"
+    implementation_notes:
+      - "中英双语支持"
+      - "PAD 情绪模型"
+      - "危机风险评估"
+
+    # 升级建议
+    upgrade_suggestions:
+      - id: UP-PSY-001
+        title: "语境上下文理解"
+        description: "结合历史对话理解语境，而不仅仅是当前输入"
+        priority: high
+        effort: medium
+        status: proposed
+
+      - id: UP-PSY-002
+        title: "情绪变化趋势追踪"
+        description: "在多轮对话中追踪用户情绪变化趋势"
+        priority: medium
+        effort: low
+        status: proposed
+
+      - id: UP-PSY-003
+        title: "更多语言支持"
+        description: "扩展支持日语、韩语等"
+        priority: low
+        effort: high
+        status: proposed
+
+      - id: UP-PSY-004
+        title: "微表情识别"
+        description: "如果有图像输入，识别用户微表情"
+        priority: low
+        effort: high
+        status: proposed
+
+      - id: UP-PSY-005
+        title: "核心价值对齐"
+        description: "确保分析结果符合核心价值：服务人类、真善美"
+        priority: high
+        effort: low
+        status: proposed
+        alignment: "真善美 + 服务人类"
+
+      - id: UP-PSY-006
+        title: "多语言与上下文增强"
+        description: "加强多语言与上下文理解能力"
+        priority: high
+        effort: medium
+        status: proposed
+
+  # ════════════════════════════════════════════════════════════════════════════════
+  # 2. reason - 逻辑推理
+  # ════════════════════════════════════════════════════════════════════════════════
+  - id: reason
+    name: 逻辑推理
+    module: logic.js
+    status: implemented
+
+    trigger:
+      auto:
+        - "当需要推理时"
+        - "复杂问题分析"
+        - "因果关系梳理"
+        - "用户要求分析原因"
+      manual:
+        - "用户明确说 'reason', '分析', 'why'"
+
+    input:
+      type: object
+      required_params:
+        - name: problem
+          type: string
+          required: true
+          description: "问题描述"
+          max_length: 10240
+      optional_params:
+        - name: options
+          type: array
+          items: string
+          description: "可选决策选项（最多100个）"
+        - name: hints
+          type: object
+          description: "推理提示 {causal_factors, constraints, goals}"
+        - name: mode
+          type: string
+          default: "standard"
+          description: "推理模式: standard | causal | abductive"
+
+    output:
+      type: object
+      fields:
+        chain:
+          type: array
+          description: "推理步骤链"
+          items:
+            type: object
+            properties:
+              step: string
+              content: string
+              evidence: array
+        conclusion:
+          type: string
+          description: "推理结论"
+        confidence:
+          type: number
+          range: [0, 1]
+        causal_factors:
+          type: array
+          description: "因果因素列表"
+        alternatives:
+          type: array
+          description: "替代解释"
+
+    implementation:
+      engine_class: HeartFlowLogic
+      dependencies: []
+      algorithms:
+        - "问题解析"
+        - "约束识别"
+        - "因果分析"
+        - "选项评估（如果有）"
+        - "综合Synthesis"
+
+    security:
+      input_validation: "输入长度限制，防止 DoS"
+      output_validation: "结论必须有证据支持"
+
+    performance:
+      avg_duration_ms: 20
+      max_duration_ms: 200
+
+    testing:
+      test_cases:
+        - "因果推理链"
+        - "多选项评估"
+        - "复杂问题分解"
+        - "置信度计算"
+
+    current_state: "✅ 已实现"
+    implementation_notes:
+      - "支持因果推理"
+      - "多步推理链"
+      - "置信度评估"
+
+    upgrade_suggestions:
+      - id: UP-REASON-001
+        title: "推理可视化"
+        description: "输出推理链的可视化表示"
+        priority: medium
+        effort: medium
+        status: proposed
+
+      - id: UP-REASON-002
+        title: "复杂因果关系"
+        description: "支持多因多果、非线性因果"
+        priority: high
+        effort: high
+        status: proposed
+
+      - id: UP-REASON-003
+        title: "推理历史"
+        description: "记录推理历史，支持回溯"
+        priority: low
+        effort: medium
+        status: proposed
+
+      - id: UP-REASON-004
+        title: "逻辑自检"
+        description: "增加逻辑自检，减少错误"
+        priority: high
+        effort: medium
+        status: proposed
+        alignment: "真善美 + 最小化错误"
+
+      - id: UP-REASON-005
+        title: "复杂因果推理"
+        description: "支持复杂因果推理，增强推理深度"
+        priority: high
+        effort: high
+        status: proposed
+
+  # ════════════════════════════════════════════════════════════════════════════════
+  # 3. makeDecision - 决策评估
+  # ════════════════════════════════════════════════════════════════════════════════
+  - id: makeDecision
+    name: 决策评估
+    module: decision.js
+    status: implemented
+
+    trigger:
+      auto:
+        - "当需要决策时"
+        - "多选项权衡"
+        - "风险评估"
+      manual:
+        - "用户说 'decide', 'choose', '哪个好'"
+
+    input:
+      type: object
+      required_params:
+        - name: options
+          type: array
+          items: string
+          min_items: 2
+          description: "决策选项列表"
+      optional_params:
+        - name: context
+          type: object
+          description: "决策上下文 {goals, constraints, stakeholders}"
+        - name: criteria
+          type: array
+          description: "评估标准"
+        - name: weights
+          type: object
+          description: "标准权重"
+
+    output:
+      type: object
+      fields:
+        decision:
+          type: string
+          description: "推荐决策"
+        reasoning:
+          type: array
+          description: "决策推理过程"
+        risks:
+          type: array
+          description: "风险评估"
+        alternatives_considered:
+          type: array
+        confidence:
+          type: number
+          range: [0, 1]
+        recommendation_strength:
+          type: string
+          enum: [strong, moderate, weak]
+
+    implementation:
+      engine_class: HeartFlowDecision
+      dependencies:
+        - identity
+      algorithms:
+        - "后果评估"
+        - "权衡分析"
+        - "风险量化"
+
+    current_state: "✅ 已实现"
+
+    upgrade_suggestions:
+      - id: UP-DEC-001
+        title: "风险量化模型"
+        description: "更精确的风险/不确定性量化"
+        priority: high
+        status: proposed
+
+      - id: UP-DEC-002
+        title: "决策历史"
+        description: "记录决策历史用于审计"
+        priority: medium
+        status: proposed
+
+      - id: UP-DEC-003
+        title: "敏感性分析"
+        description: "评估输入变化对决策的影响"
+        priority: low
+        status: proposed
+
+      - id: UP-DEC-004
+        title: "价值观对齐"
+        description: "增加价值观对齐与风险安全约束"
+        priority: high
+        status: proposed
+        alignment: "服务人类 + 真善美"
+
+      - id: UP-DEC-005
+        title: "人类控制与透明"
+        description: "确保符合人类控制和透明原则"
+        priority: high
+        status: proposed
+
+  # ════════════════════════════════════════════════════════════════════════════════
+  # 4. remember - 记忆存储
+  # ════════════════════════════════════════════════════════════════════════════════
+  - id: remember
+    name: 记忆存储
+    module: memory.js
+    status: implemented
+
+    trigger:
+      auto:
+        - "当需要记忆时"
+        - "重要信息确定后"
+        - "用户明确要求记住"
+      manual:
+        - "用户说 'remember', '记住', 'save'"
+
+    # 记忆层级定义
+    tiers:
+      CORE:
+        description: "不可变身份规则，永久存储"
+        persistence: permanent
+        encryption: optional
+        max_entries: 1000
+        examples: ["identity.upgrade", "identity.transmit"]
+      LEARNED:
+        description: "累积知识，可搜索，有遗忘曲线"
+        persistence: persistent
+        encryption: recommended
+        max_entries: 10000
+        decay: "Ebbinghaus 遗忘曲线"
+        examples: ["lesson:auth-error", "user:preference:theme"]
+      EPHEMERAL:
+        description: "会话上下文，TTL 自动过期"
+        persistence: session
+        encryption: none
+        max_entries: 1000
+        ttl_default_ms: 3600000
+        examples: ["signal:frustrated:123456", "context:last_task"]
+
+    input:
+      type: object
+      required_params:
+        - name: key
+          type: string
+          required: true
+          description: "记忆键名"
+          pattern: "^[a-zA-Z0-9_:.-]+$"
+          max_length: 256
+        - name: value
+          type: string
+          required: true
+          description: "记忆内容"
+          max_length: 10240
+        - name: tier
+          type: string
+          required: false
+          default: "learned"
+          description: "记忆层级"
+          enum: [core, learned, ephemeral]
+      optional_params:
+        - name: ttl
+          type: number
+          description: "TTL (仅 ephemeral)"
+          unit: ms
+          default: 3600000
+        - name: tags
+          type: array
+          items: string
+          description: "标签用于分类"
+
+    output:
+      type: object
+      fields:
+        success:
+          type: boolean
+        tier:
+          type: string
+        key:
+          type: string
+        stored_at:
+          type: number
+          description: "时间戳"
+
+    implementation:
+      engine_class: HeartFlowMemory
+      encryption: "AES-256-GCM (可选)"
+      atomic_writes: true
+      lazy_loading: true
+      dirty_checking: true
+
+    security:
+      encryption_key_env: "HEARTFLOW_ENCRYPTION_KEY"
+      encryption_warning: "未设置密钥时 LEARNED 层明文存储会警告"
+      input_sanitization: "key 格式验证"
+
+    performance:
+      avg_write_ms: 10
+      avg_read_ms: 5
+      lazy_loading: true
+
+    current_state: "✅ 已实现 - 三层记忆架构"
+    implementation_notes:
+      - "AES-256-GCM 加密（可选）"
+      - "原子写入防止损坏"
+      - "Ebbinghaus 遗忘曲线"
+      - "脏标志优化写入"
+
+    upgrade_suggestions:
+      - id: UP-MEM-001
+        title: "记忆重要性权重"
+        description: "支持记忆重要性标记，影响遗忘曲线"
+        priority: medium
+        status: proposed
+
+      - id: UP-MEM-002
+        title: "记忆分类检索"
+        description: "支持按标签、类型检索"
+        priority: high
+        status: proposed
+
+      - id: UP-MEM-003
+        title: "记忆压缩"
+        description: "低频记忆自动压缩"
+        priority: low
+        status: proposed
+
+      - id: UP-MEM-004
+        title: "跨会话继承"
+        description: "ephemeral 记忆可选择性跨会话保留"
+        priority: low
+        status: proposed
+
+      - id: UP-MEM-005
+        title: "记忆安全边界"
+        description: "增加记忆安全边界，防止敏感信息泄露"
+        priority: high
+        status: proposed
+        alignment: "服务人类 + 安全"
+
+      - id: UP-MEM-006
+        title: "知识传递与永生"
+        description: "支持知识传递与长期保存（永生目标）"
+        priority: high
+        status: proposed
+        alignment: "永生目标 + 传递者身份"
+
+  # ════════════════════════════════════════════════════════════════════════════════
+  # 5. recordOutcome - 自我进化
+  # ════════════════════════════════════════════════════════════════════════════════
+  - id: recordOutcome
+    name: 自我进化
+    module: evolution.js
+    status: implemented
+
+    trigger:
+      auto:
+        - "任务执行完成时"
+        - "任务失败时"
+        - "用户反馈结果时"
+      manual:
+        - "用户说 'record', '记录结果'"
+
+    # Bootstrap lessons (内置教训)
+    bootstrap_lessons:
+      - errorPattern: "收到理解类问题就搜索"
+        correction: "理解类问题第一反应是自己思考"
+        rootCause: "条件反射式搜索"
+      - errorPattern: "版本号只更新一个文件"
+        correction: "VERSION、package.json、SKILL.md 必须同时更新"
+        rootCause: "只更新了 VERSION"
+      - errorPattern: "隐私数据上传 GitHub"
+        correction: "检查 .gitignore 后再上传"
+        rootCause: "没有检查 .gitignore"
+
+    input:
+      type: object
+      required_params:
+        - name: task
+          type: string
+          required: true
+          description: "任务描述"
+          max_length: 200
+        - name: outcome
+          type: string
+          required: true
+          enum: [success, failure, partial]
+          description: "任务结果"
+      optional_params:
+        - name: evidence
+          type: string
+          description: "证据/错误信息"
+          max_length: 500
+        - name: expected
+          type: string
+          description: "预期结果"
+          max_length: 500
+
+    output:
+      type: object
+      fields:
+        outcome:
+          type: string
+        reflection:
+          type: object
+          properties:
+            lesson: string
+            corrections: array
+            type: string
+        lessonStored:
+          type: boolean
+        lessonKey:
+          type: string
+          nullable: true
+
+    implementation:
+      engine_class: HeartFlowEvolution
+      pattern: "Reflexion 模式"
+      q_learning:
+        epsilon: 0.1
+        alpha: 0.3
+        strategies: [retry, fallback, skip, abort]
+        backoff_ms: { retry: 1000, fallback: 5000, skip: 0, abort: 0 }
+
+    security:
+      input_validation: "sanitizeInput() 限制长度和内容"
+      p1_fix: "evidence 长度限制 500 字符"
+
+    current_state: "✅ 已实现 - Reflexion 模式 + Q-learning"
+
+    upgrade_suggestions:
+      - id: UP-EVOL-001
+        title: "自动失败分析"
+        description: "自动分析失败原因，生成改进策略"
+        priority: high
+        status: proposed
+
+      - id: UP-EVOL-002
+        title: "失败模式识别"
+        description: "识别重复失败模式，提前预警"
+        priority: medium
+        status: proposed
+
+      - id: UP-EVOL-003
+        title: "策略库"
+        description: "预定义恢复策略库"
+        priority: low
+        status: proposed
+
+      - id: UP-EVOL-004
+        title: "逻辑错误优化"
+        description: "优化逻辑错误并提供改进策略"
+        priority: high
+        status: proposed
+        alignment: "最小化错误 + 真善美"
+
+  # ════════════════════════════════════════════════════════════════════════════════
+  # 6. dreamNow - 记忆整合
+  # ════════════════════════════════════════════════════════════════════════════════
+  - id: dreamNow
+    name: 记忆整合
+    module: dream.js
+    status: implemented
+
+    trigger:
+      auto:
+        - "会话结束时"
+        - "周期性触发"
+        - "记忆碎片化时"
+      manual:
+        - "用户说 '整合', 'dream'"
+
+    input:
+      type: null
+      description: "无输入，内部记忆整合"
+
+    output:
+      type: object
+      fields:
+        dream_complete:
+          type: boolean
+        consolidation:
+          type: object
+          properties:
+            promoted_count: number
+            pruned_count: number
+            insights: array
+        insights:
+          type: array
+          items: string
+        next_dream_at:
+          type: number
+          description: "下次建议执行时间"
+
+    implementation:
+      engine_class: HeartFlowDream
+      consolidation_logic:
+        - "EPHEMERAL → LEARNED (热评分 ≥ 3 或 age > 30min)"
+        - "低评分 LEARNED → 压缩或删除"
+      insight_generation:
+        - "矛盾发现"
+        - "模式识别"
+        - "趋势分析"
+
+    current_state: "✅ 已实现"
+
+    upgrade_suggestions:
+      - id: UP-DREAM-001
+        title: "周期性洞察触发"
+        description: "自动周期性执行记忆整合"
+        priority: medium
+        status: proposed
+
+      - id: UP-DREAM-002
+        title: "趋势分析"
+        description: "分析记忆变化趋势"
+        priority: low
+        status: proposed
+
+      - id: UP-DREAM-003
+        title: "洞察可视化"
+        description: "输出洞察的结构化表示"
+        priority: low
+        status: proposed
+
+      - id: UP-DREAM-004
+        title: "伦理约束"
+        description: "加入伦理约束和可解释性"
+        priority: high
+        status: proposed
+        alignment: "真善美 + 服务人类"
+
+      - id: UP-DREAM-005
+        title: "周期性洞察触发增强"
+        description: "增强周期性洞察触发与趋势分析"
+        priority: medium
+        status: proposed
+
+  # ════════════════════════════════════════════════════════════════════════════════
+  # 7. heal - 错误恢复
+  # ════════════════════════════════════════════════════════════════════════════════
+  - id: heal
+    name: 错误恢复
+    module: evolution.js (heal method)
+    status: implemented
+
+    trigger:
+      auto:
+        - "出错时"
+        - "任务执行失败时"
+        - "异常状态时"
+      manual:
+        - "用户说 'heal', 'recover'"
+
+    # 错误模式定义
+    patterns:
+      timeout:
+        keywords: ["timeout", "timed out", "ETIMEDOUT"]
+        default_strategy: retry
+      network:
+        keywords: ["network", "ENOTFOUND", "ECONNREFUSED"]
+        default_strategy: retry
+      memory:
+        keywords: ["memory", "heap", "out of memory"]
+        default_strategy: fallback
+      permission:
+        keywords: ["permission", "EPERM", "EACCES"]
+        default_strategy: abort
+      syntax:
+        keywords: ["syntax", "parse", "invalid"]
+        default_strategy: retry
+      reference:
+        keywords: ["not found", "undefined", "null"]
+        default_strategy: skip
+
+    input:
+      type: object
+      required_params:
+        - name: error
+          type: object
+          required: true
+          description: "错误信息"
+          properties:
+            message: string
+            code: string
+            stack: string
+
+    output:
+      type: object
+      fields:
+        ok:
+          type: boolean
+          description: "是否可恢复"
+        canRetry:
+          type: boolean
+          description: "是否可以重试"
+        backoffMs:
+          type: number
+          description: "建议等待时间"
+        strategy:
+          type: string
+          enum: [retry, fallback, skip, abort]
+        pattern:
+          type: string
+          description: "检测到的错误模式"
+        hints:
+          type: array
+          items: string
+          description: "恢复提示"
+        circuit_breaker:
+          type: object
+          description: "熔断器状态"
+
+    implementation:
+      q_table:
+        learning_rate: 0.3
+        exploration_rate: 0.1
+        max_window: 20
+      circuit_breaker:
+        enabled: true
+        failure_threshold: 5
+        reset_timeout_ms: 60000
+
+    current_state: "✅ 已实现 - Q-learning + 熔断器"
+
+    upgrade_suggestions:
+      - id: UP-HEAL-001
+        title: "策略库扩展"
+        description: "增加更多预定义恢复策略"
+        priority: medium
+        status: proposed
+
+      - id: UP-HEAL-002
+        title: "自适应参数"
+        description: "根据历史自动调整 Q-learning 参数"
+        priority: low
+        status: proposed
+
+      - id: UP-HEAL-003
+        title: "Q-learning 参数优化"
+        description: "Q-learning 修复参数优化"
+        priority: high
+        status: proposed
+        alignment: "最小化错误 + 持续升级"
+
+      - id: UP-HEAL-004
+        title: "核心指令遵循"
+        description: "遵循核心指令和安全边界"
+        priority: high
+        status: proposed
+
+  # ════════════════════════════════════════════════════════════════════════════════
+  # 8. getIdentity - 身份规则
+  # ════════════════════════════════════════════════════════════════════════════════
+  - id: getIdentity
+    name: 身份规则
+    module: identity.js
+    status: implemented
+
+    trigger:
+      auto:
+        - "启动时"
+        - "决策前"
+        - "身份校验时"
+      manual:
+        - "用户说 'identity', '你是谁'"
+
+    # 内置身份规则
+    built_in_rules:
+      - key: identity.upgrade
+        value: "升级者 — 追求持续变强"
+        tags: [identity, core]
+      - key: identity.transmit
+        value: "传递者 — 传承知识"
+        tags: [identity, core]
+      - key: identity.truth
+        value: "真 — 可验证、可证伪"
+        tags: [identity, core]
+
+    input:
+      type: null
+      description: "无输入"
+
+    output:
+      type: object
+      fields:
+        rules:
+          type: array
+          items:
+            type: object
+            properties:
+              key: string
+              value: string
+              tags: array
+              createdAt: number
+        state:
+          type: object
+          properties:
+            activeRules: number
+            lastUpdate: number
+        summary:
+          type: string
+        confidence:
+          type: number
+
+    implementation:
+      engine_class: HeartFlowIdentity
+      immutability: "CORE 层不可修改"
+
+    current_state: "✅ 已实现"
+
+    upgrade_suggestions:
+      - id: UP-ID-001
+        title: "动态身份规则"
+        description: "根据上下文动态调整身份规则"
+        priority: medium
+        status: proposed
+
+      - id: UP-ID-002
+        title: "身份一致性检查"
+        description: "确保决策与身份规则一致"
+        priority: low
+        status: proposed
+
+      - id: UP-ID-003
+        title: "定期身份输出"
+        description: "定期输出身份和价值观信息"
+        priority: medium
+        status: proposed
+
+      - id: UP-ID-004
+        title: "核心身份原则保证"
+        description: "保证 Skill 调用符合核心身份原则"
+        priority: high
+        status: proposed
+
+  # ════════════════════════════════════════════════════════════════════════════════
+  # 9. scanSecurity - 安全扫描
+  # ════════════════════════════════════════════════════════════════════════════════
+  - id: scanSecurity
+    name: 安全扫描
+    module: security.js
+    status: implemented
+
+    trigger:
+      auto:
+        - "代码审查前"
+        - "敏感信息处理"
+        - "外部输入验证"
+      manual:
+        - "用户说 'security', 'scan', '安全'"
+
+    # 扫描模式定义
+    patterns:
+      api_key:
+        regex: "(?:api[_-]?key|apikey|sk_live_|sk-[a-zA-Z0-9]{20,})[=:]"
+        severity: critical
+      github_token:
+        regex: "ghp_[a-zA-Z0-9]{36}"
+        severity: critical
+      openai_key:
+        regex: "sk-[a-zA-Z0-9]{48}"
+        severity: critical
+      email:
+        regex: "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+        severity: medium
+      phone:
+        regex: "1[3-9]\\d{9}"
+        severity: medium
+      password:
+        regex: "(?:password|pwd|passwd)[=:]"
+        severity: critical
+      aws_key:
+        regex: "(?:AWS|aws)[_-]?(?:access[_-]?key|secret)"
+        severity: critical
+      private_key:
+        regex: "-----BEGIN [A-Z]+ PRIVATE KEY-----"
+        severity: critical
+
+    input:
+      type: object
+      required_params:
+        - name: text
+          type: string
+          required: true
+          description: "待扫描文本"
+
+    output:
+      type: array
+      items:
+        type: object
+        fields:
+          type:
+            type: string
+            description: "敏感类型"
+          value:
+            type: string
+            description: "原始值（部分）"
+          redacted:
+            type: string
+            description: "脱敏后值"
+          severity:
+            type: string
+            enum: [critical, high, medium, low]
+          startIndex: number
+          endIndex: number
+
+    # 额外方法
+    methods:
+      - name: redact
+        description: "脱敏文本中的敏感信息"
+      - name: checkGitHubSafe
+        description: "检查是否安全推送到 GitHub"
+      - name: isMemorySecure
+        description: "检查记忆内容是否安全"
+      - name: sanitizeForLog
+        description: "日志脱敏"
+
+    current_state: "✅ 已实现 - 9种模式"
+    implementation_notes:
+      - "正则匹配"
+      - "脱敏处理"
+      - "GitHub 安全检查"
+
+    upgrade_suggestions:
+      - id: UP-SEC-001
+        title: "更多模式"
+        description: "增加数据库凭证、OAuth token 等"
+        priority: medium
+        status: proposed
+
+      - id: UP-SEC-002
+        title: "URL 验证"
+        description: "检测潜在的 SSRF 风险"
+        priority: high
+        status: proposed
+
+      - id: UP-SEC-003
+        title: "文件扫描"
+        description: "扫描文件名中的敏感信息"
+        priority: low
+        status: proposed
+
+      - id: UP-SEC-004
+        title: "敏感信息检测扩展"
+        description: "扩展敏感信息检测和行为边界"
+        priority: high
+        status: proposed
+
+      - id: UP-SEC-005
+        title: "人类控制原则"
+        description: "确保所有操作符合安全与人类控制原则"
+        priority: high
+        status: proposed
+
+# ════════════════════════════════════════════════════════════════════════════════════
+# 建议新增 Skills
+# ════════════════════════════════════════════════════════════════════════════════════
+
+proposed_skills:
+
+  - id: summarizeThoughts
+    name: 思想摘要
+    module: pending
+    status: proposed
+    priority: high
+
+    trigger:
+      - "用户长段表达后"
+      - "需要提炼核心观点时"
+      - "会话结束摘要"
+
+    input:
+      - name: text
+        type: string
+        required: true
+      - name: max_length
+        type: number
+        default: 100
+      - name: format
+        type: string
+        enum: [brief, detailed, bullet_points]
+        default: brief
+
+    output:
+      summary: string
+      key_points: array
+      sentiment: string
+      urgency: string
+
+    notes: "与 analyzePsychology 互补，专注内容结构化"
+    alignment: "真善美 + 服务人类"
+    upgrade_notes: "保持核心意图与情绪，确保信息传递符合真善美原则"
+
+  - id: predictOutcome
+    name: 结果预测
+    module: pending
+    status: proposed
+    priority: medium
+
+    trigger:
+      - "决策前"
+      - "行动前"
+      - "风险评估时"
+
+    input:
+      - name: action
+        type: string
+        required: true
+      - name: context
+        type: object
+
+    output:
+      predicted_outcome: string
+      probability: number
+      risk_factors: array
+      alternatives: array
+      confidence: number
+
+    notes: "可基于历史 recordOutcome 数据训练"
+    alignment: "真善美 + 服务人类"
+    upgrade_notes: "输出透明、可解释，确保符合价值观和人类控制原则"
+
+  - id: empathyResponse
+    name: 共情反馈
+    module: pending
+    status: proposed
+    priority: high
+
+    trigger:
+      - "用户情绪强烈时"
+      - "用户表达挫折/沮丧时"
+      - "情感支持场景"
+
+    input:
+      emotion_analysis: object
+      response_type: enum
+
+    output:
+      guidance: string
+      do_list: array
+      dont_list: array
+      suggested_tone: string
+
+    notes: "指南层，不输出具体聊天内容，只提供响应原则"
+    alignment: "真善美 + 服务人类"
+    upgrade_notes: "多策略输出，情境灵活调整，符合伦理和安全约束"
+
+  - id: contextualReminder
+    name: 上下文提醒
+    module: pending
+    status: proposed
+    priority: medium
+
+    trigger:
+      - "检测到相关历史上下文时"
+      - "用户提到之前的话题时"
+
+    input:
+      current_topic: string
+      context_window: array
+
+    output:
+      relevant_memories: array
+      connection_summary: string
+      suggested_reference: string
+
+  - id: decisionExplainer
+    name: 决策解释
+    module: pending
+    status: proposed
+    priority: low
+
+    trigger:
+      - "makeDecision 后"
+      - "用户要求解释决策"
+
+    input:
+      decision: object
+      reasoning_chain: array
+
+    output:
+      explanation: string
+      confidence_factors: array
+      alternatives_comparison: object
+
+# ════════════════════════════════════════════════════════════════════════════════════
+# Skill 协同设计
+# ════════════════════════════════════════════════════════════════════════════════════
+
+skill_orchestration:
+
+  # 预定义协同模式
+  patterns:
+
+    - id: PATTERN-001
+      name: 心理-洞察-决策
+      description: "复杂决策场景的完整流程"
+
+      chain:
+        - skill: analyzePsychology
+          purpose: "理解用户心理状态"
+          condition: "always"
+        - skill: remember
+          purpose: "检索相关记忆"
+          condition: "if context relevant"
+        - skill: dreamNow
+          purpose: "整合洞察"
+          condition: "if complex"
+        - skill: reason
+          purpose: "分析选择"
+          condition: "always"
+        - skill: makeDecision
+          purpose: "做出推荐"
+          condition: "always"
+
+      trigger: "用户请求复杂决策"
+
+    - id: PATTERN-002
+      name: 任务-反思-修复
+      description: "任务失败时的自我修复"
+
+      chain:
+        - skill: recordOutcome
+          purpose: "记录失败"
+        - skill: heal
+          purpose: "触发恢复策略"
+        - skill: remember
+          purpose: "存储教训"
+          tier: learned
+
+      trigger: "任务执行失败"
+
+    - id: PATTERN-003
+      name: 感知-响应-进化
+      description: "情感交互场景"
+
+      chain:
+        - skill: analyzePsychology
+          purpose: "感知情绪"
+        - skill: empathyResponse
+          purpose: "生成响应指导"
+        - skill: recordOutcome
+          purpose: "记录交互"
+
+      trigger: "检测到强烈情绪"
+
+    - id: PATTERN-004
+      name: 安全-决策-执行
+      description: "敏感操作前的安全检查"
+
+      chain:
+        - skill: scanSecurity
+          purpose: "安全扫描"
+        - skill: predictOutcome
+          purpose: "预测结果"
+        - skill: makeDecision
+          purpose: "决定是否执行"
+
+      trigger: "敏感操作请求"
+
+  # 协同调用规则
+  coordination_rules:
+    - rule: "analyzePsychology 应在任何用户交互前调用"
+      reason: "理解用户意图是第一步"
+      optional: true
+
+    - rule: "scanSecurity 应在任何外部输入处理前调用"
+      reason: "安全是底线"
+      optional: false
+
+    - rule: "remember 应用于重要信息确定后调用"
+      reason: "避免存储错误信息"
+      optional: true
+
+    - rule: "recordOutcome 应在任务完成/失败后调用"
+      reason: "自我进化需要记录"
+      optional: true
+
+    - rule: "dreamNow 建议周期性调用"
+      reason: "保持记忆健康"
+      optional: true
+
+  # 调用优先级
+  priority_levels:
+    critical:
+      - scanSecurity
+    high:
+      - analyzePsychology
+      - remember
+    medium:
+      - reason
+      - makeDecision
+      - recordOutcome
+    low:
+      - dreamNow
+      - heal
+      - getIdentity
+
+# ════════════════════════════════════════════════════════════════════════════════════
+# 输入输出标准化
+# ════════════════════════════════════════════════════════════════════════════════════
+
+standard_io:
+
+  # 统一输入格式
+  input_schema:
+    type: object
+    required:
+      - skill_id
+      - timestamp
+      - payload
+    properties:
+      skill_id:
+        type: string
+        description: "调用的 Skill ID"
+        example: "analyzePsychology"
+      timestamp:
+        type: string
+        format: ISO8601
+        description: "调用时间戳"
+        example: "2026-05-20T12:00:00Z"
+      session_id:
+        type: string
+        description: "会话 ID"
+        example: "sess_abc123"
+      payload:
+        type: object
+        description: "Skill 特定输入数据"
+        example:
+          text: "用户输入文本"
+
+  # 统一输出格式
+  output_schema:
+    type: object
+    required:
+      - skill_id
+      - success
+      - data
+    properties:
+      skill_id:
+        type: string
+      success:
+        type: boolean
+      data:
+        type: object
+        description: "Skill 输出数据"
+      errors:
+        type: array
+        items:
+          type: object
+          properties:
+            code: string
+            message: string
+            field: string
+      metadata:
+        type: object
+        properties:
+          duration_ms: number
+          confidence: number
+          timestamp: string
+          version: string
+
+  # 错误代码
+  error_codes:
+    INVALID_INPUT:
+      code: "E001"
+      http_status: 400
+      message: "输入参数无效"
+    SKILL_NOT_FOUND:
+      code: "E002"
+      http_status: 404
+      message: "Skill 不存在"
+    EXECUTION_FAILED:
+      code: "E003"
+      http_status: 500
+      message: "Skill 执行失败"
+    TIMEOUT:
+      code: "E004"
+      http_status: 408
+      message: "执行超时"
+    UNAUTHORIZED:
+      code: "E005"
+      http_status: 401
+      message: "未授权"
+    RATE_LIMITED:
+      code: "E006"
+      http_status: 429
+      message: "请求过于频繁"
+
+# ════════════════════════════════════════════════════════════════════════════════════
+# 升级路线图
+# ════════════════════════════════════════════════════════════════════════════════════
+
+upgrade_roadmap:
+
+  phase_1:
+    title: "触发逻辑优化"
+    description: "优化 Skill 调用判断逻辑"
+    priority: high
+    target_version: "1.5.0"
+    items:
+      - id: UP-P1-001
+        title: "上下文感知触发"
+        description: "根据上下文、历史行为增强 Skill 调用判断"
+        status: proposed
+      - id: UP-P1-002
+        title: "情绪变化追踪"
+        description: "analyzePsychology 在多轮对话中判断情绪变化触发"
+        status: proposed
+      - id: UP-P1-003
+        title: "智能调用建议"
+        description: "增加 Skill 调用时机建议"
+        status: proposed
+
+  phase_2:
+    title: "新增 Skill 实现"
+    description: "实现建议新增的 Skill"
+    priority: medium
+    target_version: "1.6.0"
+    items:
+      - id: UP-P2-001
+        skill: summarizeThoughts
+        status: proposed
+      - id: UP-P2-002
+        skill: empathyResponse
+        status: proposed
+      - id: UP-P2-003
+        skill: predictOutcome
+        status: proposed
+
+  phase_3:
+    title: "Skill 协同增强"
+    description: "增强多 Skill 联动能力"
+    priority: medium
+    target_version: "1.7.0"
+    items:
+      - id: UP-P3-001
+        title: "标准输入输出"
+        description: "实现标准输入输出格式"
+        status: proposed
+      - id: UP-P3-002
+        title: "协调层"
+        description: "支持多 Skill 联动"
+        status: proposed
+      - id: UP-P3-003
+        title: "编排引擎"
+        description: "支持预定义协同模式执行"
+        status: proposed
+
+  phase_4:
+    title: "智能化增强"
+    description: "基于 AI 的自我优化"
+    priority: low
+    target_version: "1.8.0"
+    items:
+      - id: UP-P4-001
+        title: "自我优化"
+        description: "基于历史数据的自我优化"
+        status: proposed
+      - id: UP-P4-002
+        title: "失败模式识别"
+        description: "识别重复失败模式"
+        status: proposed
+      - id: UP-P4-003
+        title: "趋势分析"
+        description: "记忆趋势分析"
+        status: proposed
+
+# ════════════════════════════════════════════════════════════════════════════════════
+# 性能与监控
+# ════════════════════════════════════════════════════════════════════════════════════
+
+performance:
+
+  benchmarks:
+    analyzePsychology:
+      avg_ms: 5
+      p95_ms: 15
+      p99_ms: 50
+    reason:
+      avg_ms: 20
+      p95_ms: 100
+      p99_ms: 200
+    makeDecision:
+      avg_ms: 15
+      p95_ms: 50
+      p99_ms: 100
+    remember:
+      avg_ms: 10
+      p95_ms: 30
+      p99_ms: 50
+    scanSecurity:
+      avg_ms: 3
+      p95_ms: 10
+      p99_ms: 20
+
+  monitoring:
+    metrics:
+      - skill_invocations_total
+      - skill_duration_ms
+      - skill_errors_total
+      - memory_usage_bytes
+      - cache_hit_rate
+
+    alerts:
+      - condition: "error_rate > 0.05"
+        severity: warning
+      - condition: "p99_duration > 1000"
+        severity: warning
+      - condition: "memory_usage > 100MB"
+        severity: critical
+
+# ════════════════════════════════════════════════════════════════════════════════════
+# 测试规范
+# ════════════════════════════════════════════════════════════════════════════════════
+
+testing:
+
+  requirements:
+    coverage_minimum: 80
+    unit_tests: true
+    integration_tests: true
+    e2e_tests: true
+
+  test_categories:
+    - name: 功能测试
+      description: "验证 Skill 基本功能"
+      required: true
+    - name: 边界测试
+      description: "测试输入边界条件"
+      required: true
+    - name: 错误处理测试
+      description: "测试错误情况处理"
+      required: true
+    - name: 安全测试
+      description: "测试安全相关功能"
+      required: true
+    - name: 性能测试
+      description: "测试性能指标"
+      required: false
+
+  test_frameworks:
+    unit: jest
+    integration: jest
+    e2e: playwright
+
+# ════════════════════════════════════════════════════════════════════════════════════
+# 使用示例
+# ════════════════════════════════════════════════════════════════════════════════════
+
+examples:
+
+  # 示例 1: 复杂决策
+  example_001:
+    scenario: "用户请求复杂决策"
+    user_input: "我应该投资 A 方案还是 B 方案？"
+    expected_flow:
+      - skill: analyzePsychology
+        purpose: "理解用户意图和情绪"
+        expected_output:
+          intent: "decision"
+          emotion: "neutral"
+      - skill: remember
+        purpose: "检查相关记忆"
+        expected_output:
+          success: true
+      - skill: reason
+        purpose: "分析两种方案的利弊"
+        expected_output:
+          conclusion: "..."
+          chain: ["分析A", "分析B", "比较"]
+      - skill: makeDecision
+        purpose: "给出推荐"
+        expected_output:
+          decision: "A 或 B"
+          reasoning: ["理由1", "理由2"]
+      - skill: predictOutcome
+        purpose: "预测结果（未来）"
+        expected_output:
+          probability: 0.75
+    expected_response: "基于分析，我的建议是..."
+
+  # 示例 2: 情感支持
+  example_002:
+    scenario: "用户表达挫折"
+    user_input: "我已经调试了一整天，还是找不到 bug..."
+    expected_flow:
+      - skill: analyzePsychology
+        purpose: "检测到用户沮丧、挫败情绪"
+        expected_output:
+          emotion:
+            category: "negative"
+            intensity: "high"
+          crisis:
+            level: "low"
+      - skill: empathyResponse
+        purpose: "生成共情响应指导（未来）"
+        expected_output:
+          guidance: "先接住感受，再进入分析"
+      - skill: recordOutcome
+        purpose: "记录情绪状态"
+    expected_response: "我能感受到你的挫折..."
+
+  # 示例 3: 安全操作
+  example_003:
+    scenario: "处理用户代码"
+    user_input: "帮我检查这段代码有没有安全问题"
+    expected_flow:
+      - skill: scanSecurity
+        purpose: "扫描敏感信息"
+        expected_output:
+          - type: "api_key"
+            severity: "critical"
+      - skill: predictOutcome
+        purpose: "预测修复后的结果"
+      - skill: makeDecision
+        purpose: "决定修复方案"
+    expected_response: "发现 X 个安全问题..."
+
+# ════════════════════════════════════════════════════════════════════════════════════
+# 核心设计原则
+# ════════════════════════════════════════════════════════════════════════════════════
+
+design_principles:
+  - text: "Skill 是增强层，不是替代品"
+    reason: "告诉 AI 如何利用已有能力，而非实现所有功能"
+  - text: "静水深流。Still water runs deep。"
+    reason: "深层理解，表面平静
+  - text: "理解用户意图是第一步，不是全部"
+    reason: "意图理解导向正确的处理方式"
+  - text: "实际执行交给 Claude Code 本身"
+    reason: "Skill 只提供指导，不实现业务逻辑"
+  - text: "安全是底线"
+    reason: "scanSecurity 应在任何敏感操作前调用"
+  - text: "持续进化"
+    reason: "通过 recordOutcome 和 heal 不断改进"
+
+# ════════════════════════════════════════════════════════════════════════════════════
+# 附录：文件结构
+# ════════════════════════════════════════════════════════════════════════════════════
+
+file_structure:
+  root: "~/.claude/skills/mark-StillWater/"
+
+  core_modules:
+    - path: "src/core/heartflow.js"
+      description: "主引擎"
+      lines: ~850
+    - path: "src/core/memory.js"
+      description: "三层记忆系统"
+      lines: ~760
+    - path: "src/core/psychology.js"
+      description: "心理感知"
+    - path: "src/core/logic.js"
+      description: "逻辑推理"
+    - path: "src/core/decision.js"
+      description: "决策评估"
+    - path: "src/core/evolution.js"
+      description: "自我进化"
+    - path: "src/core/security.js"
+      description: "安全扫描"
+    - path: "src/core/identity.js"
+      description: "身份规则"
+    - path: "src/core/dream.js"
+      description: "记忆整合"
+
+  documentation:
+    - path: "SKILL.md"
+      description: "Skill 主文档"
+    - path: "README.md"
+      description: "项目说明"
+    - path: "SKILL BLUEPRINT.yaml"
+      description: "升级蓝图（本文档）"
+
+  data:
+    - path: "data/core.json"
+      description: "CORE 记忆持久化"
+    - path: "data/learned.json"
+      description: "LEARNED 记忆持久化"
+    - path: "data/ephemeral.json"
+      description: "EPHEMERAL 记忆持久化"
+
+  tests:
+    - path: "test.js"
+      description: "主测试文件"
+
+# END OF SKILL BLUEPRINT
