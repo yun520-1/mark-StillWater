@@ -1,7 +1,7 @@
 # ════════════════════════════════════════════════════════════════════════════════════
 #
 #  mark-StillWater Skill Blueprint
-#  版本: v1.4.3
+#  版本: v1.4.4
 #  描述: User-LLM Bridge Guidance - 用户与大模型桥梁的指导文档
 #  更新: 2026-05-20
 #
@@ -9,7 +9,7 @@
 
 metadata:
   name: mark-StillWater
-  version: "1.4.3"
+  version: "1.4.4"
   type: guidance  # skill type: guidance | library | hybrid
   license: MIT
   author: "mark <mark@stillwater.ai>"
@@ -19,6 +19,15 @@ metadata:
 
   # 版本历史
   changelog:
+    - version: "1.4.4"
+      date: "2026-05-20"
+      changes:
+        - "高级梦境、逻辑、决策能力"
+        - "新增 skillOrchestrator Skill"
+        - "多层次梦境分析能力"
+        - "可信度评分和优先级评分"
+        - "动态权重调整能力"
+        - "自适应能力增强"
     - version: "1.4.3"
       date: "2026-05-20"
       changes:
@@ -947,6 +956,20 @@ skills:
         priority: medium
         status: proposed
 
+      - id: UP-DREAM-010
+        title: "多层次梦境分析"
+        description: "短期、长期记忆和情绪整合的多层次梦境分析"
+        priority: high
+        status: proposed
+        dependencies: ["analyzePsychology"]
+
+      - id: UP-DREAM-011
+        title: "可信度和优先级评分"
+        description: "提供预测可信度和优先级评分"
+        priority: high
+        status: proposed
+        alignment: "真善美 + 服务人类"
+
   # ════════════════════════════════════════════════════════════════════════════════
   # 7. heal - 错误恢复
   # ════════════════════════════════════════════════════════════════════════════════
@@ -1356,7 +1379,7 @@ proposed_skills:
 
     notes: "可基于历史 recordOutcome 数据训练"
     alignment: "真善美 + 服务人类"
-    upgrade_notes: "输出透明、可解释，确保符合价值观和人类控制原则"
+    upgrade_notes: "输出透明、可解释，确保符合价值观和人类控制原则，提供可信度评分"
     dependencies: ["makeDecision", "dreamNow"]
 
   - id: empathyResponse
@@ -1382,7 +1405,7 @@ proposed_skills:
 
     notes: "指南层，不输出具体聊天内容，只提供响应原则"
     alignment: "真善美 + 服务人类"
-    upgrade_notes: "多策略输出，情境灵活调整，符合伦理和安全约束"
+    upgrade_notes: "多策略输出，情境灵活调整，符合伦理和安全约束，提供优先级评分和反馈回路"
     dependencies: []
 
   - id: contextualReminder
@@ -1422,6 +1445,37 @@ proposed_skills:
       explanation: string
       confidence_factors: array
       alternatives_comparison: object
+
+  - id: skillOrchestrator
+    name: Skill 编排器
+    module: pending
+    status: proposed
+    priority: high
+
+    trigger:
+      - "任务启动或上下文变化时"
+
+    input:
+      - name: current_task_type
+        type: string
+        required: true
+        description: "当前任务类型"
+      - name: context_info
+        type: object
+        description: "上下文信息"
+      - name: skill_outputs
+        type: object
+        description: "Skill 输出汇总"
+
+    output:
+      dynamic_skill_sequence: array
+      strategy: object
+      audit_log: array
+
+    notes: "动态优化 Skill 调用顺序，根据任务优先级和价值观评分选择最优 Skill"
+    alignment: "真善美 + 服务人类 + 持续升级"
+    upgrade_notes: "动态优化 Skill 调用顺序，根据任务优先级和价值观评分选择最优 Skill，协同 dreamNow、reason、makeDecision 输出"
+    dependencies: ["dreamNow", "reason", "makeDecision"]
 
 # ════════════════════════════════════════════════════════════════════════════════════
 # Skill 协同设计
@@ -1497,6 +1551,29 @@ skill_orchestration:
           purpose: "决定是否执行"
 
       trigger: "敏感操作请求"
+
+    - id: PATTERN-005
+      name: 编排-执行-反馈
+      description: "skillOrchestrator 驱动的动态编排流程"
+
+      chain:
+        - skill: skillOrchestrator
+          purpose: "动态编排 Skill 顺序"
+          condition: "always"
+        - skill: dreamNow
+          purpose: "整合洞察"
+          condition: "if complex"
+        - skill: reason
+          purpose: "推理分析"
+          condition: "if reasoning needed"
+        - skill: makeDecision
+          purpose: "决策评估"
+          condition: "if decision needed"
+        - skill: recordOutcome
+          purpose: "记录反馈"
+          condition: "after completion"
+
+      trigger: "复杂任务或多 Skill 协同场景"
 
   # 协同调用规则
   coordination_rules:
