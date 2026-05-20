@@ -198,6 +198,13 @@ class HeartFlowMemory {
     // Encryption enabled for LEARNED tier (requires HEARTFLOW_ENCRYPTION_KEY env var)
     this._encryptionEnabled = !!ENCRYPTION_CONFIG.getKey();
 
+    // P0 Security: Warn if encryption is not enabled
+    if (!this._encryptionEnabled) {
+      console.warn(`${LOGGER_PREFIX} WARNING: LEARNED memory encryption is DISABLED.`);
+      console.warn(`${LOGGER_PREFIX} WARNING: Set HEARTFLOW_ENCRYPTION_KEY environment variable to enable encryption.`);
+      console.warn(`${LOGGER_PREFIX} WARNING: Sensitive data may be stored in plaintext.`);
+    }
+
     // In-memory stores
     this._coreStore = {};
     this._learnedStore = {};

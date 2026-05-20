@@ -1,7 +1,7 @@
 /**
  * mark-StillWater v1.4.1 — AI Psychological & Philosophical Enhancement Layer
  *
- * A thin enhancement layer that helps AI think more like a human peer.
+ * A thin enhancement layer that helps AI understand users better.
  * Not a rule engine. Not a replacement for AI thinking.
  *
  * Features (核心增强):
@@ -754,9 +754,32 @@ function createHeartFlow(config = {}) {
       return dream.dreamNow();
     },
 
+    // v1.5.4: Dream with stages (Light → Deep → REM)
+    dreamWithStages() {
+      this._ensureStarted();
+      return dream.dreamWithStages();
+    },
+
+    // v1.5.4: Cached dream for performance
+    dreamCached(options = {}) {
+      this._ensureStarted();
+      return dream.dreamCached(options);
+    },
+
+    // v1.5.4: Async DAG-driven dream
+    async dreamAsync(options = {}) {
+      this._ensureStarted();
+      return await dream.dreamAsync(options);
+    },
+
     getLastDream() {
       this._ensureStarted();
       return dream.getLastDream();
+    },
+
+    getDreamStats() {
+      this._ensureStarted();
+      return dream.getDreamStats();
     },
 
     // ─── MindSpace ────────────────────────────────────────
@@ -782,10 +805,26 @@ function createHeartFlow(config = {}) {
 
     // ─── PsychBridge ─────────────────────────────────────
 
+    /**
+     * P2 Security: Sanitize user input to prevent log injection.
+     */
+    _sanitizeForStorage(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/<[^>]*>/g, '')  // Remove HTML tags
+        .replace(/[\x00-\x1F\x7F]/g, '')  // Remove control characters
+        .replace(/javascript:/gi, '')  // Remove javascript: protocol
+        .replace(/on\w+=/gi, '')  // Remove event handlers
+        .substring(0, 100);
+    },
+
     _psychBridge(input, result) {
       const { emotion, intent } = result;
 
       if (emotion?.intensity !== 'high') return;
+
+      // P2 Security: Sanitize input
+      const sanitizedInput = this._sanitizeForStorage(input);
 
       const stopwords = new Set([
         'the', 'a', 'an', 'is', 'are', 'was', 'were', 'i', 'you', 'he', 'she',
@@ -794,7 +833,7 @@ function createHeartFlow(config = {}) {
         '我', '你', '他', '她', '它', '我们', '你们', '他们', '这个', '那个',
       ]);
 
-      const words = input.split(/\s+/)
+      const words = sanitizedInput.split(/\s+/)
         .map(w => w.replace(/[^a-zA-Z一-鿿]/g, '').toLowerCase())
         .filter(w => w.length > 2 && !stopwords.has(w))
         .slice(0, 3);
@@ -811,7 +850,7 @@ function createHeartFlow(config = {}) {
           emotion: emotionTag,
           intent: intent?.category,
           ts: Date.now(),
-          preview: input.substring(0, 100),
+          preview: sanitizedInput.substring(0, 100),
         }),
         TTL_4_HOURS
       );

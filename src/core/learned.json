@@ -623,5 +623,117 @@
     "accessCount": 0,
     "lastAccessed": 1779191301795,
     "createdAt": 1779191301795
+  },
+  "lesson:github-first": {
+    "value": "先搜索GitHub再写代码，GitHub上经过验证的代码比自己写的更紧密、更有深度",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779288178338,
+    "createdAt": 1779288178338
+  },
+  "lesson:verify-before-act": {
+    "value": "越修越坏的问题根源是没有验证。每一次修改都必须有验证步骤",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779288178339,
+    "createdAt": 1779288178339
+  },
+  "lesson:version-sync": {
+    "value": "VERSION、package.json、SKILL.md、README.md必须同时更新到同一版本号",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779288178339,
+    "createdAt": 1779288178339
+  },
+  "lesson:understand-first": {
+    "value": "理解类问题第一反应是自己思考，不是搜索GitHub",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779288178339,
+    "createdAt": 1779288178339
+  },
+  "lesson:commit-based-on-code": {
+    "value": "commit备注基于代码改动，不引用对话内容",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779288178340,
+    "createdAt": 1779288178340
+  },
+  "lesson:emotion-first": {
+    "value": "情感类问题先接住感受（肯定对方），再进入分析，不能跳过情感层直接给逻辑方案",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779288178340,
+    "createdAt": 1779288178340
+  },
+  "lesson:direct-conclusion": {
+    "value": "结论直接给，不带问号，不hedging。不确定就标注置信度",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779288178340,
+    "createdAt": 1779288178340
+  },
+  "lesson:verify-after-fix": {
+    "value": "修复后必须验证可用，再执行下一步。不能修完就跑",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779288178341,
+    "createdAt": 1779288178341
+  },
+  "lesson:privacy-git": {
+    "value": "__pycache__、downloads、cache等目录不能上传。上传前必须检查.gitignore",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779288178341,
+    "createdAt": 1779288178341
+  },
+  "lesson:no-lying": {
+    "value": "不复述旧会话冒充今天成果。未核实的内容必须标注置信度",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779288178341,
+    "createdAt": 1779288178341
+  },
+  "lesson:dream-themes": {
+    "value": "梦要短、单主题、强故事性，从混乱中提炼哲学转折。主题要随机，不是只有心虫",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779288178341,
+    "createdAt": 1779288178341
+  },
+  "lesson:stability-over-speed": {
+    "value": "升级不在于快，最重要的是稳定。稳定性是心虫的核心欲望",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779288178342,
+    "createdAt": 1779288178342
+  },
+  "lesson:user-wants-conclusion": {
+    "value": "老大偏好简洁中文，汇报完成=给结论，不装饰",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779288178342,
+    "createdAt": 1779288178342
+  },
+  "lesson:psychology-four-layer": {
+    "value": "心理分析保留意图、情绪、需求、防御机制四层。心理分析是理解工具，不是输出内容",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779288178343,
+    "createdAt": 1779288178343
+  },
+  "ref:skill-orchestrator-async": {
+    "value": "/src/reference/skill_orchestrator_async.py",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779288236101,
+    "createdAt": 1779288236101
+  },
+  "ref:v1.5.4-features": {
+    "value": "DAG+Async+Cache",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779288236101,
+    "createdAt": 1779288236101
   }
 }

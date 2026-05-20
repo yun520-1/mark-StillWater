@@ -10,7 +10,25 @@
  *
  * v1.0.1: Added Lesson Bank with bootstrap lessons from mark-improving-agent,
  *         confidence tracking, and pattern-based lesson checking.
+ * v1.0.2: P1 security: Input validation and length limits in recordOutcome.
  */
+
+// P1 Security: Input validation limits
+const MAX_INPUT_LENGTH = 2000;  // Max total input length
+const MAX_EVIDENCE_LENGTH = 500;  // Max evidence string length
+const MAX_TASK_LENGTH = 200;  // Max task string length
+
+/**
+ * Sanitize input string - remove control characters and limit length
+ */
+function sanitizeInput(str, maxLen) {
+  if (!str) return '';
+  const sanitized = String(str)
+    .replace(/[\x00-\x1F\x7F]/g, '')  // Remove control characters
+    .replace(/<[^>]*>/g, '')  // Remove HTML tags
+    .substring(0, maxLen);
+  return sanitized;
+}
 
 // Bootstrap lessons from mark-improving-agent's 25+ real lessons
 const BOOTSTRAP_LESSONS = [
@@ -191,9 +209,15 @@ class HeartFlowEvolution {
 
   /**
    * Record an outcome and generate self-reflection if needed.
+   * P1 Security: All inputs are sanitized and length-limited.
    */
   recordOutcome({ task, outcome, evidence, expected }) {
-    const reflection = this._reflect(task, outcome, evidence, expected);
+    // P1 Security: Sanitize inputs
+    const safeTask = sanitizeInput(task, MAX_TASK_LENGTH);
+    const safeEvidence = sanitizeInput(evidence, MAX_EVIDENCE_LENGTH);
+    const safeExpected = sanitizeInput(expected, MAX_EVIDENCE_LENGTH);
+
+    const reflection = this._reflect(safeTask, outcome, safeEvidence, safeExpected);
 
     // Update stats
     this._stats.total++;

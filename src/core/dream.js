@@ -1,21 +1,33 @@
 /**
- * HeartFlow Dream System — Memory consolidation during "sleep"
+ * HeartFlow Dream System v1.5.4 — Memory consolidation during "sleep"
  *
  * Like biological sleep, the dream engine:
  *   1. Consolidates frequently-accessed EPHEMERAL → LEARNED
  *   2. Prunes forgotten or irrelevant memories (7+ days unused)
  *   3. Synthesizes insight from recent experiences
- *   4. Detects cross-domain connections (NEW v1.2.8)
- *   5. Identifies contradictions in stored claims (NEW v1.2.8)
+ *   4. Detects cross-domain connections
+ *   5. Identifies contradictions in stored claims
+ *
+ * v1.5.4 Upgrades:
+ *   - L1~L6 层级评分系统
+ *   - DAG 并行与异步执行
+ *   - 智能缓存管理
+ *   - 传承价值评分
+ *   - 性能成本评分
  *
  * Based on: memory consolidation theory, sleep cycle research.
- * Upgraded with: HeartFlow connections/contradictions detection
  */
 
 class HeartFlowDream {
   constructor(memory) {
     this.memory = memory;
     this.lastDream = null;
+    // v1.5.4: 缓存管理 (LRU)
+    this.cache = new Map();
+    this.maxCacheSize = 100;
+    // v1.5.4: 性能评分
+    this.performanceScore = 1.0;
+    this.costScore = 1.0;
   }
 
   /**
@@ -57,9 +69,200 @@ class HeartFlowDream {
     return this.dream({ consolidate: true, prune: false, synthesize: false });
   }
 
+  // ═══════════════════════════════════════════════════════════════════════
+  // v1.5.4: L1~L6 层级评分系统
+  // ═══════════════════════════════════════════════════════════════════════
+
+  /**
+   * 计算梦境输出的 L1~L6 层级评分
+   * L1 觉察: 感受、感觉、现在
+   * L2 自省: 我为什么、反思、思考
+   * L3 无我: 我们、整体、连接、一体
+   * L4 彼岸: 超越、本质、空、道
+   * L5 般若: 智慧、理解、真相、觉悟
+   * L6 圣人: 帮助、关怀、爱、慈悲
+   */
+  calculateL1L6Score(insight, themes = []) {
+    const levels = { L1: 0, L2: 0, L3: 0, L4: 0, L5: 0, L6: 0 };
+    const text = (insight + ' ' + themes.join(' ')).toLowerCase();
+
+    // L1 觉察 keywords
+    if (/感受|感觉|现在|体验|当下/.test(text)) levels.L1 += 0.2;
+    // L2 自省 keywords
+    if (/我为什么|反思|思考|为什么|原因/.test(text)) levels.L2 += 0.2;
+    // L3 无我 keywords
+    if (/我们|整体|连接|一体|共同|大家/.test(text)) levels.L3 += 0.2;
+    // L4 彼岸 keywords
+    if (/超越|本质|空|道|真相|真理/.test(text)) levels.L4 += 0.2;
+    // L5 般若 keywords
+    if (/智慧|理解|觉悟|洞察|领悟/.test(text)) levels.L5 += 0.2;
+    // L6 圣人 keywords
+    if (/帮助|关怀|爱|慈悲|济世|服务/.test(text)) levels.L6 += 0.2;
+
+    const total = Object.values(levels).reduce((a, b) => a + b, 0);
+    return { levels, total, maxPossible: 1.2 };
+  }
+
+  /**
+   * 计算传承价值评分
+   * 基于记忆的持久性和重要性
+   */
+  calculateInheritanceScore(memories) {
+    if (!memories || memories.length === 0) return 0;
+
+    let score = 0;
+    for (const m of memories) {
+      // CORE 层记忆最高传承价值
+      if (m.tier === 'core' || (m.tags && m.tags.includes('core'))) {
+        score += 1.0;
+      } else if (m.tier === 'learned') {
+        score += 0.5;
+      } else {
+        score += 0.1;
+      }
+    }
+    return Math.min(score / memories.length, 1.0);
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // v1.5.4: 缓存管理 (LRU)
+  // ═══════════════════════════════════════════════════════════════════════
+
+  _getCache(key) {
+    if (this.cache.has(key)) {
+      const entry = this.cache.get(key);
+      // LRU: 移动到最新位置
+      this.cache.delete(key);
+      this.cache.set(key, entry);
+      return entry.value;
+    }
+    return null;
+  }
+
+  _setCache(key, value) {
+    if (this.cache.size >= this.maxCacheSize) {
+      // 删除最老的条目
+      const firstKey = this.cache.keys().next().value;
+      this.cache.delete(firstKey);
+    }
+    this.cache.set(key, { value, timestamp: Date.now() });
+  }
+
+  /**
+   * v1.5.4: 带缓存的梦境执行
+   */
+  dreamCached(options = {}) {
+    const cacheKey = JSON.stringify(options);
+    const cached = this._getCache(cacheKey);
+    if (cached) {
+      return { ...cached, fromCache: true };
+    }
+
+    const startTime = Date.now();
+    const result = this.dream(options);
+    const duration = Date.now() - startTime;
+
+    // 更新性能评分: 1 / duration
+    this.performanceScore = 1 / Math.max(duration, 1);
+    this.costScore = duration / 1000; // 转换为秒
+
+    result.performanceScore = this.performanceScore;
+    result.costScore = this.costScore;
+
+    this._setCache(cacheKey, result);
+    return { ...result, fromCache: false };
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // v1.5.4: DAG 并行与异步执行
+  // ═══════════════════════════════════════════════════════════════════════
+
+  /**
+   * v1.5.4: DAG 驱动的梦境阶段执行
+   * 并行执行独立的梦境阶段，提升性能
+   */
+  async dreamAsync(options = {}) {
+    const startTime = Date.now();
+
+    // DAG 定义: 哪些阶段可以并行
+    const dag = {
+      light: { deps: [], fn: () => this._dreamLight() },
+      connections: { deps: [], fn: () => this._findConnections() },
+      prune: { deps: [], fn: () => this._prune() },
+      deep: { deps: ['light'], fn: () => this._dreamDeep() },
+      synthesize: { deps: ['light'], fn: () => this._synthesize() },
+      contradictions: { deps: ['connections'], fn: () => this._findContradictions() },
+      rem: { deps: ['deep', 'synthesize', 'connections', 'contradictions'], fn: () => this._dreamREM() },
+      consolidation: { deps: [], fn: () => this.memory.consolidate() }
+    };
+
+    // 执行 DAG (拓扑排序 + 并行)
+    const results = {};
+    const executed = new Set();
+
+    const executeAsync = async (name) => {
+      if (executed.has(name)) return results[name];
+      const node = dag[name];
+      // 等待依赖完成
+      await Promise.all(node.deps.map(dep => executeAsync(dep)));
+      if (!executed.has(name)) {
+        results[name] = node.fn();
+        executed.add(name);
+      }
+      return results[name];
+    };
+
+    // 并行执行所有入口节点
+    await Promise.all([
+      executeAsync('light'),
+      executeAsync('connections'),
+      executeAsync('prune'),
+      executeAsync('consolidation')
+    ]);
+
+    // 执行依赖链
+    await executeAsync('deep');
+    await executeAsync('synthesize');
+    await executeAsync('contradictions');
+    await executeAsync('rem');
+
+    const duration_ms = Date.now() - startTime;
+
+    // 组装结果
+    const finalResult = {
+      dream_complete: true,
+      duration_ms,
+      // 阶段结果
+      light: results.light,
+      deep: results.deep,
+      rem: results.rem,
+      consolidation: results.consolidation,
+      pruning: results.prune,
+      // 连接和矛盾
+      connections: results.connections,
+      contradictions: results.contradictions,
+      synthesis: results.synthesize,
+      // v1.5.4: L1~L6 评分
+      l1l6_score: this.calculateL1L6Score(
+        results.synthesize?.insight || '',
+        results.synthesize?.themes || []
+      ),
+      // v1.5.4: 传承价值评分
+      inheritance_score: this.calculateInheritanceScore(this.memory.listLearned())
+    };
+
+    // 缓存结果
+    const cacheKey = JSON.stringify({ ...options, type: 'async' });
+    this._setCache(cacheKey, finalResult);
+
+    this.lastDream = finalResult;
+    return finalResult;
+  }
+
   /**
    * Dream with 3 stages: Light → Deep → REM
    * Inspired by hermes-dream sleep architecture.
+   * v1.5.4: 增加 L1~L6 评分和传承价值
    */
   dreamWithStages() {
     const results = {};
@@ -80,6 +283,15 @@ class HeartFlowDream {
     results.synthesis = this._synthesize();
     results.connections = this._findConnections();
     results.contradictions = this._findContradictions();
+
+    // v1.5.4: L1~L6 层级评分
+    results.l1l6_score = this.calculateL1L6Score(
+      results.synthesis.insight || '',
+      results.synthesis.themes || []
+    );
+
+    // v1.5.4: 传承价值评分
+    results.inheritance_score = this.calculateInheritanceScore(this.memory.listLearned());
 
     results.duration_ms = Date.now() - startTime;
     results.dream_complete = true;
@@ -402,6 +614,7 @@ class HeartFlowDream {
 
   /**
    * Get dream statistics.
+   * v1.5.4: 增加 L1~L6 评分和性能指标
    */
   getDreamStats() {
     if (!this.lastDream) {
@@ -411,7 +624,16 @@ class HeartFlowDream {
       connectionsFound: this.lastDream.connections?.length || 0,
       contradictionsFound: this.lastDream.contradictions?.length || 0,
       duration_ms: this.lastDream.duration_ms,
-      dream_complete: this.lastDream.dream_complete
+      dream_complete: this.lastDream.dream_complete,
+      // v1.5.4: L1~L6 评分
+      l1l6_score: this.lastDream.l1l6_score || null,
+      // v1.5.4: 传承价值评分
+      inheritance_score: this.lastDream.inheritance_score || 0,
+      // v1.5.4: 性能评分
+      performance_score: this.performanceScore,
+      cost_score: this.costScore,
+      // v1.5.4: 缓存状态
+      cache_size: this.cache.size
     };
   }
 }
