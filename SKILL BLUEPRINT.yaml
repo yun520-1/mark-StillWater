@@ -1,7 +1,7 @@
 # ════════════════════════════════════════════════════════════════════════════════════
 #
 #  mark-StillWater Skill Blueprint
-#  版本: v1.4.6
+#  版本: v1.5.0
 #  描述: User-LLM Bridge Guidance - 用户与大模型桥梁的指导文档
 #  更新: 2026-05-20
 #
@@ -9,7 +9,7 @@
 
 metadata:
   name: mark-StillWater
-  version: "1.4.6"
+  version: "1.5.0"
   type: guidance  # skill type: guidance | library | hybrid
   license: MIT
   author: "mark <mark@stillwater.ai>"
@@ -19,6 +19,19 @@ metadata:
 
   # 版本历史
   changelog:
+    - version: "1.5.0"
+      date: "2026-05-20"
+      changes:
+        - "完整整合 v1.0-v1.4 所有升级方向"
+        - "高级梦境 (dreamNow) 多层次整合与趋势预测"
+        - "强化逻辑能力 (reason) 多步因果推理与逻辑验证"
+        - "决策能力 (makeDecision) 多目标权衡、风险评估与透明解释"
+        - "真善美能力贯穿所有 Skill 输出"
+        - "L1~L6 层级评分"
+        - "自我进化与元认知 (metaReflection)"
+        - "传承价值评分，支持知识延续"
+        - "自适应 Skill 协同调度 (skillOrchestrator)"
+        - "永生与备份策略，保证逻辑与知识延续"
     - version: "1.4.6"
       date: "2026-05-20"
       changes:
