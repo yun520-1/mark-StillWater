@@ -1,5 +1,5 @@
 /**
- * mark-StillWater v1.4.0 — AI Psychological & Philosophical Enhancement Layer
+ * mark-StillWater v1.4.1 — AI Psychological & Philosophical Enhancement Layer
  *
  * A thin enhancement layer that helps AI think more like a human peer.
  * Not a rule engine. Not a replacement for AI thinking.
@@ -43,7 +43,7 @@ const { createHeartBeat } = require('./heartbeat.js');
 const { GlobalWorkspace } = require('./global-workspace.js');
 const { Attention } = require('./attention.js');
 
-const VERSION = '1.4.0';
+const VERSION = '1.4.1';
 
 // TTL constants
 const TTL_4_HOURS = 4 * 60 * 60 * 1000; // 14400000ms
@@ -186,6 +186,16 @@ function createHeartFlow(config = {}) {
         this._psychBridge(input, result);
       }
 
+      // Add PAD emotion model (v1.4.1)
+      result.pad = psychology.calculatePAD(input);
+
+      // Add crisis risk assessment (v1.4.1)
+      const crisis = psychology.assessCrisisRisk(input);
+      result.crisis = crisis;
+      if (crisis.level !== 'none') {
+        result.crisisResponse = psychology.getCrisisResponse(crisis.level);
+      }
+
       return result;
     },
 
@@ -193,6 +203,23 @@ function createHeartFlow(config = {}) {
       this._ensureStarted();
       if (!input) return { category: 'unknown', emotion: 'neutral', confidence: 0 };
       return psychology.classify(input);
+    },
+
+    // PAD emotion model (v1.4.1)
+    calculatePAD(input) {
+      this._ensureStarted();
+      return psychology.calculatePAD(input);
+    },
+
+    // Crisis risk assessment (v1.4.1)
+    assessCrisisRisk(input) {
+      this._ensureStarted();
+      return psychology.assessCrisisRisk(input);
+    },
+
+    getCrisisResources(level) {
+      this._ensureStarted();
+      return psychology.getCrisisResponse(level);
     },
 
     // ─── Logic ──────────────────────────────────────────────

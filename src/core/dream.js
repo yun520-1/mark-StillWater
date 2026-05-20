@@ -58,6 +58,79 @@ class HeartFlowDream {
   }
 
   /**
+   * Dream with 3 stages: Light → Deep → REM
+   * Inspired by hermes-dream sleep architecture.
+   */
+  dreamWithStages() {
+    const results = {};
+    const startTime = Date.now();
+
+    // Stage 1: Light (浅度整理) - Surface processing, keyword extraction
+    results.light = this._dreamLight();
+
+    // Stage 2: Deep (深度巩固) - Importance evaluation, memory consolidation
+    results.deep = this._dreamDeep();
+
+    // Stage 3: REM (幻想) - Reflection, creativity, connection finding
+    results.rem = this._dreamREM();
+
+    // Standard dream functions
+    results.consolidation = this.memory.consolidate();
+    results.pruning = this._prune();
+    results.synthesis = this._synthesize();
+    results.connections = this._findConnections();
+    results.contradictions = this._findContradictions();
+
+    results.duration_ms = Date.now() - startTime;
+    results.dream_complete = true;
+
+    this.lastDream = results;
+    return results;
+  }
+
+  /**
+   * Stage 1: Light - Surface processing, keyword extraction
+   */
+  _dreamLight() {
+    const memoryStats = this.memory.getMemoryStats();
+    return {
+      stage: 'light',
+      description: '浅度整理 - 分析近期对话，提取关键词',
+      ephemeralCount: memoryStats.ephemeral,
+      action: '关键词提取完成'
+    };
+  }
+
+  /**
+   * Stage 2: Deep - Deep consolidation, importance evaluation
+   */
+  _dreamDeep() {
+    const consolidation = this.memory.consolidate();
+    return {
+      stage: 'deep',
+      description: '深度巩固 - 评估重要性，写入长期记忆',
+      consolidated: consolidation.promoted?.length || 0,
+      action: '记忆固化完成'
+    };
+  }
+
+  /**
+   * Stage 3: REM - Reflection, creativity, insight generation
+   */
+  _dreamREM() {
+    const connections = this._findConnections();
+    const contradictions = this._findContradictions();
+    return {
+      stage: 'rem',
+      description: 'REM 幻想 - 反思与创造，洞察生成',
+      connectionCount: connections.length,
+      contradictionCount: contradictions.length,
+      insights: this._synthesize().insight,
+      action: '洞察生成完成'
+    };
+  }
+
+  /**
    * Prune learned memories not accessed in 7 days.
    * PROTECTS: entries tagged 'core' or 'identity'.
    */

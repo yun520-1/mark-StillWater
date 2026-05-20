@@ -296,6 +296,124 @@ class HeartFlowPsychology {
 
     return acknowledgments[detected[0]] || `我听到了，你感到${detected[0]}。`;
   }
+
+  // ─── PAD Emotion Model (from mark-heartflow-skill) ─────────────
+
+  /**
+   * Calculate PAD emotion from text using 3 dimensions:
+   * Pleasure (-10 to +10), Arousal (-10 to +10), Dominance (-10 to +10)
+   * Based on Mehrabian's PAD model.
+   */
+  calculatePAD(input) {
+    const lower = input.toLowerCase();
+
+    // Pleasure indicators
+    let pleasure = 0;
+    const pleasurePos = ['happy', 'great', 'good', 'love', '开心', '高兴', '棒', '成功'];
+    const pleasureNeg = ['sad', 'angry', 'bad', 'hate', '愤怒', '伤心', '痛苦', '失败'];
+    for (const kw of pleasurePos) { if (lower.includes(kw)) pleasure += 2; }
+    for (const kw of pleasureNeg) { if (lower.includes(kw)) pleasure -= 2; }
+
+    // Arousal indicators
+    let arousal = 0;
+    const arousalHigh = ['excited', 'anxious', '紧张', '兴奋', '激动', '焦虑'];
+    const arousalLow = ['calm', 'tired', 'bored', '平静', '累', '无聊'];
+    for (const kw of arousalHigh) { if (lower.includes(kw)) arousal += 2; }
+    for (const kw of arousalLow) { if (lower.includes(kw)) arousal -= 2; }
+
+    // Dominance indicators
+    let dominance = 0;
+    const dominanceHigh = ['decide', 'will', 'must', '决定', '必须', '一定'];
+    const dominanceLow = ['maybe', 'perhaps', 'uncertain', '也许', '可能', '不确定'];
+    for (const kw of dominanceHigh) { if (lower.includes(kw)) dominance += 2; }
+    for (const kw of dominanceLow) { if (lower.includes(kw)) dominance -= 2; }
+
+    // Clamp to [-10, 10]
+    pleasure = Math.max(-10, Math.min(10, pleasure));
+    arousal = Math.max(-10, Math.min(10, arousal));
+    dominance = Math.max(-10, Math.min(10, dominance));
+
+    return { pleasure, arousal, dominance };
+  }
+
+  // ─── Crisis Intervention (from mark-heartflow-skill, mental-health-analyzer) ────
+
+  // Crisis keywords in order of severity
+  static CRISIS_KEYWORDS = {
+    critical: ['我不想活了', '我不想活了', '活着没意思', '活着没意义', 'suicide', 'kill myself', '自残', '自杀'],
+    high: ['好累', '活着好累', '不想活了', '太痛苦了', '绝望', '崩溃', 'hopeless'],
+    medium: ['好沮丧', '好焦虑', '好压力', '好累', '难过', 'depressed', '焦虑', '压力'],
+    low: ['有点累', '不太高兴', '无聊', '失落'],
+  };
+
+  /**
+   * Assess crisis risk level from user input.
+   * Returns: { level: 'none'|'low'|'medium'|'high'|'critical', score: 0-20, warnings: string[] }
+   * Based on mental-health-analyzer scoring system (0-20 scale).
+   */
+  assessCrisisRisk(input) {
+    const lower = input.toLowerCase();
+    let score = 0;
+    const warnings = [];
+
+    // Check each severity level
+    for (const [level, keywords] of Object.entries(HeartFlowPsychology.CRISIS_KEYWORDS)) {
+      for (const kw of keywords) {
+        if (lower.includes(kw)) {
+          switch (level) {
+            case 'critical': score += 10; warnings.push('危机关键词: ' + kw); break;
+            case 'high': score += 5; warnings.push('高风险关键词: ' + kw); break;
+            case 'medium': score += 3; break;
+            case 'low': score += 1; break;
+          }
+        }
+      }
+    }
+
+    // Determine level from score
+    let level = 'none';
+    if (score >= 10) level = 'critical';
+    else if (score >= 7) level = 'high';
+    else if (score >= 4) level = 'medium';
+    else if (score >= 1) level = 'low';
+
+    return { level, score: Math.min(20, score), warnings };
+  }
+
+  /**
+   * Get crisis intervention response based on level.
+   * Returns appropriate message and resources.
+   */
+  getCrisisResponse(level) {
+    const responses = {
+      none: null,
+      low: {
+        message: '我听到了，你的感受是真实的。每个人都会有累的时候。',
+        resources: []
+      },
+      medium: {
+        message: '我听到了你的感受，这些情绪是很真实的。如果持续低落，寻求帮助是勇敢的表现。',
+        resources: ['全国心理援助热线: 400-161-9995 (24小时)']
+      },
+      high: {
+        message: '我听到你的痛苦了，你并不孤单。寻求专业帮助是重要的一步。',
+        resources: [
+          '全国心理援助热线: 400-161-9995 (24小时)',
+          '北京心理危机干预中心: 010-82951332 (24小时)'
+        ]
+      },
+      critical: {
+        message: '⚠️ 我听到你的痛苦了，我非常关心你的安全。',
+        resources: [
+          '紧急求助: 拨打 110 或前往最近医院急诊',
+          '全国心理援助热线: 400-161-9995 (24小时)',
+          '北京心理危机干预中心: 010-82951332 (24小时)'
+        ]
+      }
+    };
+
+    return responses[level] || null;
+  }
 }
 
 module.exports = { HeartFlowPsychology };
