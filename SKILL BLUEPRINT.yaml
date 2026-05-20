@@ -878,6 +878,21 @@ skills:
         status: proposed
         alignment: "传承 + 永生目标"
 
+      - id: UP-MEM-010
+        title: "FadeMem 遗忘机制"
+        description: "参考 FadeMem 论文，实现 Ebbinghaus 遗忘曲线启发的自适应衰减机制"
+        priority: high
+        status: proposed
+        references: ["FadeMem: Biologically Inspired Forgetting"]
+        alignment: "真善美 + 最小化错误"
+
+      - id: UP-MEM-011
+        title: "双重记忆层级优化"
+        description: "参考 FadeMem LML+SML 双层架构，优化 CORE/LEARNED/EPHEMERAL 三层"
+        priority: medium
+        status: proposed
+        references: ["FadeMem architecture"]
+
   # ════════════════════════════════════════════════════════════════════════════════
   # 5. recordOutcome - 自我进化
   # ════════════════════════════════════════════════════════════════════════════════
@@ -999,6 +1014,21 @@ skills:
         description: "DAG 调度优化修复顺序"
         priority: high
         status: proposed
+
+      - id: UP-EVOL-007
+        title: "FORGE 自我进化机制"
+        description: "参考 FORGE 论文，实现 Failure-Triggered Reflexion Loop，失败触发反思"
+        priority: high
+        status: proposed
+        references: ["FORGE: Self-Evolving Agent Memory"]
+        alignment: "最小化错误 + 持续升级"
+
+      - id: UP-EVOL-008
+        title: "知识工件生成"
+        description: "失败时生成 Rules/Examples/Mixed 三种知识工件注入记忆"
+        priority: medium
+        status: proposed
+        references: ["FORGE knowledge artifacts"]
 
   # ════════════════════════════════════════════════════════════════════════════════
   # 6. dreamNow - 记忆整合
@@ -1661,6 +1691,12 @@ proposed_skills:
       - 动态 Skill 检索: 根据任务类型动态组合最优执行方案
       - 异步并行执行: 独立 Skill 异步运行，提升整体吞吐量
       - 性能成本评分: 优化 Skill 调用顺序，最小化延迟
+
+      v1.6.0 论文参考升级:
+      - MASPO: Joint Prompt Optimization for Multi-Agent Systems
+        * Local + Lookahead + Global 三维度评估 Skill
+        * Misalignment-Aware Sampling 检测协调失败
+        * Trace-Guided Beam Search 优化 Skill 序列
     dependencies: ["dreamNow", "reason", "makeDecision"]
 
   - id: L1_L6_Scoring

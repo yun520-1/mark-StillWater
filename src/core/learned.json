@@ -735,5 +735,47 @@
     "accessCount": 0,
     "lastAccessed": 1779288236101,
     "createdAt": 1779288236101
+  },
+  "lesson:test": {
+    "value": "test value",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779289395207,
+    "createdAt": 1779289395207
+  },
+  "paper:DeepSeek-OCR": {
+    "value": "{\"title\":\"DeepSeek-OCR: Contexts Optical Compression\",\"keyInsights\":[\"视觉模态作为高效的文本压缩媒介\",\"DeepEncoder: 低激活内存 + 少 vision tokens\",\"20x 压缩率仍保持 60% OCR 准确率\",\"97% 准确率 at 10x compression\",\"SAM + CLIP 串联架构\",\"16x 卷积压缩器\"],\"architecture\":\"DeepEncoder (SAM+CLIP) + DeepSeek-3B-MoE decoder\",\"applications\":[\"长上下文压缩\",\"LLM 记忆遗忘机制\",\"文档理解\"]}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779289565758,
+    "createdAt": 1779289565758
+  },
+  "lesson:vision-compression": {
+    "value": "DeepSeek-OCR: 视觉token压缩比文本token更高效",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779289565759,
+    "createdAt": 1779289565759
+  },
+  "paper:FadeMem": {
+    "value": "{\"title\":\"FadeMem: Biologically Inspired Forgetting\",\"insights\":[\"双重记忆层级: LML (长期) + SML (短期)\",\"自适应衰减: λ = λ_base * exp(-μ * I)\",\"Ebbinghaus 遗忘曲线启发\",\"LLM 引导的冲突解决\",\"访问频率决定记忆重要性\"]}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779289714742,
+    "createdAt": 1779289714742
+  },
+  "paper:FORGE": {
+    "value": "{\"title\":\"FORGE: Self-Evolving Agent Memory\",\"insights\":[\"Failure-Triggered Reflexion Loop\",\"分层 ReAct agent with dynamic memory\",\"知识工件 (Rules/Examples/Mixed)\",\"无权重更新的自我进化\",\"Population-based protocol\"]}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779289714743,
+    "createdAt": 1779289714743
+  },
+  "paper:MASPO": {
+    "value": "{\"title\":\"MASPO: MultiAgent Prompt Optimization\",\"insights\":[\"Joint Prompt Optimization for MAS\",\"Misalignment-Aware Sampling\",\"Trace-Guided Beam Search\",\"Co-adaptation protocol\",\"Local + Lookahead + Global 三个维度评估\"]}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779289714743,
+    "createdAt": 1779289714743
   }
 }
