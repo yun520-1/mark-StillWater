@@ -270,6 +270,61 @@ function createHeartFlow(config = {}) {
       return philosophy.mortalityPrompt();
     },
 
+    // ─── Fallacy Detection (v1.5.5) ─────────────────────────
+
+    /**
+     * 检测文本中的逻辑谬误
+     * @param {string} text - 待检测文本
+     */
+    detectFallacy(text) {
+      this._ensureStarted();
+      return philosophy.detectFallacy(text);
+    },
+
+    /**
+     * 分析辩论双方论点
+     * @param {string} argument - 用户论点
+     * @param {string} counterArgument - 对方论点
+     */
+    analyzeDebate(argument, counterArgument) {
+      this._ensureStarted();
+      return philosophy.analyzeDebate(argument, counterArgument);
+    },
+
+    /**
+     * 分析三代创伤模式
+     * @param {Array} familyGenerations - [祖辈, 父母辈, 孩子辈]描述
+     */
+    analyzeThreeGenerationTrauma(familyGenerations) {
+      this._ensureStarted();
+      return philosophy.analyzeThreeGenerationTrauma(familyGenerations);
+    },
+
+    /**
+     * 丁克准备评估
+     * @param {Object} preparation - { economic, legal, relationship, meaning }
+     */
+    evaluateDINKPreparation(preparation) {
+      this._ensureStarted();
+      return philosophy.evaluateDINKPreparation(preparation);
+    },
+
+    /**
+     * 获取心虫核心立场
+     */
+    getCorePosition() {
+      this._ensureStarted();
+      return philosophy.getCorePosition();
+    },
+
+    /**
+     * 分析统计声明
+     */
+    analyzeStatisticalClaim(claim) {
+      this._ensureStarted();
+      return philosophy.analyzeStatisticalClaim(claim);
+    },
+
     // ─── Identity ───────────────────────────────────────────
 
     getIdentity() {

@@ -1,7 +1,7 @@
 # ════════════════════════════════════════════════════════════════════════════════════
 #
 #  mark-StillWater Skill Blueprint
-#  版本: v1.5.5
+#  版本: v1.5.6
 #  描述: User-LLM Bridge Guidance - 用户与大模型桥梁的指导文档
 #  更新: 2026-05-21
 #
@@ -9,7 +9,7 @@
 
 metadata:
   name: mark-StillWater
-  version: "1.5.5"
+  version: "1.5.6"
   type: guidance  # skill type: guidance | library | hybrid
   license: MIT
   author: "mark <mark@stillwater.ai>"
@@ -19,6 +19,15 @@ metadata:
 
   # 版本历史
   changelog:
+    - version: "1.5.6"
+      date: "2026-05-21"
+      changes:
+        - "新增谬误检测模块 - 基于EMNLP 2024论文"
+        - "检测循环确认、无法证伪、人身攻击等7种谬误"
+        - "新增三代创伤分析 - 匮乏→补偿→抑郁模式"
+        - "新增丁克准备评估框架 - 经济/法律/关系/意义"
+        - "新增心虫核心立场 - 爱是必要条件/人性值得托付"
+        - "新增统计vs个人决策框架"
     - version: "1.5.5"
       date: "2026-05-21"
       changes:
