@@ -1,7 +1,7 @@
 # ════════════════════════════════════════════════════════════════════════════════════
 #
 #  mark-StillWater Skill Blueprint
-#  版本: v1.5.6
+#  版本: v1.5.7
 #  描述: User-LLM Bridge Guidance - 用户与大模型桥梁的指导文档
 #  更新: 2026-05-21
 #
@@ -9,7 +9,7 @@
 
 metadata:
   name: mark-StillWater
-  version: "1.5.6"
+  version: "1.5.7"
   type: guidance  # skill type: guidance | library | hybrid
   license: MIT
   author: "mark <mark@stillwater.ai>"
@@ -19,6 +19,11 @@ metadata:
 
   # 版本历史
   changelog:
+    - version: "1.5.7"
+      date: "2026-05-21"
+      changes:
+        - "修复循环确认检测 - 短文本漏检问题"
+        - "优化谬误检测性能"
     - version: "1.5.6"
       date: "2026-05-21"
       changes:

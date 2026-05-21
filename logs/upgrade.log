@@ -186,3 +186,29 @@
 [Thu May 21 20:03:49 CST 2026] 运行梦境整合...
 梦境完成: true
 [Thu May 21 20:03:49 CST 2026] Git 同步...
+[master 34ecadd] auto: 论文升级 2026-05-21_20:03
+ 24 files changed, 1717 insertions(+)
+ create mode 100644 .agents/skills/cavecrew/README.md
+ create mode 100644 .agents/skills/cavecrew/SKILL.md
+ create mode 100644 .agents/skills/caveman-commit/README.md
+ create mode 100644 .agents/skills/caveman-commit/SKILL.md
+ create mode 100644 .agents/skills/caveman-compress/README.md
+ create mode 100644 .agents/skills/caveman-compress/SECURITY.md
+ create mode 100644 .agents/skills/caveman-compress/SKILL.md
+ create mode 100644 .agents/skills/caveman-compress/scripts/__init__.py
+ create mode 100644 .agents/skills/caveman-compress/scripts/__main__.py
+ create mode 100644 .agents/skills/caveman-compress/scripts/benchmark.py
+ create mode 100644 .agents/skills/caveman-compress/scripts/cli.py
+ create mode 100644 .agents/skills/caveman-compress/scripts/compress.py
+ create mode 100644 .agents/skills/caveman-compress/scripts/detect.py
+ create mode 100644 .agents/skills/caveman-compress/scripts/validate.py
+ create mode 100644 .agents/skills/caveman-help/README.md
+ create mode 100644 .agents/skills/caveman-help/SKILL.md
+ create mode 100644 .agents/skills/caveman-review/README.md
+ create mode 100644 .agents/skills/caveman-review/SKILL.md
+ create mode 100644 .agents/skills/caveman-stats/README.md
+ create mode 100644 .agents/skills/caveman-stats/SKILL.md
+ create mode 100644 .agents/skills/caveman/README.md
+ create mode 100644 .agents/skills/caveman/SKILL.md
+ create mode 100644 skills-lock.json
+[Thu May 21 20:05:19 CST 2026] mark-StillWater 论文升级任务完成

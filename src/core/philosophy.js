@@ -189,14 +189,14 @@ class HeartFlowPhilosophy {
    * @returns {Object} - { fallacies: [], hasFallacy: boolean, severity: 'low'|'medium'|'high' }
    */
   detectFallacy(text) {
-    if (!text || text.length < 20) {
+    if (!text) {
       return { fallacies: [], hasFallacy: false, severity: 'low' };
     }
 
     const fallacies = [];
     const lower = text.toLowerCase();
 
-    // 1. 循环确认 (Circular Reasoning)
+    // 循环确认检测 - 短文本也可能包含
     if (this._detectCircularReasoning(text)) {
       fallacies.push({
         type: 'circular_reasoning',
@@ -205,6 +205,16 @@ class HeartFlowPhilosophy {
         severity: 'high',
         example: '因为A所以A'
       });
+    }
+
+    // 文本太短，结束检测
+    if (text.length < 20) {
+      return {
+        fallacies,
+        hasFallacy: fallacies.length > 0,
+        severity: fallacies.length > 0 ? 'high' : 'low',
+        count: fallacies.length
+      };
     }
 
     // 2. 无法证伪 (Unfalsifiable)
@@ -283,13 +293,18 @@ class HeartFlowPhilosophy {
   }
 
   _detectCircularReasoning(text) {
-    // 检测循环确认模式
-    const patterns = [
-      /(因为|由于).*(所以|因此).*\1/,
-      /^(.*)\s+所以\s+\1$/,
-      /(只要|只有).*(才|就).*\1/,
-    ];
-    return patterns.some(p => p.test(text));
+    // 心虫: "用心爱孩子，孩子有孝心" - 循环确认
+
+    // "因为A所以A"
+    if (/因为(.+)所以\1/.test(text)) return true;
+
+    // "只要A就A"
+    if (/只要(.+)就\1/.test(text)) return true;
+
+    // "只有A才A"
+    if (/只有(.+)才\1/.test(text)) return true;
+
+    return false;
   }
 
   _detectUnfalsifiable(text) {
