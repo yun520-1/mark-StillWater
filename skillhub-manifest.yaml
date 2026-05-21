@@ -1,0 +1,80 @@
+# skillhub.cn 技能发布清单
+# https://skillhub.cn
+
+name: mark-StillWater
+version: "1.5.4"
+type: guidance
+license: MIT
+author: "mark <mark@stillwater.ai>"
+homepage: "https://github.com/yun520-1/mark-StillWater"
+
+# 技能标签（用于搜索）
+tags:
+  - AI-Enhancement
+  - Psychology
+  - Memory
+  - Self-Evolution
+  - Dream
+  - User-Understanding
+  - Chinese-Support
+
+# 简短描述（50字内）
+short_description: "用户与大模型桥梁指导 - 心理学分析、记忆系统、自我进化、梦境整合"
+
+# 详细描述
+description: |
+  mark-StillWater 是用户与大模型的桥梁指导技能。
+
+  核心能力：
+  - 心理学分析：意图识别、情绪检测、需求分析、危机干预
+  - 三层记忆系统：CORE（永久）/ LEARNED（持久）/ EPHEMERAL（会话）
+  - 自我进化：Reflexion风格教训银行、Q-learning自愈
+  - 梦境整合：记忆巩固、连接发现、矛盾检测
+  - L1~L6层级评分：觉察→自省→无我→彼岸→般若→圣人
+  - 身份锚定：45条核心身份规则
+
+  适用场景：
+  - 需要理解用户深层需求的对话系统
+  - 需要长期记忆的AI助手
+  - 需要自我进化的智能代理
+  - 中文语境下的情感理解
+
+# 安装要求
+requirements:
+  runtime: "node >= 14"
+  dependencies: []
+
+# 核心文件
+entry_points:
+  main: "src/core/heartflow.js"
+  test: "test.js"
+
+# 配置选项
+config:
+  encryption_enabled:
+    type: boolean
+    default: false
+    description: "启用LEARNED记忆加密"
+  heartbeat_interval:
+    type: number
+    default: 5000
+    description: "心跳检测间隔(ms)"
+
+# 权限要求
+permissions:
+  - "filesystem:read"
+  - "filesystem:write"
+
+# 更新日志
+changelog:
+  - version: "1.5.4"
+    date: "2026-05-20"
+    notes: "性能优化+异步+缓存+动态组合"
+  - version: "1.5.0"
+    date: "2026-05-20"
+    notes: "完整整合v1.0-v1.4所有升级"
+
+# 兼容性
+compatibility:
+  claude_code: ">= 1.0"
+  platform: ["darwin", "linux"]
