@@ -1,24 +1,31 @@
 # ════════════════════════════════════════════════════════════════════════════════════
 #
 #  mark-StillWater Skill Blueprint
-#  版本: v1.5.4
+#  版本: v1.5.5
 #  描述: User-LLM Bridge Guidance - 用户与大模型桥梁的指导文档
-#  更新: 2026-05-20
+#  更新: 2026-05-21
 #
 # ════════════════════════════════════════════════════════════════════════════════════
 
 metadata:
   name: mark-StillWater
-  version: "1.5.4"
+  version: "1.5.5"
   type: guidance  # skill type: guidance | library | hybrid
   license: MIT
   author: "mark <mark@stillwater.ai>"
   repository: "https://github.com/yun520-1/mark-StillWater"
   created: "2026-04-23"
-  updated: "2026-05-20"
+  updated: "2026-05-21"
 
   # 版本历史
   changelog:
+    - version: "1.5.5"
+      date: "2026-05-21"
+      changes:
+        - "新增 Self-Refine 迭代精炼模式"
+        - "生成→反馈→精炼 三步迭代"
+        - "支持最多3轮迭代精炼"
+        - "基于 Madaan et al. Self-Refine 论文"
     - version: "1.5.4"
       date: "2026-05-20"
       changes:

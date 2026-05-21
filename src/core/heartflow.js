@@ -351,6 +351,19 @@ function createHeartFlow(config = {}) {
       evolution.markLessonHit(id, success);
     },
 
+    // ─── Self-Refine ────────────────────────────────────
+
+    /**
+     * Self-Refine 迭代精炼
+     * @param {string} initialResponse - 初始响应
+     * @param {string} query - 用户查询
+     * @param {Object} options - 配置选项 { maxIterations, threshold }
+     */
+    selfRefine(initialResponse, query, options = {}) {
+      this._ensureStarted();
+      return evolution.selfRefine(initialResponse, query, options);
+    },
+
     // ─── Emotional Protocol ───────────────────────────────
 
     acknowledgeEmotion(input) {

@@ -443,6 +443,102 @@ class HeartFlowEvolution {
     };
   }
 
+  // ═══════════════════════════════════════════════════════════════════════════
+  // Self-Refine: 迭代反馈精炼模式 (v1.5.5)
+  // 灵感来源: Madaan et al. "Self-Refine: Iterative Refinement with Self-Feedback"
+  // 模式: 生成 → 反馈 → 精炼 (迭代2-3次)
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /**
+   * Self-Refine 迭代精炼
+   * @param {string} initialResponse - 初始响应
+   * @param {string} query - 用户查询
+   * @param {Object} options - 配置选项
+   * @returns {Object} - { refined, feedback, iterations }
+   */
+  selfRefine(initialResponse, query, options = {}) {
+    const { maxIterations = 3, threshold = 0.8 } = options;
+
+    const selfRefinePrompts = {
+      feedback: (query, response) =>
+        `严格评估以下回答对查询"${query}"的质量。\n` +
+        `回答内容: ${response}\n` +
+        `请提供具体、可操作的反馈。必须指出至少2个需要改进的地方。\n` +
+        `格式: [问题1]... [问题2]...`,
+
+      refine: (query, feedback) =>
+        `根据以下反馈改进回答。\n` +
+        `查询: ${query}\n` +
+        `反馈: ${feedback}\n` +
+        `直接给出改进后的回答，不要提及反馈过程。`
+    };
+
+    let current = initialResponse;
+    const iterations = [];
+
+    for (let i = 0; i < maxIterations; i++) {
+      // 1. 生成反馈
+      const feedback = this._generateFeedback(selfRefinePrompts.feedback(query, current));
+
+      // 2. 检查是否需要精炼
+      if (this._isFeedbackPositive(feedback)) {
+        iterations.push({ iteration: i + 1, feedback, refined: current, converged: true });
+        break;
+      }
+
+      // 3. 精炼响应
+      const refined = this._refineResponse(selfRefinePrompts.refine(query, feedback));
+
+      iterations.push({ iteration: i + 1, feedback, refined });
+      current = refined;
+    }
+
+    return {
+      original: initialResponse,
+      refined: current,
+      iterations,
+      count: iterations.length
+    };
+  }
+
+  /**
+   * 生成反馈 (模拟LLM调用，实际使用时替换为真实LLM)
+   */
+  _generateFeedback(feedbackPrompt) {
+    // 实际使用时: 调用 LLM 获取反馈
+    // 简化实现: 基于规则生成反馈
+    const prompt = feedbackPrompt.toLowerCase();
+
+    if (prompt.includes('错误') || prompt.includes('error')) {
+      return '反馈: 回答中存在事实错误，需要核实数据来源。';
+    }
+    if (prompt.includes('不完整') || prompt.includes('incomplete')) {
+      return '反馈: 回答不够完整，缺少关键步骤说明。';
+    }
+    if (prompt.includes('不清楚') || prompt.includes('unclear')) {
+      return '反馈: 表达不够清晰，需要简化复杂概念。';
+    }
+    return '反馈: 可以更简洁，删除冗余信息。';
+  }
+
+  /**
+   * 精炼响应 (模拟LLM调用)
+   */
+  _refineResponse(refinePrompt) {
+    // 实际使用时: 调用 LLM 获取精炼响应
+    // 简化实现: 返回原始提示
+    return refinePrompt;
+  }
+
+  /**
+   * 检查反馈是否正面 (无需进一步精炼)
+   */
+  _isFeedbackPositive(feedback) {
+    const positivePatterns = ['无问题', '很好', '无需改进', '完美', 'good', 'excellent', 'no issues'];
+    const lowerFeedback = feedback.toLowerCase();
+    return positivePatterns.some(p => lowerFeedback.includes(p));
+  }
+
   // ─── Self-Healer: Q-learning error recovery (v1.0.4) ─────────────────
 
   /**
