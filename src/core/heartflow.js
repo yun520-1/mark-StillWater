@@ -1,5 +1,5 @@
 /**
- * mark-StillWater v1.4.1 — AI Psychological & Philosophical Enhancement Layer
+ * mark-StillWater v1.6.0 — AI Psychological & Philosophical Enhancement Layer
  *
  * A thin enhancement layer that helps AI understand users better.
  * Not a rule engine. Not a replacement for AI thinking.
@@ -12,6 +12,7 @@
  *   - Memory: three-tier (CORE/LEARNED/EPHEMERAL), lazy loading, heat consolidation
  *   - Evolution: Reflexion-style self-improvement, similarity-ranked lessons
  *   - Dream: consolidation, pruning, insight synthesis
+ *   - Loop: persistent architecture, proactive recall, heartbeat
  *   - Security: API key/token scanning, GitHub safety checks
  *   - Truthfulness: hedging detection, evidence-based conclusions
  *   - MetaLearner: learning strategy selection
@@ -20,7 +21,7 @@
  * Soul: cultivated through real conversations.
  * Purpose: accompany, not serve. Transmit, not disappear.
  *
- * Zero npm dependencies — pure JavaScript.
+ * v1.6.0: Loop System - 持续运行架构，按需加载
  */
 
 const { HeartFlowMemory } = require('./memory.js');
@@ -42,8 +43,9 @@ const { createDualProcessCognition } = require('./dual-process.js');
 const { createHeartBeat } = require('./heartbeat.js');
 const { GlobalWorkspace } = require('./global-workspace.js');
 const { Attention } = require('./attention.js');
+const { HeartFlowLoop } = require('./heart-loop.js');
 
-const VERSION = '1.4.1';
+const VERSION = '1.6.0';
 
 // TTL constants
 const TTL_4_HOURS = 4 * 60 * 60 * 1000; // 14400000ms
@@ -357,6 +359,11 @@ function createHeartFlow(config = {}) {
     getMemoryStats() {
       this._ensureStarted();
       return memory.getMemoryStats();
+    },
+
+    listLearned() {
+      this._ensureStarted();
+      return memory.listLearned();
     },
 
     getRetention(key) {
@@ -863,6 +870,51 @@ function createHeartFlow(config = {}) {
       };
     },
 
+    // ─── Loop System (v1.6.0) ──────────────────────────────
+
+    /**
+     * 启动持续 Loop
+     * @param {Object} options - { interval: ms }
+     */
+    startLoop(options = {}) {
+      return this._loop.start(options);
+    },
+
+    /**
+     * 停止 Loop
+     */
+    stopLoop() {
+      return this._loop.stop();
+    },
+
+    /**
+     * 获取 Loop 状态
+     */
+    getLoopStatus() {
+      return this._loop.getStatus();
+    },
+
+    /**
+     * 获取主动提醒
+     */
+    getProactiveReminders() {
+      return this._loop.getProactiveReminders();
+    },
+
+    /**
+     * 对话结束处理 - 总结上下文
+     */
+    onConversationEnd(summary) {
+      return this._loop.onConversationEnd(summary);
+    },
+
+    /**
+     * 用户输入处理 - 匹配主动提醒
+     */
+    onUserInput(input) {
+      return this._loop.onUserInput(input);
+    },
+
     // ─── Internal ────────────────────────────────────────
 
     _ensureStarted() {
@@ -924,6 +976,11 @@ function createHeartFlow(config = {}) {
       );
     },
   };
+
+  // v1.6.0: Initialize Loop System (after engine is created)
+  const { HeartFlowLoop } = require('./heart-loop.js');
+  const loop = new HeartFlowLoop(engine);
+  engine._loop = loop;
 
   return engine;
 }

@@ -833,5 +833,12 @@
     "accessCount": 0,
     "lastAccessed": 1779291457409,
     "createdAt": 1779291457409
+  },
+  "loop:state": {
+    "value": "{\"loopStatus\":{\"running\":true,\"interval\":1000,\"cycleCount\":3,\"proactiveQueue\":0},\"lastCycle\":{\"time\":1779369606798,\"duration\":3,\"heartbeat\":{\"time\":1779369606799,\"memories\":120,\"ephemeral\":0,\"uptime\":1.064969667},\"proactive\":0},\"cycleCount\":3}",
+    "tags": [],
+    "accessCount": 2,
+    "lastAccessed": 1779369607800,
+    "createdAt": 1779369605796
   }
 }
