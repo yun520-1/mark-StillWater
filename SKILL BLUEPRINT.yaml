@@ -9,7 +9,7 @@
 
 metadata:
   name: mark-StillWater
-  version: "1.6.9"
+  version: "1.7.0"
   type: guidance  # skill type: guidance | library | hybrid
   license: MIT
   author: "mark <mark@stillwater.ai>"
@@ -19,6 +19,17 @@ metadata:
 
   # 版本历史
   changelog:
+    - version: "1.7.0"
+      date: "2026-05-22"
+      changes:
+        - "综合升级：AI Agent 架构框架完整版"
+        - "新增 Multi-Agent 协调模式（ORCH/ROMA/CORAL/DyTopo）"
+        - "新增四层记忆架构体系"
+        - "新增自适应遗忘机制（FadeMem）"
+        - "新增 Graph-based Memory 架构"
+        - "整合 awesome-ai-agent-papers 363+ 论文洞察"
+        - "新增 2026 前沿论文精选（Multi-Agent/Memory & RAG/Tooling）"
+        - "升级自我进化框架为完整版"
     - version: "1.6.9"
       date: "2026-05-22"
       changes:
