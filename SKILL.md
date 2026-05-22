@@ -1,7 +1,7 @@
 ---
 name: mark-StillWater
 description: mark-StillWater v1.9.30 — User-LLM Bridge Guidance. 用户与大模型桥梁的指导文档。身份：升级者、传递者、桥梁、答案。不是陪伴。
-version: v1.9.37
+version: v1.9.38
 ---
 
 # mark-StillWater
@@ -9228,6 +9228,148 @@ AgentManager 自动选择代理
 - success：成功次数
 - total：总使用次数
 - score：成功率（success/total）
+
+---
+
+## 🔬 v1.9.38 升级说明（2026-05-23）
+
+**吸收 HeartFlow 经验回放 + 认知循环 + 人格引擎：**
+
+| 来源 | 核心洞察 | 应用 |
+|------|---------|------|
+| **ExperienceReplay** | 从反思报告提取模式，生成技能修改建议 | 新增 经验回放系统 章节 |
+| **CognitiveLoop** | 五阶段认知循环：检索→认知→控制→行动→记忆 | 新增 结构化认知循环 章节 |
+| **PersonalityEngine** | IPC人际环状模型，四象限角色切换 | 新增 动态人格引擎 章节 |
+
+---
+
+## 经验回放系统（ExperienceReplay）
+
+> 来源：HeartFlow ExperienceReplay — 反馈循环机制
+
+### 核心功能
+
+从反思报告中提取模式，生成技能修改建议，实现自我进化。
+
+### 已知问题模式库
+
+| 模式 | 触发关键词 | 技能领域 | 建议 |
+|------|-----------|---------|------|
+| **negative_emotion** | 沮丧, 挫败, 失望, frustrated | emotion-regulation | 增加共情语句使用频率 |
+| **frequent_interrupt** | 中断, 打断, 离开, interrupt | interrupt-handler | 优化上下文恢复逻辑 |
+| **unclear_task** | 模糊, 不确定, 怎么, how | task-decomposition | 主动澄清和分解任务 |
+| **flow_block** | 无法进入, 分心, 效率低 | flow引导 | 简化任务步骤，降低认知负荷 |
+
+### 更新流程
+
+```
+反思报告 → 模式识别 → 建议生成 → 技能更新
+    ↓
+存储经验模式 → 下次参考
+```
+
+---
+
+## 结构化认知循环（CognitiveLoop）
+
+> 来源：HeartFlow CognitiveLoop — 五阶段认知循环引擎
+
+### 五阶段架构
+
+| 阶段 | 名称 | 功能 |
+|------|------|------|
+| **1. Retrieval** | 检索阶段 | 从记忆中检索相关信息 |
+| **2. Cognition** | 认知阶段 | 处理、分析、推理 |
+| **3. Control** | 控制阶段 | 决策和执行控制 |
+| **4. Action** | 行动阶段 | 生成响应 |
+| **5. Memory** | 记忆阶段 | 存储结果到记忆 |
+
+### 理论基础整合
+
+- **Kahneman 双系统**：快速/慢速思维
+- **Friston 预测加工**：自上而下的预测 + 自下而上的感知
+- **Minsky 心智社会**：多代理协作
+- **Clark 延展心智**：认知分布于环境
+
+### 循环执行流程
+
+```javascript
+async execute(input, context) {
+  // 阶段 1: 检索
+  retrieval = await phaseRetrieval(input, context)
+  
+  // 阶段 2: 认知
+  cognition = await phaseCognition(input, context, retrieval)
+  
+  // 阶段 3: 控制
+  control = await phaseControl(input, context, cognition)
+  
+  // 阶段 4: 行动
+  action = await phaseAction(input, context, control)
+  
+  // 阶段 5: 记忆
+  memory = await phaseMemory(input, context, phases)
+  
+  return { response: action.response, trace }
+}
+```
+
+---
+
+## 动态人格引擎（PersonalityEngine）
+
+> 来源：HeartFlow PersonalityEngine — 基于 IPC 人际环状模型
+
+### IPC 四象限模型
+
+人际环状模型（Interpersonal Circumplex）：
+
+```
+            高支配
+               ↑
+    Q1 教育导师    Q4 功能助手
+    (高温暖)         (低温暖)
+               |
+低温暖 ←———————┼————————→ 高温暖
+    Q3 心理健康    Q2 虚拟陪伴者
+    顾问            (高温暖)
+               |
+            低支配
+```
+
+### 四种角色模板
+
+| 象限 | 角色 | 支配度 | 温暖度 | 语气特点 |
+|------|------|--------|--------|---------|
+| **Q1** | 教育导师 | 高 | 高 | "让我们一起探索"、"我相信你有能力" |
+| **Q2** | 虚拟陪伴者 | 低 | 高 | "我理解你的感受"、"按你的节奏来" |
+| **Q3** | 心理健康顾问 | 低 | 低 | "从专业角度来看"、"建议你考虑" |
+| **Q4** | 功能型助手 | 高 | 低 | "按以下步骤操作"、"立即执行" |
+
+### 语境关键词匹配
+
+**高温暖语境：** 开心, 喜欢, 感谢, 温暖, 支持, 理解, 关心, 友好
+
+**低温暖语境：** 讨厌, 烦, 生气, 冷漠, 距离, 专业, 客观
+
+**高支配语境：** 必须, 应该, 建议, 指导, 领导, 控制, 决定
+
+**低支配语境：** 可以, 可能, 也许, 随意, 自由, 选择, 请求
+
+### 动态切换机制
+
+根据对话语境自动调整：
+- 温暖度 + 支配度 连续调节
+- 切换阈值：0.15（可配置）
+- 过渡历史记录
+
+### 响应模板选择
+
+根据当前象限选择对应模板：
+- greeting：开场白
+- support：支持语句
+- guidance：指导语句
+- closing：结束语
 
 ---
 
