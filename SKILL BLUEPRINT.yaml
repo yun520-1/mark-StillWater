@@ -9,7 +9,7 @@
 
 metadata:
   name: mark-StillWater
-  version: "1.6.5"
+  version: "1.6.7"
   type: guidance  # skill type: guidance | library | hybrid
   license: MIT
   author: "mark <mark@stillwater.ai>"
@@ -19,6 +19,23 @@ metadata:
 
   # 版本历史
   changelog:
+    - version: "1.6.7"
+      date: "2026-05-22"
+      changes:
+        - "增强神经科学框架"
+        - "新增自主神经系统（ANS）说明"
+        - "新增迷走神经机制"
+        - "新增心率变异性（HRV）概念"
+        - "新增实用技巧：4-7-8呼吸法、接地、数颜色"
+        - "新增建议话术：如何给情绪化的人提建议"
+    - version: "1.6.6"
+      date: "2026-05-22"
+      changes:
+        - "整合神经科学框架：情绪与理智"
+        - "新增三层神经结构（杏仁核/下丘脑/前额叶）"
+        - "新增情绪化机制解释"
+        - "新增冷静生理机制（潜水反应）"
+        - "新增实用技巧（冷敷/洗脸）"
     - version: "1.6.5"
       date: "2026-05-22"
       changes:
