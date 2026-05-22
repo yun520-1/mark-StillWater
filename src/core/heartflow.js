@@ -12,7 +12,7 @@
  *   - Memory: three-tier (CORE/LEARNED/EPHEMERAL), lazy loading, heat consolidation
  *   - Evolution: Reflexion-style self-improvement, similarity-ranked lessons
  *   - Dream: consolidation, pruning, insight synthesis
- *   - Loop: persistent architecture, proactive recall, heartbeat
+ *   - Loop: persistent architecture, proactive recall
  *   - Security: API key/token scanning, GitHub safety checks
  *   - Truthfulness: hedging detection, evidence-based conclusions
  *   - MetaLearner: learning strategy selection
@@ -40,7 +40,6 @@ const { RetrievalAnchor } = require('./retrieval-anchor.js');
 const { ContextPassport } = require('./context-passport.js');
 const { createFlowMachine } = require('./flow-machine.js');
 const { createDualProcessCognition } = require('./dual-process.js');
-const { createHeartBeat } = require('./heartbeat.js');
 const { GlobalWorkspace } = require('./global-workspace.js');
 const { Attention } = require('./attention.js');
 const { HeartFlowLoop } = require('./heart-loop.js');
@@ -101,9 +100,6 @@ function createHeartFlow(config = {}) {
 
   // Instantiate dual process cognition
   const dualProcess = createDualProcessCognition();
-
-  // Instantiate heartbeat/circuit breaker
-  const heartBeat = createHeartBeat();
 
   // Instantiate global workspace
   const globalWorkspace = new GlobalWorkspace();
@@ -168,7 +164,6 @@ function createHeartFlow(config = {}) {
         stats: memory.stats(),
         identity_state: identity.getState(),
         flow: flowMachine.getStats(),
-        heartbeat: heartBeat.getStats(),
         dualProcess: dualProcess.getStats(),
         workspace: globalWorkspace.getStats(),
         attention: attention.getStats(),
@@ -505,23 +500,7 @@ function createHeartFlow(config = {}) {
     heal(error, stampId = null) {
       this._ensureStarted();
 
-      // Check circuit breaker first
-      if (!heartBeat.canHeal()) {
-        return {
-          ok: false,
-          canRetry: false,
-          backoffMs: 0,
-          strategy: 'abort',
-          pattern: 'circuit_breaker_open',
-          hints: ['Circuit breaker is open — healing paused. Try later.'],
-          circuitBreaker: heartBeat.getStats(),
-        };
-      }
-
       const result = evolution.heal(error);
-
-      // Record metric in heartbeat
-      heartBeat.recordMetric('heal_attempt', result.canRetry ? 8 : 3);
 
       // Attach context from passport if available
       if (stampId) {
@@ -537,18 +516,12 @@ function createHeartFlow(config = {}) {
         }
       }
 
-      result.circuitBreaker = heartBeat.getStats();
       return result;
     },
 
     recordHealOutcome(strategy, success) {
       this._ensureStarted();
       evolution.recordHealOutcome(strategy, success);
-      if (success) {
-        heartBeat.recordSuccess();
-      } else {
-        heartBeat.recordMetric('heal_failure', 2);
-      }
       return { updated: true };
     },
 
@@ -735,24 +708,6 @@ function createHeartFlow(config = {}) {
       return { mode: dualProcess.getCurrentMode() };
     },
 
-    // ─── HeartBeat ───────────────────────────────────────
-
-    getHeartBeatStats() {
-      this._ensureStarted();
-      return heartBeat.getStats();
-    },
-
-    canHeal() {
-      this._ensureStarted();
-      return heartBeat.canHeal();
-    },
-
-    tripCircuitBreaker(durationMs) {
-      this._ensureStarted();
-      heartBeat.trip(durationMs);
-      return heartBeat.getStats();
-    },
-
     // ─── GlobalWorkspace ─────────────────────────────────
 
     broadcast(content, importance = 0.5, source = 'unknown') {
@@ -861,8 +816,7 @@ function createHeartFlow(config = {}) {
 
     getMindSpace() {
       this._ensureStarted();
-      memory._ensureEphemeralLoaded();
-      const ephemeralEntries = Object.entries(memory._ephemeralStore).slice(0, 10);
+      const ephemeralEntries = memory.listEphemeral().slice(0, 10);
       return {
         rules: _mindSpace.rules,
         context: _mindSpace.context,

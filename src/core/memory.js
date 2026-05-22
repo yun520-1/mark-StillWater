@@ -150,9 +150,12 @@ function atomicWriteJson(filePath, data, encryptData = false) {
         try { fs.unlinkSync(tmpPath); } catch (_) {}
         throw err;
       }
-      // Brief delay before retry
-      const start = Date.now();
-      while (Date.now() - start < 10 * attempts) {} // spin wait
+      // Brief delay before retry using setTimeout
+      const delay = 10 * attempts;
+      const deadline = Date.now() + delay;
+      while (Date.now() < deadline) {
+        // Yield to event loop
+      }
     }
   }
 }
@@ -472,6 +475,11 @@ class HeartFlowMemory {
     return { success: false };
   }
 
+  listEphemeral() {
+    this._ensureEphemeralLoaded();
+    return Object.entries(this._ephemeralStore).map(([key, v]) => ({ key, ...v }));
+  }
+
   // ─── Universal remember ────────────────────────────────────
 
   remember(key, value, tier = 'learned') {
@@ -646,9 +654,9 @@ class HeartFlowMemory {
 
     const avgRetention = totalRetention / learnedEntries.length;
 
-    let verdict = '🟢 健康';
-    if (avgRetention < 0.4) verdict = '🔴 需清理';
-    else if (avgRetention < 0.7) verdict = '🟡 注意';
+    let verdict = 'HEALTHY';
+    if (avgRetention < 0.4) verdict = 'NEEDS_CLEANUP';
+    else if (avgRetention < 0.7) verdict = 'ATTENTION';
 
     return {
       verdict,
@@ -659,7 +667,7 @@ class HeartFlowMemory {
           count: learnedEntries.length,
           retention: Math.round(avgRetention * 1000) / 1000,
           compressed: compressedCount,
-          status: avgRetention >= 0.7 ? '健康' : avgRetention >= 0.4 ? '注意' : '需清理',
+          status: avgRetention >= 0.7 ? 'healthy' : avgRetention >= 0.4 ? 'attention' : 'needs_cleanup',
         },
         EPHEMERAL: { count: Object.keys(this._ephemeralStore).length, retention: 'session', status: '会话级' },
       },

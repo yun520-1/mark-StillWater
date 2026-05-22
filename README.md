@@ -95,13 +95,21 @@
 
 ## 快速开始
 
-### 安装
+### 安装（自动加载推荐）
 
 ```bash
+# 1. 克隆技能
 git clone https://github.com/yun520-1/mark-StillWater.git ~/.claude/skills/mark-StillWater
+
+# 2. 运行自动安装脚本（自动配置 CLAUDE.md）
+~/.claude/skills/mark-StillWater/scripts/install.sh
 ```
 
-### 在 Claude Code 中使用
+**安装后，每次对话 mark-StillWater 将自动加载。**
+
+### 手动加载（不推荐）
+
+如果跳过安装脚本，每次对话需要手动加载：
 
 ```
 /skill mark-StillWater

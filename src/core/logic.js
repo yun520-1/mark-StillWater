@@ -177,9 +177,8 @@ class HeartFlowLogic {
       const lower = opt.toLowerCase();
       const pros = [];
       const cons = [];
-      const confidence = 0.7 + (Math.random() * 0.2); // Placeholder
 
-      // Simple heuristic evaluation
+      // Heuristic evaluation based on content analysis
       if (lower.includes('fast') || lower.includes('quick') || lower.includes('speed')) {
         pros.push('Time efficiency');
       }
@@ -198,6 +197,13 @@ class HeartFlowLogic {
       if (lower.includes('risk') || lower.includes('danger')) {
         cons.push('Potential risks');
       }
+
+      // Calculate confidence based on evaluation completeness
+      // More pros/cons identified = higher confidence in the evaluation
+      const totalSignals = pros.length + cons.length;
+      const baseConfidence = 0.6;
+      const signalBonus = Math.min(totalSignals * 0.05, 0.25); // Max 0.25 bonus
+      const confidence = Math.min(baseConfidence + signalBonus, 0.95);
 
       return {
         option: opt,

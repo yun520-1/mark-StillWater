@@ -140,10 +140,12 @@ class HeartFlowDream {
   }
 
   _setCache(key, value) {
-    if (this.cache.size >= this.maxCacheSize) {
-      // 删除最老的条目
+    if (this.cache.size >= this.maxCacheSize && this.cache.size > 0) {
+      // 删除最老的条目 (LRU)
       const firstKey = this.cache.keys().next().value;
-      this.cache.delete(firstKey);
+      if (firstKey !== undefined) {
+        this.cache.delete(firstKey);
+      }
     }
     this.cache.set(key, { value, timestamp: Date.now() });
   }
@@ -573,7 +575,7 @@ class HeartFlowDream {
    * Find cross-domain connections between memory fragments.
    * Connections are discovered through:
    *   - Same sessionId
-   *   -相近timestamps (< 5 minutes apart)
+   *   -相近 timestamps (< 5 minutes apart)
    *   - Shared tags or themes
    * @returns {Array<{ids: string[], score: number, type: string}>}
    */

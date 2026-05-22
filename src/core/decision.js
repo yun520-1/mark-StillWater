@@ -132,13 +132,20 @@ class HeartFlowDecision {
 
     let totalScore = 0;
     let weightSum = 0;
+    // Criteria where higher score = better (impact, feasibility, speed, reversibility, alignment)
+    const higherIsBetter = new Set(['impact', 'feasibility', 'speed', 'reversibility', 'alignment', 'prior_learning']);
     for (const [criterion, weight] of Object.entries(weights)) {
       if (criteria[criterion] !== undefined) {
-        totalScore += (1 - criteria[criterion]) * weight; // risk is inverted
+        if (higherIsBetter.has(criterion)) {
+          totalScore += criteria[criterion] * weight;
+        } else {
+          // Criteria where lower score = better (risk, cost)
+          totalScore += (1 - criteria[criterion]) * weight;
+        }
         weightSum += weight;
       }
     }
-    totalScore = 1 - (totalScore / weightSum);
+    totalScore = totalScore / weightSum;
 
     // Consequences
     consequences.short_term = this._predictShortTermConsequences(option);

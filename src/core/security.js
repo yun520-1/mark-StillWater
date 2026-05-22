@@ -1,14 +1,16 @@
 /**
- * HeartFlow Security Module — v1.0.2
+ * HeartFlow Security Module — v1.0.3
  *
  * From mark-heartflow-skill: scans/redacts API keys, tokens, passwords,
  * emails, phone numbers. Checks GitHub content safety and memory security.
+ *
+ * v1.0.3: Updated module documentation (encryption handled in memory.js)
  */
 
 const PATTERNS = {
   api_key: /(?:api[_-]?key|apikey|sk_live_|sk-[a-zA-Z0-9]{20,})[=:]*\s*['"]?([a-zA-Z0-9_-]{10,})['"]?/gi,
   github_token: /ghp_[a-zA-Z0-9]{36}/gi,
-  github_pat: /github_pat_[a-zA-Z0-9_]{82}/gi,
+  github_pat: /github_pat_[a-zA-Z0-9_]{40,}/gi,
   openai_key: /sk-[a-zA-Z0-9]{48}/gi,
   email: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/gi,
   phone: /1[3-9]\d{9}/gi,

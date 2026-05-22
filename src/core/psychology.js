@@ -340,7 +340,7 @@ class HeartFlowPsychology {
 
   // Crisis keywords in order of severity
   static CRISIS_KEYWORDS = {
-    critical: ['我不想活了', '我不想活了', '活着没意思', '活着没意义', 'suicide', 'kill myself', '自残', '自杀'],
+    critical: ['我不想活了', '活着没意思', '活着没意义', 'suicide', 'kill myself', '自残', '自杀'],
     high: ['好累', '活着好累', '不想活了', '太痛苦了', '绝望', '崩溃', 'hopeless'],
     medium: ['好沮丧', '好焦虑', '好压力', '好累', '难过', 'depressed', '焦虑', '压力'],
     low: ['有点累', '不太高兴', '无聊', '失落'],

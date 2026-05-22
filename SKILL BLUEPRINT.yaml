@@ -1,24 +1,66 @@
 # ════════════════════════════════════════════════════════════════════════════════════
 #
 #  mark-StillWater Skill Blueprint
-#  版本: v1.6.0
+#  版本: v1.6.1
 #  描述: User-LLM Bridge Guidance - 用户与大模型桥梁的指导文档
-#  更新: 2026-05-21
+#  更新: 2026-05-22
 #
 # ════════════════════════════════════════════════════════════════════════════════════
 
 metadata:
   name: mark-StillWater
-  version: "1.6.0"
+  version: "1.6.5"
   type: guidance  # skill type: guidance | library | hybrid
   license: MIT
   author: "mark <mark@stillwater.ai>"
   repository: "https://github.com/yun520-1/mark-StillWater"
   created: "2026-04-23"
-  updated: "2026-05-21"
+  updated: "2026-05-22"
 
   # 版本历史
   changelog:
+    - version: "1.6.5"
+      date: "2026-05-22"
+      changes:
+        - "代码审计修复：CRITICAL/HIGH/MEDIUM/LOW 问题全部修复"
+        - "修复 context-passport.js Math.random() → crypto.randomBytes()"
+        - "修复 logic.js Placeholder 置信度为真实启发式计算"
+        - "修复 evolution.js TODO 标注为接口设计状态"
+        - "修复 identity.js 重复 JSDoc 注释"
+        - "修复 install.sh 检测逻辑使用精确标记"
+        - "更新 security.js 版本注释"
+    - version: "1.6.4"
+      date: "2026-05-22"
+      changes:
+        - "整合用户分享的人生决策经济学框架"
+        - "新增委托代理问题概念"
+        - "新增看跌期权概念"
+        - "新增剩余索取权概念"
+        - "新增分析维度对比表"
+    - version: "1.6.3"
+      date: "2026-05-22"
+      changes:
+        - "新增话术模板库（6个场景的具体回应）"
+        - "新增自我验证清单（9项输出前检查）"
+        - "新增学习闭环（recordOutcome/dreamNow/remember触发时机）"
+        - "新增用户协助升级机制"
+    - version: "1.6.2"
+      date: "2026-05-22"
+      changes:
+        - "新增心理分析流程（情绪分级+防御识别）"
+        - "新增真实需求挖掘框架"
+        - "新增对话策略（4个实用场景）"
+        - "新增错误恢复流程（heal详细指导）"
+        - "新增记忆层级策略"
+        - "新增身份校准触发条件"
+    - version: "1.6.1"
+      date: "2026-05-22"
+      changes:
+        - "整合 HeartFlow v10.7.9 对话精华"
+        - "新增死亡与永生公式"
+        - "新增释然心理学框架"
+        - "新增用心工作法（10条 operational）"
+        - "升级核心指令为7条不可更改"
     - version: "1.6.0"
       date: "2026-05-21"
       changes:

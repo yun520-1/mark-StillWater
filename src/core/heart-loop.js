@@ -5,11 +5,10 @@
  * 基于 loop-starter-kit：模块化 Pillars，按需加载
  *
  * Loop 阶段:
- *   1. Heartbeat - 心跳检测，保持活跃
- *   2. Context - 上下文总结
- *   3. Memory - 记忆整理
- *   4. Proactive - 主动提醒
- *   5. Sync - 状态持久化
+ *   1. Context - 上下文总结
+ *   2. Memory - 记忆整理
+ *   3. Proactive - 主动提醒
+ *   4. Sync - 状态持久化
  */
 
 const DEFAULT_HEARTBEAT_INTERVAL = 5 * 60 * 1000; // 5分钟
@@ -94,26 +93,22 @@ class HeartFlowLoop {
     const startTime = Date.now();
 
     try {
-      // Phase 1: Heartbeat
-      const heartbeat = this._heartbeat();
-
-      // Phase 2: Context Summary
+      // Phase 1: Context Summary
       const context = this._summarizeContext();
 
-      // Phase 3: Memory Organization
+      // Phase 2: Memory Organization
       const memory = this._organizeMemory();
 
-      // Phase 4: Proactive Recall
+      // Phase 3: Proactive Recall
       const proactive = this._proactiveRecall();
 
-      // Phase 5: Sync
+      // Phase 4: Sync
       const sync = this._sync();
 
       // 记录本次循环
       this._lastCycle = {
         time: startTime,
         duration: Date.now() - startTime,
-        heartbeat,
         proactive: proactive.length
       };
 
@@ -122,23 +117,7 @@ class HeartFlowLoop {
     }
   }
 
-  // ─── Phase 1: Heartbeat ──────────────────────────────────
-
-  /**
-   * 心跳检测 - 保持活跃状态
-   */
-  _heartbeat() {
-    const stats = this.hf.getMemoryStats();
-
-    return {
-      time: Date.now(),
-      memories: stats.learned,
-      ephemeral: stats.ephemeral,
-      uptime: process.uptime()
-    };
-  }
-
-  // ─── Phase 2: Context Summary ────────────────────────────
+  // ─── Phase 1: Context Summary ────────────────────────────
 
   /**
    * 上下文总结 - RTK 压缩理念：只保留关键信息
@@ -196,7 +175,7 @@ class HeartFlowLoop {
     return hash.toString(16);
   }
 
-  // ─── Phase 3: Memory Organization ─────────────────────────
+  // ─── Phase 2: Memory Organization ─────────────────────────
 
   /**
    * 记忆整理 - 压缩+淘汰低价值记忆
@@ -215,7 +194,7 @@ class HeartFlowLoop {
     };
   }
 
-  // ─── Phase 4: Proactive Recall ────────────────────────────
+  // ─── Phase 3: Proactive Recall ────────────────────────────
 
   /**
    * 主动提醒 - 检测相关教训，在适当时机提醒
@@ -260,7 +239,7 @@ class HeartFlowLoop {
     this._proactiveQueue = [];
   }
 
-  // ─── Phase 5: Sync ───────────────────────────────────────
+  // ─── Phase 4: Sync ───────────────────────────────────────
 
   /**
    * 状态同步

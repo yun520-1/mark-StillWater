@@ -1,7 +1,7 @@
 /**
  * ContextPassport — Decision Context Tracker
  *
- * v1.0.5: Tracks the context chain at each reasoning/decision point so that
+ * v1.0.6: Tracks the context chain at each reasoning/decision point so that
  * when errors occur, the recovery system has full context to make better decisions.
  *
  * Inspired by mark-improving-agent's Context Passport chain concept.
@@ -13,7 +13,11 @@
  *   - Assumptions captured at decision time
  *   - Alternatives considered but rejected
  *   - Recovery-ready context export
+ *
+ * Security: Uses crypto.randomBytes() for secure ID generation.
  */
+
+const crypto = require('crypto');
 
 class ContextPassport {
   constructor() {
@@ -23,12 +27,20 @@ class ContextPassport {
   }
 
   /**
+   * Generate a cryptographically secure random string for stamp IDs.
+   * @returns {string} secure random string
+   */
+  _secureId() {
+    return crypto.randomBytes(8).toString('hex');
+  }
+
+  /**
    * Create a new context stamp — marks entry into a reasoning/decision context.
    * @param {object} meta - { task, phase, intent }
    * @returns {string} stampId
    */
   enter(meta = {}) {
-    const stampId = `stamp-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    const stampId = `stamp-${Date.now()}-${this._secureId()}`;
     const now = Date.now();
 
     // Finalize previous stamp if exists

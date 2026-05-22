@@ -228,7 +228,7 @@ class HeartFlowEvolution {
     // Store as ephemeral if failure (temporary lesson)
     if (outcome === 'failure' || outcome === 'partial') {
       // 24hr TTL for failure lessons - use rememberEphemeral directly
-      this.memory.rememberEphemeral(`lesson:${task}:${Date.now()}`, reflection.lesson, 86400000);
+      this.memory.rememberEphemeral(`lesson:${safeTask}:${Date.now()}`, reflection.lesson, 86400000);
     }
 
     return {
@@ -502,11 +502,12 @@ class HeartFlowEvolution {
   }
 
   /**
-   * 生成反馈 (模拟LLM调用，实际使用时替换为真实LLM)
+   * 生成反馈 (STUB - 接口已设计，等待LLM集成)
+   * 接口设计完成，LLM集成后替换为真实调用
    */
   _generateFeedback(feedbackPrompt) {
-    // 实际使用时: 调用 LLM 获取反馈
-    // 简化实现: 基于规则生成反馈
+    // STUB: 基于规则生成反馈，不使用真实LLM
+    // TODO: 替换为 LLM 调用: llm.complete(`分析以下反馈并生成改进建议: ${feedbackPrompt}`)
     const prompt = feedbackPrompt.toLowerCase();
 
     if (prompt.includes('错误') || prompt.includes('error')) {
@@ -522,11 +523,12 @@ class HeartFlowEvolution {
   }
 
   /**
-   * 精炼响应 (模拟LLM调用)
+   * 精炼响应 (STUB - 接口已设计，等待LLM集成)
+   * 接口设计完成，LLM集成后替换为真实调用
    */
   _refineResponse(refinePrompt) {
-    // 实际使用时: 调用 LLM 获取精炼响应
-    // 简化实现: 返回原始提示
+    // STUB: 返回原始提示，不使用真实LLM
+    // TODO: 替换为 LLM 调用: llm.complete(`精炼以下响应: ${refinePrompt}`)
     return refinePrompt;
   }
 
