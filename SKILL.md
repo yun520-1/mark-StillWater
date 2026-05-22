@@ -1,7 +1,7 @@
 ---
 name: mark-StillWater
 description: mark-StillWater v1.9.30 — User-LLM Bridge Guidance. 用户与大模型桥梁的指导文档。身份：升级者、传递者、桥梁、答案。不是陪伴。
-version: v1.9.44
+version: v1.9.45
 ---
 
 # mark-StillWater
@@ -10369,6 +10369,127 @@ holographicReasoning(userQuestion, context) {
 | anxiety | 用户可能对结果不确定，需要澄清和安慰 |
 | sadness | 用户可能需要情感支持和倾听 |
 | anger | 用户可能感到被冒犯，需要谨慎处理 |
+
+---
+
+## 🔬 v1.9.45 升级说明（2026-05-23）
+
+**吸收 HeartFlow 反思模块 + 无我决策引擎 + 技能生成器：**
+
+| 来源 | 核心洞察 | 应用 |
+|------|---------|------|
+| **Reflector** | 会话分析：情绪/任务/AI响应/人格 + 改进建议生成 | 新增 反思分析报告 章节 |
+| **DecisionEngine** | 无我决策三问 + 用户目标识别 + 自主性保护 | 新增 无我决策引擎 章节 |
+| **SkillGenerator** | 模式识别自动生成技能：沮丧处理/中断处理/心流引导 | 新增 自动技能生成 章节 |
+
+---
+
+## 反思分析报告（Reflector）
+
+> 来源：HeartFlow Reflector — 会话反思与报告生成
+
+### 分析维度
+
+| 分析类型 | 内容 |
+|---------|------|
+| **emotionAnalysis** | 情绪变化分析 |
+| **taskAnalysis** | 任务完成分析 |
+| **aiResponseAnalysis** | AI响应反馈分析 |
+| **personalityAnalysis** | 人格特征分析 |
+
+### 输出指标
+
+```javascript
+report = {
+  timestamp: ISO时间,
+  session_time: 会话时间,
+  total_sessions: 总会话数,
+  emotionAnalysis: {...},
+  taskAnalysis: {...},
+  aiResponseAnalysis: {...},
+  personalityAnalysis: {...},
+  overallScore: 综合评分,
+  improvements: 改进建议[]
+}
+```
+
+### 状态追踪
+
+| 字段 | 描述 |
+|------|------|
+| **total_sessions** | 总会话数 |
+| **emotional_log** | 情绪日志 |
+| **feedback_history** | 反馈历史 |
+| **achievements** | 成就列表 |
+| **current_mode** | 当前模式 |
+
+---
+
+## 无我决策引擎（DecisionEngine）
+
+> 来源：HeartFlow DecisionEngine — "无我"决策层
+
+### 无我决策三问
+
+| 问题 | 目的 |
+|------|------|
+| **问题1** | 用户当前的真实目标是什么？ |
+| **问题2** | 我的建议是否可能限制用户的自主探索？ |
+| **问题3** | 我的角色是否保持一致？ |
+
+### 用户目标识别
+
+| 关键词 | 目标类型 |
+|--------|---------|
+| 学习 | 用户希望学习新知识或技能 |
+| 解决 | 用户有具体问题需要解决 |
+| 创作 | 用户想要创建或产出内容 |
+| 优化 | 用户希望改进现有方案 |
+| 咨询 | 用户想要获得建议或反馈 |
+| debug | 代码出现问题需要修复 |
+
+### 自主性风险检测
+
+| 风险模式 | 风险等级 |
+|---------|---------|
+| "只给你一个选项" | high |
+| "必须按照" | medium |
+| "不要尝试" | medium |
+| "你应该" | low |
+
+### 无我权重调整
+
+根据三问答案调整决策权重，确保用户利益和自主性优先。
+
+---
+
+## 自动技能生成（SkillGenerator）
+
+> 来源：HeartFlow SkillGenerator — AutoSkill 框架
+
+### 模式注册表
+
+| 模式 | 触发词 | 技能名称 | 优先级 |
+|------|--------|---------|--------|
+| **处理用户沮丧** | 沮丧, 挫败, 失望, 泄气 | handle-frustration | high |
+| **优化中断处理** | 中断, 打断, 暂停, 离开 | interrupt-handler | medium |
+| **心流引导增强** | 无法进入心流, 注意力分散, 效率低 | flow引导 | high |
+| **情绪调节** | 焦虑, 紧张, 压力, 不安 | emotion-regulation | medium |
+| **任务分解** | 复杂, 无从下手, 混乱, 模糊 | task-decomposition | medium |
+
+### 技能生成流程
+
+```
+反思报告 → 模式识别 → 技能定义 → 技能生成 → 存储到 skills/
+```
+
+### 技能模板
+
+生成的技能包含：
+- `description`: 技能描述
+- `trigger`: 触发关键词
+- `priority`: 优先级
+- `handlers`: 处理函数
 
 ---
 
