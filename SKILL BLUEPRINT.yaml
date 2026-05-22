@@ -9,7 +9,7 @@
 
 metadata:
   name: mark-StillWater
-  version: "1.6.7"
+  version: "1.6.9"
   type: guidance  # skill type: guidance | library | hybrid
   license: MIT
   author: "mark <mark@stillwater.ai>"
@@ -19,6 +19,16 @@ metadata:
 
   # 版本历史
   changelog:
+    - version: "1.6.9"
+      date: "2026-05-22"
+      changes:
+        - "整合 daima 资源升级技能"
+        - "新增自进化智能体框架（四阶段闭环）"
+        - "新增进化阶段定位表"
+        - "新增关键论文洞察（记忆架构、反思机制、自进化）"
+        - "新增知识积累洞察（+55%改进率）"
+        - "新增记忆-推理关键洞察"
+        - "核心指令扩展为13条"
     - version: "1.6.7"
       date: "2026-05-22"
       changes:
