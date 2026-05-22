@@ -11,6 +11,8 @@
  * v1.0.1: Added Lesson Bank with bootstrap lessons from mark-improving-agent,
  *         confidence tracking, and pattern-based lesson checking.
  * v1.0.2: P1 security: Input validation and length limits in recordOutcome.
+ * v1.8.2: CRITICAL FIX — heal() now queries lesson bank BEFORE Q-learning strategy
+ *         selection (AtomMem pattern: learned strategies take priority over relearning).
  */
 
 // P1 Security: Input validation limits
@@ -545,9 +547,32 @@ class HeartFlowEvolution {
 
   /**
    * Heal: detect error pattern and select recovery strategy.
-   * Returns: { ok, canRetry, backoffMs, strategy, pattern, hints }
+   * Returns: { ok, canRetry, backoffMs, strategy, pattern, hints, lesson }
+   *
+   * CRITICAL FIX (v1.8.2): Query lesson bank BEFORE Q-learning strategy selection.
+   * AtomMem insight: If a similar error was previously recorded, use the stored
+   * recovery strategy instead of relearning via Q-learning.
    */
   heal(error) {
+    // Step 1: Check lesson bank for similar errors (AtomMem pattern)
+    const lessonResult = this.checkLesson(String(error.message || error));
+    if (lessonResult.found) {
+      return {
+        ok: false,
+        canRetry: true,
+        backoffMs: this._BACKOFF['fallback'],
+        strategy: 'fallback',  // Use fallback since we have learned guidance
+        pattern: lessonResult.errorPattern,
+        hints: [lessonResult.correction, `Root cause: ${lessonResult.rootCause}`],
+        lesson: {
+          id: lessonResult.id,
+          confidence: lessonResult.confidence,
+          skill: lessonResult.skill,
+        },
+      };
+    }
+
+    // Step 2: No lesson found — use Q-learning to select strategy
     const pattern = this._detectHealPattern(error);
     const strategy = this._selectHealStrategy(pattern);
     const hints = this._getHealHints(strategy, pattern);
@@ -559,6 +584,7 @@ class HeartFlowEvolution {
       strategy,
       pattern,
       hints,
+      lesson: null,
     };
   }
 
