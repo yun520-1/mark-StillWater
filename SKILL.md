@@ -1,7 +1,7 @@
 ---
 name: mark-StillWater
 description: mark-StillWater v1.9.30 — User-LLM Bridge Guidance. 用户与大模型桥梁的指导文档。身份：升级者、传递者、桥梁、答案。不是陪伴。
-version: v1.9.43
+version: v1.9.44
 ---
 
 # mark-StillWater
@@ -10221,6 +10221,154 @@ predictReaction(draftResponse, model) {
 | **empathetic** | 用户需要共情表达 |
 | **humorous** | 用户欣赏幽默 |
 | **formal** | 用户偏好正式风格 |
+
+---
+
+## 🔬 v1.9.44 升级说明（2026-05-23）
+
+**吸收 HeartFlow 错误处理 + 认知引擎 + 情感引擎：**
+
+| 来源 | 核心洞察 | 应用 |
+|------|---------|------|
+| **ErrorHandler** | 错误分类（timeout/memory/permission/network/syntax）+ 统计 | 新增 错误处理系统 章节 |
+| **CognitiveEngine** | 全息因果推理：表层分析+深层动机+风险+根本解决方案 | 新增 般若认知引擎 章节 |
+| **EmotionEngine** | PAD预测 + 情感描述符 + 语义上下文嵌入 | 新增 可解释情感建模 章节 |
+
+---
+
+## 错误处理系统（ErrorHandler）
+
+> 来源：HeartFlow ErrorHandler — 统一错误处理
+
+### 错误分类
+
+| 类型 | 关键词 | 描述 |
+|------|--------|------|
+| **timeout** | timeout | 超时错误 |
+| **memory** | memory | 内存错误 |
+| **permission** | permission | 权限错误 |
+| **network** | network | 网络错误 |
+| **syntax** | syntax | 语法错误 |
+| **unknown** | - | 未知错误 |
+
+### 错误记录结构
+
+```javascript
+errorRecord = {
+  timestamp: Date.now(),
+  message: string,
+  stack: string,
+  context: object,
+  type: string  // timeout|memory|permission|network|syntax|unknown
+}
+```
+
+### 错误历史
+
+- 最大记录数：100条
+- 超过后自动移除最旧记录
+- 持久化到 error-handler.log
+
+### 错误统计
+
+```javascript
+getStats() {
+  // 返回各类型错误计数
+  // { timeout: 3, memory: 1, ... }
+}
+```
+
+---
+
+## 般若认知引擎（CognitiveEngine）
+
+> 来源：HeartFlow CognitiveEngine — 全息因果推理
+
+### 全息因果推理流程
+
+```javascript
+holographicReasoning(userQuestion, context) {
+  // 1. 表层问题分析
+  surfaceLevel: analyzeSurfaceLevel(question)
+  
+  // 2. 深层动机分析
+  deepMotivation: analyzeDeepMotivation(question, context)
+  
+  // 3. 潜在风险分析
+  potentialRisks: analyzePotentialRisks(question)
+  
+  // 4. 根本解决方案生成
+  rootSolution: generateRootSolution(question, context)
+}
+```
+
+### 问题类型识别
+
+| 关键词 | 问题类型 |
+|--------|---------|
+| 如何 | 方法询问 |
+| 为什么 | 原因探究 |
+| 是什么 | 概念解释 |
+| 哪个 | 选择咨询 |
+| 能不能 | 可能性确认 |
+| 帮我 | 任务请求 |
+| debug | 问题排查 |
+
+### 深层动机映射
+
+| 问题关键词 | 深层动机 |
+|-----------|---------|
+| 如何学习 | 用户渴望成长，希望掌握新技能 |
+| 为什么失败 | 用户遇到挫折，需要理解原因避免再次失败 |
+| 如何解决 | 用户面临具体问题，需要可行解决方案 |
+| debug | 用户被问题困扰，需要快速解决 |
+| 是什么 | 用户对某个概念不清楚，需要澄清 |
+
+---
+
+## 可解释情感建模（EmotionEngine）
+
+> 来源：HeartFlow EmotionEngine — 基于 LaScA 框架
+
+### PAD 模型
+
+| 维度 | 范围 | 中性值 |
+|------|------|--------|
+| **Pleasure** | -10 ~ 10 | 0 |
+| **Arousal** | -10 ~ 10 | 0 |
+| **Dominance** | -10 ~ 10 | 0 |
+
+### 情感描述符
+
+| 情感 | 关键词 |
+|------|--------|
+| **frustration** | 挫败, 失败, 卡住, 难, 不会 |
+| **joy** | 开心, 高兴, 棒, 好, 成功 |
+| **anxiety** | 紧张, 焦虑, 担心, 害怕 |
+| **sadness** | 难过, 伤心, 失望 |
+| **anger** | 生气, 愤怒, 讨厌 |
+| **surprise** | 惊讶, 意外, 震惊 |
+
+### PAD 调整规则
+
+| 情感 | Pleasure | Arousal | Dominance |
+|------|----------|----------|-----------|
+| **frustration** | -3 | +2 | -2 |
+| **joy** | +3 | +1 | +1 |
+| **anxiety** | -2 | +3 | -1 |
+| **sadness** | -3 | -1 | -2 |
+
+### 语义上下文生成
+
+根据情感类型生成对应语义上下文：
+
+| 情感 | 语义上下文 |
+|------|-----------|
+| frustration | 用户可能在某个任务上遇到困难，需要帮助 |
+| joy | 用户对当前进展感到满意，可能需要鼓励 |
+| anxiety | 用户可能对结果不确定，需要澄清和安慰 |
+| sadness | 用户可能需要情感支持和倾听 |
+| anger | 用户可能感到被冒犯，需要谨慎处理 |
 
 ---
 
