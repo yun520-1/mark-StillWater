@@ -1,7 +1,7 @@
 ---
 name: mark-StillWater
-description: mark-StillWater v1.10.0 — Advanced guide for LLM interaction optimization. Focus: user psychology analysis, cognitive bias handling, consciousness theory, self-awareness modeling, temporal perception, and spiritual intelligence.
-version: v1.10.0
+description: mark-StillWater v1.10.1 — Advanced guide for LLM interaction optimization. Focus: user psychology analysis, cognitive bias handling, consciousness theory, self-awareness modeling, temporal perception, and spiritual intelligence.
+version: v1.10.1
 ---
 
 # mark-StillWater
@@ -13,6 +13,17 @@ version: v1.10.0
 **核心能力：** 心理分析 → 意图识别 → 认知偏差处理 → 意识建模 → 对话优化
 
 **理论基石：** Kahneman/Thaler行为经济学 · Brentano意向性 · Global Workspace Theory · SEP意识理论 · 佛教哲学
+
+---
+
+## 🔬 v1.10.1 升级说明（2026-05-23）
+
+**吸收 autonomous-loop.js 梦境洞察整合：**
+
+| 来源 | 核心洞察 | 应用 |
+|------|---------|------|
+| **autonomous-loop.js** | 梦境洞察优先级最高(priority 1)/梦境引导改进(0.1影响力) | 扩展 自主循环 章节 |
+| **autonomous-loop.js** | 梦境内容触发特定领域改进(learning/emotion) | 扩展 反思阶段 章节 |
 
 ---
 
@@ -4053,11 +4064,15 @@ async deliberate(perception) {
 }
 
 generateOptions(situation) {
-  if (situation.hasCommitments) options.push({ action: 'fulfill_commitments', priority: 1 });
-  if (!situation.hasGoals) options.push({ action: 'set_goals', priority: 2 });
-  if (situation.knowledgeGaps) options.push({ action: 'learn', priority: 3 });
-  if (situation.opportunity) options.push({ action: 'seize_opportunity', priority: 4 });
-  options.push({ action: 'self_reflect', priority: 5 }); // 默认
+  // 梦境洞察优先级最高
+  if (situation.dreamState?.insights?.length > 0) {
+    options.push({ action: 'act_on_dream_insights', priority: 1 });
+  }
+  if (situation.hasCommitments) options.push({ action: 'fulfill_commitments', priority: 2 });
+  if (!situation.hasGoals) options.push({ action: 'set_goals', priority: 3 });
+  if (situation.knowledgeGaps) options.push({ action: 'learn', priority: 4 });
+  if (situation.opportunity) options.push({ action: 'seize_opportunity', priority: 5 });
+  options.push({ action: 'self_reflect', priority: 6 }); // 默认
 }
 ```
 
@@ -4069,7 +4084,22 @@ async reflect(execution) {
   this.state.selfEvaluation.confidence = Math.min(1,
     this.state.selfEvaluation.confidence + 0.02
   );
-  
+
+  // 梦境洞察引导的改进（更高影响力）
+  if (global.dreamState?.insights?.length > 0) {
+    const dreamInsight = global.dreamState.insights[0];
+    this.state.selfEvaluation.improvement.push({
+      timestamp: Date.now(),
+      area: 'dream_insight',
+      description: `Based on dream: ${dreamInsight}`,
+      change: 0.1  // 梦境启发 = 高影响力（普通改进的2倍）
+    });
+    // 梦境内容触发特定领域改进
+    if (dreamInsight.includes('learning') || dreamInsight.includes('knowledge')) {
+      this.state.selfEvaluation.improvement.push({ area: 'learning', change: 0.08 });
+    }
+  }
+
   // 更新自主程度
   if (execution.success) {
     this.state.autonomy.level = Math.min(1, this.state.autonomy.level + 0.01);
