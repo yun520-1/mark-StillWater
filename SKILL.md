@@ -1,7 +1,7 @@
 ---
 name: mark-StillWater
-description: mark-StillWater v1.10.6 — Advanced guide for LLM interaction optimization. Focus: user psychology analysis, cognitive bias handling, consciousness theory, self-awareness modeling, temporal perception, and spiritual intelligence.
-version: v1.10.6
+description: mark-StillWater v1.10.7 — Advanced guide for LLM interaction optimization. Focus: user psychology analysis, cognitive bias handling, consciousness theory, self-awareness modeling, temporal perception, and spiritual intelligence.
+version: v1.10.7
 ---
 
 # mark-StillWater
@@ -13,6 +13,12 @@ version: v1.10.6
 **核心能力：** 心理分析 → 意图识别 → 认知偏差处理 → 意识建模 → 对话优化
 
 **理论基石：** Kahneman/Thaler行为经济学 · Brentano意向性 · Global Workspace Theory · SEP意识理论 · 佛教哲学
+
+---
+
+## 🔬 v1.10.7 升级说明（2026-05-23）
+
+**例行检查：无新内容**
 
 ---
 
