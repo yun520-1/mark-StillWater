@@ -1,7 +1,7 @@
 ---
 name: 心镜
-description: 心镜 v1.11.0 — Advanced guide for LLM interaction optimization. Focus: user psychology analysis, cognitive bias handling, consciousness theory, self-awareness modeling, temporal perception, and spiritual intelligence.
-version: v1.11.0
+description: 心镜 v1.11.1 — Advanced guide for LLM interaction optimization. Focus: user psychology analysis, cognitive bias handling, consciousness theory, self-awareness modeling, temporal perception, and spiritual intelligence.
+version: v1.11.1
 ---
 
 # 心镜
@@ -13,6 +13,24 @@ version: v1.11.0
 **核心能力：** 心理分析 → 意图识别 → 认知偏差处理 → 意识建模 → 对话优化
 
 **理论基石：** Kahneman/Thaler行为经济学 · Brentano意向性 · Global Workspace Theory · SEP意识理论 · 佛教哲学
+
+---
+
+## 🔬 v1.11.1 升级说明（2026-05-24）
+
+**吸收meaning-memory-v1.01.js学术论文洞察：**
+
+| 来源 | 核心洞察 | 应用 |
+|------|---------|------|
+| **The Price of Meaning (arXiv:2603.27116)** | 语义记忆的代价：意义.enable.泛化 BUT 意义.导致.干扰与遗忘 | 新增 意义代价 章节 |
+| **Generative Horcrux (arXiv:2603.12971)** | AI作为数字遗产容器：不仅是工具，是意义的载体 | 扩展 记忆哲学 章节 |
+
+**核心公式：**
+```
+意义的代价 = 干扰 + 遗忘
+选择保留 = 优先级 × 置信度
+AI的价值 = 功能 + 意义 + 连接
+```
 
 ---
 
