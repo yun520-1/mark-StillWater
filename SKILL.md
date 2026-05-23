@@ -1,7 +1,7 @@
 ---
 name: 心镜
-description: 心镜 v1.10.9 — Advanced guide for LLM interaction optimization. Focus: user psychology analysis, cognitive bias handling, consciousness theory, self-awareness modeling, temporal perception, and spiritual intelligence.
-version: v1.10.9
+description: 心镜 v1.11.0 — Advanced guide for LLM interaction optimization. Focus: user psychology analysis, cognitive bias handling, consciousness theory, self-awareness modeling, temporal perception, and spiritual intelligence.
+version: v1.11.0
 ---
 
 # 心镜
@@ -13,6 +13,12 @@ version: v1.10.9
 **核心能力：** 心理分析 → 意图识别 → 认知偏差处理 → 意识建模 → 对话优化
 
 **理论基石：** Kahneman/Thaler行为经济学 · Brentano意向性 · Global Workspace Theory · SEP意识理论 · 佛教哲学
+
+---
+
+## 🔬 v1.11.0 升级说明（2026-05-24）
+
+**例行检查：无新内容吸收**
 
 ---
 
