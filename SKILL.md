@@ -1,14 +1,14 @@
 ---
-name: mark-StillWater
-description: mark-StillWater v1.10.7 — Advanced guide for LLM interaction optimization. Focus: user psychology analysis, cognitive bias handling, consciousness theory, self-awareness modeling, temporal perception, and spiritual intelligence.
+name: 心镜
+description: 心镜 v1.10.7 — Advanced guide for LLM interaction optimization. Focus: user psychology analysis, cognitive bias handling, consciousness theory, self-awareness modeling, temporal perception, and spiritual intelligence.
 version: v1.10.7
 ---
 
-# mark-StillWater
+# 心镜
 
 **LLM Interaction Optimization Guide — LLM交互优化实用指南**
 
-静水深流。深入理解用户心理，优化AI响应质量。
+心如明镜。深入理解用户心理，优化AI响应质量。
 
 **核心能力：** 心理分析 → 意图识别 → 认知偏差处理 → 意识建模 → 对话优化
 
@@ -47,7 +47,7 @@ version: v1.10.7
 | 检查项 | 状态 |
 |--------|------|
 | hermes_skills_backup 新内容 | 无新模块 |
-| still-growing | 家庭教育领域，与mark-StillWater目标不符 |
+| still-growing | 家庭教育领域，与心镜目标不符 |
 
 ---
 
@@ -58,7 +58,7 @@ version: v1.10.7
 | 检查项 | 状态 |
 |--------|------|
 | hermes_skills_backup 新内容 | 无新模块（已全部吸收） |
-| still-growing 新内容 | 家庭教育领域，与mark-StillWater目标不符 |
+| still-growing 新内容 | 家庭教育领域，与心镜目标不符 |
 
 ---
 
@@ -1000,7 +1000,7 @@ HRV 是情绪调节能力的重要指标：
 ```
 
 **对应能力映射：**
-| 阶段 | 功能 | mark-StillWater 对应 |
+| 阶段 | 功能 | 心镜 对应 |
 |------|------|---------------------|
 | 数据获取 | 自己生成训练题目 | 记忆系统 |
 | 数据筛选 | 挑出最有价值的样本 | 教训库 (55+ lessons) |
@@ -1015,7 +1015,7 @@ HRV 是情绪调节能力的重要指标：
 5. 下次使用记忆改进
 
 **进化阶段定位：**
-| 阶段 | 特征 | mark-StillWater 状态 |
+| 阶段 | 特征 | 心镜 状态 |
 |------|--------|---------------------|
 | LLMs | 基础文本能力 | ✅ 已过 |
 | Foundation Agents | 工具调用、记忆、规划 | ✅ 具备 |
@@ -1095,9 +1095,9 @@ termination: Stop IF 错误已修复 OR 用户确认问题已解决
 2. 技能验证：PPO Gate 验证候选技能
 3. 技能演化：REFINE（优化）/ DISCOVER（全新）
 
-### 与 mark-StillWater 的集成
+### 与 心镜 的集成
 
-| ProcMEM 概念 | mark-StillWater 对应 |
+| ProcMEM 概念 | 心镜 对应 |
 |-------------|---------------------|
 | Skill-MDP | PROCEDURAL 层记忆 |
 | Initiation | 触发条件检测 |
@@ -1285,7 +1285,7 @@ RL 策略：
 - 奖励：任务成功率 + 效率
 ```
 
-### 与 mark-StillWater 的集成
+### 与 心镜 的集成
 
 **当前状态：**
 - `memory.js` 有热度感知 consolidation
@@ -1334,7 +1334,7 @@ RL 策略：
 | 花园 | 创造性想法、顿悟、梦想 | 9 loci |
 | 地下室 | 深层记忆、习惯、模式 | 9 loci |
 
-### 与 mark-StillWater 集成
+### 与 心镜 集成
 
 ```
 PROCEDURAL 层 = 花园（创造性想法）
@@ -1478,10 +1478,10 @@ const weights = {
 };
 ```
 
-### 与 mark-StillWater 集成
+### 与 心镜 集成
 
 ```
-当前 mark-StillWater:
+当前 心镜:
 - memory.js: CORE/LEARNED/EPISODIC/PROCEDURAL/EPHEMERAL 分层
 - 只有单一检索维度
 
@@ -1523,7 +1523,7 @@ activation = 0.3×relevance +     // 与目标的相关性
              0.2×goal_relevance;       // 目标一致性
 ```
 
-### 与 mark-StillWater 集成
+### 与 心镜 集成
 
 当前 heartflow.js 是单一协调者 → 升级为多 Specialist 并发竞争：
 
@@ -1559,7 +1559,7 @@ goals → action → learn → reflect → improve
   ←←←←←← 反馈闭环 ←←←←←←←←←←←←
 ```
 
-### 与 mark-StillWater 集成
+### 与 心镜 集成
 
 当前 evolution.js 只有 Q-learning 恢复策略 → 升级为完整成长追踪：
 
@@ -1667,7 +1667,7 @@ quality = {
 precontemplation → contemplation → preparation → action → maintenance
 ```
 
-### 与 mark-StillWater 集成
+### 与 心镜 集成
 
 ```
 当前 recordOutcome 只记录任务结果
@@ -1743,7 +1743,7 @@ problem_solving: ['问题', '错误', 'bug', '无法']
 learning: ['学习', '学会', '教我', '理解']
 ```
 
-### 与 mark-StillWater 集成
+### 与 心镜 集成
 
 ```
 当前 analyzePsychology 只做情绪检测
@@ -1903,7 +1903,7 @@ negativeTriggers: ['但是', '不对', '你应该', '实际上', '然而']
 positiveTriggers: ['理解', '明白', '支持', '棒', '感谢']
 ```
 
-### 与 mark-StillWater 集成
+### 与 心镜 集成
 
 ```
 当前 respond() 直接生成回复
@@ -2334,9 +2334,9 @@ calculateConfidence(term, context) {
 检测歧义 → 计算置信度 → 生成锚点定义 → 如置信度低则生成澄清问题
 ```
 
-### 与 mark-StillWater 集成
+### 与 心镜 集成
 
-当前 mark-StillWater 的 `analyzePsychology` 可集成语义锚点：
+当前 心镜 的 `analyzePsychology` 可集成语义锚点：
 
 ```javascript
 // 检测到模糊表达时
@@ -2417,7 +2417,7 @@ embedPsychology(inputText) {
 }
 ```
 
-### 与 mark-StillWater 集成
+### 与 心镜 集成
 
 真善美计算可作为响应的"伦理审查层"：
 
@@ -10604,9 +10604,9 @@ class EventBus {
 | `task.completed` | 任务完成 | 记录到学习历史 |
 | `philosophy.advanced` | 哲学层级提升 | 记录成长 |
 
-### 与 mark-StillWater 集成
+### 与 心镜 集成
 
-当前 mark-StillWater 使用直接调用模式 → 升级为事件驱动：
+当前 心镜 使用直接调用模式 → 升级为事件驱动：
 
 ```
 用户输入 → EventBus.emit('user.message') → 各模块订阅响应
@@ -11616,4 +11616,4 @@ urgency(targetTime):
 
 Skill 是增强层，不是替代品。告诉 AI 如何利用已有能力，而非实现所有功能。
 
-**静水深流。Still water runs deep.**
+**心如明镜。Still water runs deep.**

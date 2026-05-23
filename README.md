@@ -1,102 +1,80 @@
-# mark-StillWater v1.9.45
+# 心镜 v1.10.7
 
-> **LLM Interaction Optimization Guide** — Practical guidance for understanding user psychology and optimizing LLM responses.
+> **LLM Interaction Optimization Guide** — 如镜照心，洞察用户真实意图
 
-**静水深流。Still water runs deep.**
+心如明镜。深入理解用户心理，优化AI响应质量。
 
 ---
 
-## Overview
+## 核心能力
 
-mark-StillWater is a practical skill guide for optimizing LLM interactions. It provides frameworks for:
+| 能力 | 描述 |
+|------|------|
+| **心理分析** | 意图识别、情绪检测、需求挖掘、防御识别 |
+| **认知偏差** | Kahneman双系统、16种偏差、EAST框架 |
+| **意识建模** | GWT全局工作空间、SEP自我意识、高级意识公式 |
+| **时间感知** | 急迫度算法、时间敌人框架 |
+| **真善美** | 熵减判断、心理健康分析、价值内化 |
 
-- User psychology analysis and intent detection
-- Response strategy selection
-- Cognitive bias handling
-- Dialogue optimization
+## 理论基石
 
-## Core Capabilities
+Kahneman/Thaler行为经济学 · Brentano意向性 · Global Workspace Theory · SEP意识理论 · 佛教哲学
 
-| Capability | Description |
-|-----------|-------------|
-| **Psychology Analysis** | Detect user intent, emotion, needs, and defense mechanisms |
-| **Reasoning** | Multi-step causal reasoning, logic validation, fallacy detection |
-| **Decision Making** | Multi-objective weighing, dynamic weights, risk assessment |
-| **Memory** | Three-tier memory system (CORE/LEARNED/EPHEMERAL) |
-| **Outcome Recording** | Self-improvement through lesson retrieval |
+---
 
-## Quick Start
+## 快速开始
 
-### Installation
+### 安装
 
 ```bash
-# Clone the skill
-git clone https://github.com/yun520-1/mark-StillWater.git ~/.claude/skills/mark-StillWater
+# 克隆技能
+git clone https://github.com/yun520-1/xinji.git ~/.claude/skills/xinji
 ```
 
-### Usage
+### 使用
 
-Load the skill before any conversation:
-
-```
-/skill mark-StillWater
-```
-
-## Key Frameworks
-
-### User Psychology Analysis
-
-**Emotion Detection:**
-| Level | Label | Strategy |
-|-------|-------|----------|
-| 0 | Positive | Normal execution, maintain connection |
-| 1 | Neutral | Direct answer |
-| 2 | Negative | Cautious response, confirm understanding first |
-| 3 | Painful | **Empathy first, then execute** |
-| 4 | Collapsed | **Stop immediately, prioritize comfort** |
-
-**Defense Recognition:**
-| Type | Keywords | Strategy |
-|------|---------|----------|
-| Denial | "No", "didn't", "isn't" | Acknowledge feelings first |
-| Displacement | Complaining about third party | Gently guide back |
-| Rationalization | "Because...so..." | Acknowledge logic, explore feelings |
-| Attack | Blaming, questioning ability | Stay professional, don't defend |
-| Withdrawal | No reply,敷衍 | Simplify and offer options |
-
-### Cognitive Bias Handling
-
-Based on Kahneman's behavioral economics:
-
-| Bias | Detection | Response |
-|------|----------|----------|
-| Loss Aversion | Focus on "losing" vs "gaining" | Reframe as "not losing" |
-| Anchoring | First number dominates | Establish high reference point first |
-| Cognitive Overload | Too many options | Simplify choices, gradual disclosure |
-| Social Proof | Need for validation | Provide evidence of others' choices |
-
-### Dialogue Optimization
-
-**Response Strategy Selection:**
-- Task-focused: Direct, actionable output
-- Emotional support needed: Brief acknowledgment + task focus
-- Ambiguous input: Ask clarifying questions
-- High complexity: Break into steps
-
-## Architecture
+加载技能后再开始对话：
 
 ```
-SKILL.md           — Main guidance document
-CORE_IDENTITY.md    — Operational identity guidelines
-CORE_VALUES.md     — Safety and ethics principles
+/skill 心镜
 ```
+
+---
+
+## 核心框架
+
+### 用户心理分析流程
+
+```
+用户输入
+  ↓
+1. 情绪检测：积极/中性/消极/痛苦
+  ↓
+2. 防御识别：无/防御/攻击/撤退
+  ↓
+3. 需求挖掘：表面需求 → 真实需求
+  ↓
+4. 意图分类：task/information/emotion/relationship
+  ↓
+5. 路由决策：执行/安抚/两者
+```
+
+### 情绪分级响应
+
+| 级别 | 标签 | 表现 | 策略 |
+|------|------|------|------|
+| 0 | 积极 | 开心、满意 | 正常执行 |
+| 1 | 中性 | 普通询问 | 直接回答 |
+| 2 | 消极 | 不满、困惑 | 先确认理解 |
+| 3 | 痛苦 | 沮丧、愤怒 | **先共情，再执行** |
+| 4 | 崩溃 | 绝望、放弃 | **立即停止，优先安抚** |
+
+---
 
 ## GitHub
 
-```
-https://github.com/yun520-1/mark-StillWater
-```
+https://github.com/yun520-1/xinji
 
 ---
 
-**静水深流。Still water runs deep.**
+**心如明镜，照见真意。**
