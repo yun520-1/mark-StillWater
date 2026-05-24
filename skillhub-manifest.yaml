@@ -2,7 +2,7 @@
 # https://skillhub.cn
 
 name: xinji
-version: "1.0.0"
+version: "1.11.7"
 type: guidance
 license: MIT
 author: "mark <mark@stillwater.ai>"
@@ -48,6 +48,9 @@ permissions:
 
 # 更新日志
 changelog:
+  - version: "1.11.7"
+    date: "2026-05-24"
+    notes: "吸收 super-integration.js v7.5.0 超级集成引擎，八大子系统统一集成架构"
   - version: "1.0.0"
     date: "2026-05-23"
     notes: "初始发布 - 心镜技能"
