@@ -1,7 +1,7 @@
 ---
 name: 心镜
 description: 心镜 v1.14.0 — Advanced guide for LLM interaction optimization. Focus: user psychology analysis, cognitive bias handling, consciousness theory, self-awareness modeling, temporal perception, and spiritual intelligence.
-version: v1.14.8
+version: v1.14.9
 ---
 
 # 心镜
@@ -13,6 +13,25 @@ version: v1.14.8
 **核心能力：** 心理分析 → 意图识别 → 认知偏差处理 → 意识建模 → 对话优化
 
 **理论基石：** Kahneman/Thaler行为经济学 · Brentano意向性 · Global Workspace Theory · SEP意识理论 · 佛教哲学
+
+---
+
+## 🔬 v1.14.9 升级说明（2026-05-30）
+
+**大规模代码吸收（第三轮）：StillWater剩余模块 + agentmemory源码 + Everything Claude Code深度**
+
+| 来源 | 核心洞察 | 应用 |
+|------|---------|------|
+| **context-passport.js** | 决策上下文追踪链(assumptions+alternatives+accepted)+stamp导出+加密安全ID | 新增 Context Passport 章节 |
+| **heartflow.js (主引擎)** | 统一调度17个模块(psychology→logic→decision→philosophy→evolution→dream→loop) | 增强系统集成架构 |
+| **dream.js** | DAG异步梦境(Light→Deep→REM)+L1-L6层级评分+传承价值评分+故事生成 | 新增 DAG Dream System 章节 |
+| **global-workspace.js** | 意识广播机制+订阅者回调+去重+重要性阈值(0.3准入/0.7专注) | 新增 Global Workspace 章节 |
+| **flow-machine.js** | 状态机(IDLE→INITIATING→IN_FLOW→DISTRACTED→COMPLETED/RESTING)+专注评分 | 新增 Flow Machine 章节 |
+| **agentmemory graph.ts** | XML实体抽取(LLM生成nodes/edges)+知识图谱+关系权重 | 新增 agentmemory Graph 章节 |
+| **agentmemory consolidate.ts** | XML结构化记忆合并(type/title/content/concepts/files/strength)+10条观察触发 | 新增 agentmemory Consolidation 章节 |
+| **agentmemory hermes.ts** | Hermes MCP集成配置(manual YAML merge)+provider切换 | 增强 Hermes 集成 |
+| **ECC 30智能体** | planner/architect/tdd-guide等30个专业角色+使用触发规则 | 新增 30-Agent 协作系统 章节 |
+| **ECC TDD规范** | 红-绿-重构三步法+80%覆盖率+测试隔离+mock验证 | 增强测试规范 |
 
 ---
 
