@@ -1,5 +1,5 @@
 /**
- * mark-StillWater v1.6.0 — AI Psychological & Philosophical Enhancement Layer
+ * mark-StillWater v1.14.18 — AI Psychological & Philosophical Enhancement Layer
  *
  * A thin enhancement layer that helps AI understand users better.
  * Not a rule engine. Not a replacement for AI thinking.

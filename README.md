@@ -1,4 +1,4 @@
-# 心镜 v1.11.6
+# 心镜 v1.14.18
 
 > **LLM Interaction Optimization Guide** — 如镜照心，洞察用户真实意图
 

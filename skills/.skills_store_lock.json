@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "skills": {
+    "multi-search-engine": {
+      "name": "Multi Search Engine",
+      "zip_url": "https://api.skillhub.cn/api/v1/download?slug=multi-search-engine",
+      "source": "community",
+      "version": "2.1.3",
+      "installedAt": "2026-05-24T09:36:04Z"
+    },
+    "smartlib-citation-checker": {
+      "name": "参考文献验真——基于全球10亿文献",
+      "zip_url": "https://api.skillhub.cn/api/v1/download?slug=smartlib-citation-checker",
+      "source": "community",
+      "version": "1.0.4",
+      "installedAt": "2026-05-24T12:49:05Z"
+    },
+    "gpt-image-2-1": {
+      "name": "gpt-image-2-生图技能，",
+      "zip_url": "https://api.skillhub.cn/api/v1/download?slug=gpt-image-2-1",
+      "source": "community",
+      "version": "1.0.0",
+      "installedAt": "2026-05-24T13:48:08Z"
+    }
+  }
+}

@@ -4,3 +4,8 @@ data/
 .DS_Store
 pre-launch-check*.md
 CORE_VALUES.md
+
+# Privacy-critical files - NEVER push to public GitHub
+src/core/learned.json
+src/core/agent-performance.json
+src/self/
