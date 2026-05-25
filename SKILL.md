@@ -16,6 +16,21 @@ version: v1.14.13
 
 ---
 
+## 🔬 v1.14.16 升级说明（2026-05-30）
+
+**第十轮：HeartFlow v1.6.0完整引擎API + 17模块统一调度 + 完整系统集成**
+
+| 来源 | 核心洞察 | 应用 |
+|------|---------|------|
+| **heartflow.js完整API** | 30+方法统一出口(psychology/logic/decision/philosophy/evolution/dream/security/meta-learner/healer/verifier/kg/anchor/passport/flow/dual/GWS/attention/loop) | 新增 Engine Architecture 章节 |
+| **Engine boot顺序** | memory→identity→psychology→logic→decision→philosophy→evolution→dream→security→meta→verifier→kg→anchor→passport→flow→dual→GWS→attention→loop | 增强系统启动文档 |
+| **GlobalWorkspace完整API** | broadcast/subscribe/unsubscribe/attend/getAttention/getWorkspace/getHistory + 全订阅者系统 | 增强GWS |
+| **Dream完整API** | dreamNow/dreamWithStages/dreamCached/dreamAsync + DAG异步执行 | 增强Dream |
+| **FlowMachine完整API** | transition/getState/getFocusScore/getFlowDuration/getStats | 增强Flow |
+| **DualProcess完整API** | reason/analyze/switchMode/getCurrentMode/getStats + S1/S2切换统计 | 增强Cognition |
+
+---
+
 ## 🔬 v1.14.15 升级说明（2026-05-30）
 
 **第九轮：动作管理+热感知合并+遗忘曲线完整实现+Actions边系统**
