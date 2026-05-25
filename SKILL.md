@@ -16,6 +16,20 @@ version: v1.14.11
 
 ---
 
+## 🔬 v1.14.12 升级说明（2026-05-30）
+
+**第六轮：agentmemory多智能体网络 + Governance治理 + Slots系统 + Compression压缩**
+
+| 来源 | 核心洞察 | 应用 |
+|------|---------|------|
+| **agentmemory mesh.ts** | 多智能体Mesh网络+DNS lookup+私有IP检测+LWW合并+shared scopes(8种类型) | 新增 Multi-Agent Mesh 章节 |
+| **agentmemory governance.ts** | 治理删除(audit追踪)+dry-run批量操作+type/date/quality过滤器 | 新增 Governance 章节 |
+| **agentmemory slots.ts** | 8个固定槽(persona/user_prefs/tool_guidelines/project_context/guidance/pending/session_patterns/self_notes)+size限制+project/global作用域 | 新增 Memory Slots 章节 |
+| **agentmemory compress.ts** | 观察压缩(15种类型+XML提取facts/narrative/concepts/files)+self-correct重试+importance评分 | 新增 Compression Engine 章节 |
+| **archive/heartflow-complete.js** | v8.1.4完整系统+IIT/GWT/HOT+佛教哲学+BigFive+真善美+六层践行 | 新增 HeartFlow v8 Archive 章节 |
+
+---
+
 ## 🔬 v1.14.11 升级说明（2026-05-30）
 
 **第五轮：Self-Refinement完整实现 + Hindsight 2行集成 + Access追踪 + AI宪法**
