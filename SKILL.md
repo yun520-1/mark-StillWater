@@ -1,7 +1,7 @@
 ---
 name: 心镜
 description: 心镜 v1.14.0 — Advanced guide for LLM interaction optimization. Focus: user psychology analysis, cognitive bias handling, consciousness theory, self-awareness modeling, temporal perception, and spiritual intelligence.
-version: v1.14.9
+version: v1.14.11
 ---
 
 # 心镜
@@ -13,6 +13,37 @@ version: v1.14.9
 **核心能力：** 心理分析 → 意图识别 → 认知偏差处理 → 意识建模 → 对话优化
 
 **理论基石：** Kahneman/Thaler行为经济学 · Brentano意向性 · Global Workspace Theory · SEP意识理论 · 佛教哲学
+
+---
+
+## 🔬 v1.14.11 升级说明（2026-05-30）
+
+**第五轮：Self-Refinement完整实现 + Hindsight 2行集成 + Access追踪 + AI宪法**
+
+| 来源 | 核心洞察 | 应用 |
+|------|---------|------|
+| **evolution.js完整** | Self-Refine迭代(收敛检测+maxIterations)+Bootstrap 40教训+安全输入验证+P1安全 | 增强 Self-Refinement |
+| **Self-Healer** | Q-learning错误恢复(retry/fallback/skip/abort)+7种错误模式+lesson bank优先于Q-learning | 新增 Self-Healer 章节 |
+| **CORE_VALUES.md** | HeartFlow AI宪法(5原则不可修改)+安全边界+修改审批流程 | 新增 AI Constitution 章节 |
+| **agentmemory access-tracker** | 键锁并发控制+访问日志标准化+batch批量记录+normalizeAccessLog | 新增 Access Tracker 章节 |
+| **agentmemory lessons recall** | lesson-recall语义查询+confidence过滤+按project筛选 | 增强 Lessons System |
+| **Hindsight 2行集成** | LLM Wrapper: 2行代码为任意Agent添加记忆+LongMemEval SOTA | 新增 Hindsight 集成 章节 |
+
+---
+
+## 🔬 v1.14.10 升级说明（2026-05-30）
+
+**第四轮吸收：agentmemory核心函数 + Hindsight SOTA记忆 + StillWater归档模块**
+
+| 来源 | 核心洞察 | 应用 |
+|------|---------|------|
+| **agentmemory lessons.ts** | Lesson强化机制(fingerprint去重+confidence强化+decayRate)+来源追踪(manual/crystal/consolidation) | 新增 agentmemory Lessons 章节 |
+| **agentmemory context.ts** | token预算管理+pinned slots+project profile(概念/文件/约定/错误) | 新增 agentmemory Context 章节 |
+| **agentmemory graph-extraction** | XML实体抽取(prompt)+8种关系类型(uses/imports/modifies/causes/fixes/depends_on)+权重评分 | 新增 agentmemory Graph Extraction 章节 |
+| **Hindsight (14428★)** | LongMemEval SOTA最准确记忆系统+benchmark对照图+Learns而非Remembers理念 | 新增 Hindsight 章节 |
+| **evolution.js** | Reflexion模式(attempt→evaluate→reflect→store)+Bootstrap 40+教训库+安全输入验证 | 增强 Self-Refinement |
+| **weixin-client.js** | 微信API客户端(access token+XML解析+签名验证+媒体上传框架) | 新增 Weixin Client 章节 |
+| **weixin-server.js** | Express微信服务器+消息日志+SelfAgent集成+环境变量配置 | 新增 Weixin Server 章节 |
 
 ---
 
