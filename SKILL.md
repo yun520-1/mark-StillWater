@@ -16,6 +16,20 @@ version: v1.14.13
 
 ---
 
+## 🔬 v1.14.15 升级说明（2026-05-30）
+
+**第九轮：动作管理+热感知合并+遗忘曲线完整实现+Actions边系统**
+
+| 来源 | 核心洞察 | 应用 |
+|------|---------|------|
+| **memory.js consolidate** | 热感知合并(≥3次访问 OR >30min)+signal:前缀提升2分+consolidated标签 | 增强 Consolidation |
+| **memory.js applyForgetting** | Ebbinghaus压缩/删除+compressed标志+统计返回 | 增强遗忘曲线 |
+| **memory.js getRetention** | 三层统一retention计算+ageHours+shouldCompress/shouldDelete | 增强记忆健康检查 |
+| **actions.ts** | Action CRUD+5种边(requires/unlocks/spawned_by/gated_by/conflicts_with)+priority 1-10+父子层级 | 新增 Action Management 章节 |
+| **memory.js完整方法** | getWorking/forgetWorking/listEphemeral/rememberUniversal+dirty flag I/O优化 | 增强记忆API |
+
+---
+
 ## 🔬 v1.14.14 升级说明（2026-05-30）
 
 **第八轮：混合搜索实现 + 记忆完整API + agentmemory搜索架构**
