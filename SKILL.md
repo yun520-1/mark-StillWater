@@ -1,7 +1,7 @@
 ---
 name: 心镜
 description: 心镜 v1.14.0 — Advanced guide for LLM interaction optimization. Focus: user psychology analysis, cognitive bias handling, consciousness theory, self-awareness modeling, temporal perception, and spiritual intelligence.
-version: v1.14.11
+version: v1.14.13
 ---
 
 # 心镜
@@ -13,6 +13,22 @@ version: v1.14.11
 **核心能力：** 心理分析 → 意图识别 → 认知偏差处理 → 意识建模 → 对话优化
 
 **理论基石：** Kahneman/Thaler行为经济学 · Brentano意向性 · Global Workspace Theory · SEP意识理论 · 佛教哲学
+
+---
+
+## 🔬 v1.14.13 升级说明（2026-05-30）
+
+**第七轮：记忆系统完整实现 + 意识理论 + agentmemory生产级系统**
+
+| 来源 | 核心洞察 | 应用 |
+|------|---------|------|
+| **memory.js完整** | 三层架构(CORE/LEARNED/EPHEMERAL)+AES-256-GCM加密+dirty flags+lazy loading+原子写入(temp+rename)+降级策略 | 新增 HeartFlow Memory System 章节 |
+| **Ebbinghaus遗忘曲线** | R=e^(-t/S)+retention<10%删除/<30%压缩+CORE层8760h稳定/LEARNED层720h | 增强记忆管理 |
+| **v7.3.0 Consciousness** | SEP自我意识理论+6层检查(觉察85+/自省80+/无我75+/彼岸70+/般若65+/圣人60+)+第一人称检测 | 新增 SEP Consciousness 章节 |
+| **agentmemory quality.ts** | 压缩评分(100分:facts/narrative/title/concepts/importance)+摘要评分+上下文相关性评分 | 新增 Quality Scoring System 章节 |
+| **agentmemory enrich.ts** | 多源enrichment(文件context+搜索+bug memory并行)+并行trigger+MAX 4000 tokens | 新增 Enrichment Pipeline 章节 |
+| **agentmemory frontier.ts** | Action管理(blockers+checkpoints+conflicts+leases)+评分排序+deadline感知 | 新增 Action Frontier 章节 |
+| **agentmemory evict.ts** | 驱逐策略(30天stale+90天low importance+10k观察上限)+recovery触发+consolidation | 新增 Eviction Engine 章节 |
 
 ---
 
