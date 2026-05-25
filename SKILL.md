@@ -1,7 +1,7 @@
 ---
 name: 心镜
 description: 心镜 v1.14.0 — Advanced guide for LLM interaction optimization. Focus: user psychology analysis, cognitive bias handling, consciousness theory, self-awareness modeling, temporal perception, and spiritual intelligence.
-version: v1.14.13
+version: v1.14.17
 ---
 
 # 心镜
@@ -13,6 +13,20 @@ version: v1.14.13
 **核心能力：** 心理分析 → 意图识别 → 认知偏差处理 → 意识建模 → 对话优化
 
 **理论基石：** Kahneman/Thaler行为经济学 · Brentano意向性 · Global Workspace Theory · SEP意识理论 · 佛教哲学
+
+---
+
+## 🔬 v1.14.17 升级说明（2026-05-30）
+
+**第十一轮：HeartFlow Memory System 773行全文完结 + 完整Search/Stats/Health**
+
+| 来源 | 核心洞察 | 应用 |
+|------|---------|------|
+| **memory.js全文773行** | AES-256-GCM+dirty flags+lazy loading+三层Ebbinghaus+热感知合并+search三层+stats+health+完整加密 | 新增 HeartFlow Memory System 完整文档 |
+| **search全部** | 三层全文搜索(CORE+LEARNED+EPHEMERAL)+query+results with tier标记 | 增强 Search |
+| **stats完整** | avgRetention+compressedCount+遗忘曲线配置+三层统计 | 增强 Stats |
+| **getMemoryHealth** | 样本返回(core_samples+learned_samples)+遗忘配置展示 | 增强 Health |
+| **_cleanEphemeral** | TTL过期清理+自动清理 | 增强 Ephemeral管理 |
 
 ---
 
