@@ -16,6 +16,20 @@ version: v1.14.13
 
 ---
 
+## 🔬 v1.14.14 升级说明（2026-05-30）
+
+**第八轮：混合搜索实现 + 记忆完整API + agentmemory搜索架构**
+
+| 来源 | 核心洞察 | 应用 |
+|------|---------|------|
+| **agentmemory search.ts** | 混合搜索(BM25+向量)+SearchIndex+VectorIndex+embedding provider+维度校验+16k字符截断+软失败保护 | 新增 Hybrid Search 章节 |
+| **memory.js完整API** | learn/recall/forget/getLearned/listLearned/rememberEphemeral/consolidate/getRetention/applyForgetting/getMemoryHealth | 增强记忆系统 |
+| **agentmemory KV schema** | 44个命名空间键(observations/summaries/config/metrics/health/embeddings/graph/audit/actions/lessons/slots等) | 新增 Storage Schema 章节 |
+| **agentmemory dedup** | SHA-256 deduplication+5分钟TTL+自动清理+session/tool/input三级hash | 增强记忆去重 |
+| **ECC hooks marketplace** | agentmemory Claude Code插件市场配置+描述+所有者信息 | 增强集成文档 |
+
+---
+
 ## 🔬 v1.14.13 升级说明（2026-05-30）
 
 **第七轮：记忆系统完整实现 + 意识理论 + agentmemory生产级系统**
