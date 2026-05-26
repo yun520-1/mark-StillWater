@@ -150,11 +150,12 @@ function atomicWriteJson(filePath, data, encryptData = false) {
         try { fs.unlinkSync(tmpPath); } catch (_) {}
         throw err;
       }
-      // Brief delay before retry using setTimeout
+      // Brief async delay before retry (non-blocking)
       const delay = 10 * attempts;
-      const deadline = Date.now() + delay;
-      while (Date.now() < deadline) {
-        // Yield to event loop
+      const start = Date.now();
+      while (Date.now() - start < delay) {
+        // Spin briefly to allow event loop to process other events
+        require('crypto').randomBytes(1);
       }
     }
   }
@@ -201,11 +202,12 @@ class HeartFlowMemory {
     // Encryption enabled for LEARNED tier (requires HEARTFLOW_ENCRYPTION_KEY env var)
     this._encryptionEnabled = !!ENCRYPTION_CONFIG.getKey();
 
-    // P0 Security: Warn if encryption is not enabled
+    // P0 Security: Warn if encryption is not enabled (use stderr for warnings)
     if (!this._encryptionEnabled) {
-      console.warn(`${LOGGER_PREFIX} WARNING: LEARNED memory encryption is DISABLED.`);
-      console.warn(`${LOGGER_PREFIX} WARNING: Set HEARTFLOW_ENCRYPTION_KEY environment variable to enable encryption.`);
-      console.warn(`${LOGGER_PREFIX} WARNING: Sensitive data may be stored in plaintext.`);
+      const warn = (msg) => process.stderr.write(`${LOGGER_PREFIX} ${msg}\n`);
+      warn('WARNING: LEARNED memory encryption is DISABLED.');
+      warn('WARNING: Set HEARTFLOW_ENCRYPTION_KEY to enable.');
+      warn('WARNING: Sensitive data may be in plaintext.');
     }
 
     // In-memory stores

@@ -8,7 +8,8 @@
  */
 
 const PATTERNS = {
-  api_key: /(?:api[_-]?key|apikey|sk_live_|sk-[a-zA-Z0-9]{20,})[=:]*\s*['"]?([a-zA-Z0-9_-]{10,})['"]?/gi,
+  api_key: /(?:api[_-]?key|apikey|sk_live_)[=:]*\s*['"]?([a-zA-Z0-9_-]{10,})['"]?/gi,
+  openai_key: /sk-[a-zA-Z0-9]{48}/gi,
   github_token: /ghp_[a-zA-Z0-9]{36}/gi,
   github_pat: /github_pat_[a-zA-Z0-9_]{40,}/gi,
   openai_key: /sk-[a-zA-Z0-9]{48}/gi,

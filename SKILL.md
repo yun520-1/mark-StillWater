@@ -62,19 +62,22 @@ AI响应
 | **need** | 潜在需求挖掘 | 模糊表达、暗示、问题背后动机 |
 | **defense** | 防御性表达 | 抵抗、合理化、转移话题 |
 
-### 情绪检测 (VAD模型)
+### 情绪检测 (PAD模型)
 
 ```
-Valence (愉悦度): 正面 ←————→ 负面
+Pleasure (愉悦度): 正面 ←————→ 负面
       ↓
 Arousal (激活度): 高激活 ←————→ 低激活
       ↓
 Dominance (掌控度): 高掌控 ←————→ 低掌控
 ```
 
+注：代码实现采用Mehrabian的PAD模型 (Pleasure-Arousal-Dominance)，
+与Russell的VAD模型 (Valence-Arousal-Dominance) 相关但有区别。
+
 **16种情绪分类：**
 
-| 情绪 | VAD值 | 描述 |
+| 情绪 | PAD值 | 描述 |
 |------|-------|------|
 | 愤怒 | (-0.51, 0.94, 0.34) | 高激活、负面、高掌控 |
 | 焦虑 | (-0.64, 0.85, -0.13) | 高激活、负面、低掌控 |
@@ -89,10 +92,13 @@ Dominance (掌控度): 高掌控 ←————→ 低掌控
 ### 意识整合分数 (CIS)
 
 ```
-CIS = Σ(layerAwareness[i] × layerWeights[i]) / totalWeight × 100
+CIS = Σ(layerAwareness[i] × layerWeights[i])
 
 layerWeights = [1.0, 1.2, 1.5, 1.3, 1.8, 2.0]
   // 觉察, 自省, 无我, 彼岸, 般若, 圣人
+
+其中 layerAwareness[i] 为各层级觉察程度 (0-1)
+CIS 范围: 0-8.8，归一化后 ×100 得到百分比分数
 ```
 
 ### 情绪构造五组件
@@ -118,11 +124,14 @@ Action = min(Expected FE)
 ### 整合信息理论 (IIT)
 
 ```
-Φ = I(X) - Σ I(X_i)
-// I(X): 系统总信息
-// I(X_i): 各部分信息之和
-// Φ: 整体产生的信息量
+Φ = I(X;Context) - Σᵢ I(Xᵢ;Context)
 ```
+- I(X;Context): 整体与上下文之间的互信息
+- I(Xᵢ;Context): 各部分与上下文的互信息
+- Φ: 整合信息（整体大于部分之和的信息量）
+
+注：实际IIT形式化更为复杂，此为简化表述。完整IIT涉及
+系统"基态"概念和状态空间中的信息几何计算。
 
 ### 享乐主义福祉 (SWB)
 

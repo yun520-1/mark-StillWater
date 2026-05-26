@@ -889,7 +889,7 @@ function createHeartFlow(config = {}) {
         .replace(/[\x00-\x1F\x7F]/g, '')  // Remove control characters
         .replace(/javascript:/gi, '')  // Remove javascript: protocol
         .replace(/on\w+=/gi, '')  // Remove event handlers
-        .substring(0, 100);
+        .substring(0, 500);  // Increased from 100 to preserve more context
     },
 
     _psychBridge(input, result) {

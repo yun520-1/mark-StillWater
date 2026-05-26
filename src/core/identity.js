@@ -342,13 +342,12 @@ class HeartFlowIdentity {
   // Integrate a lesson into identity
   integrate(ruleId, lesson) {
     const stored = this.memory.getCore('identity:' + ruleId);
-    if (stored) {
-      this.memory.rememberCore('identity:' + ruleId, {
-        ...stored,
-        integrated: true,
-        lesson
-      });
-    }
+    if (!stored) return;  // Guard: don't overwrite non-existent identity
+    this.memory.rememberCore('identity:' + ruleId, {
+      ...stored,
+      integrated: true,
+      lesson
+    });
     this._state = 'integrated';
   }
 

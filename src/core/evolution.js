@@ -15,6 +15,8 @@
  *         selection (AtomMem pattern: learned strategies take priority over relearning).
  */
 
+const crypto = require('crypto');
+
 // P1 Security: Input validation limits
 const MAX_INPUT_LENGTH = 2000;  // Max total input length
 const MAX_EVIDENCE_LENGTH = 500;  // Max evidence string length
@@ -455,11 +457,11 @@ class HeartFlowEvolution {
    * Self-Refine 迭代精炼
    * @param {string} initialResponse - 初始响应
    * @param {string} query - 用户查询
-   * @param {Object} options - 配置选项
+   * @param {Object} options - 配置选项 { maxIterations, threshold, llmComplete }
    * @returns {Object} - { refined, feedback, iterations }
    */
   selfRefine(initialResponse, query, options = {}) {
-    const { maxIterations = 3, threshold = 0.8 } = options;
+    const { maxIterations = 3, threshold = 0.8, llmComplete = null } = options;
 
     const selfRefinePrompts = {
       feedback: (query, response) =>
@@ -479,8 +481,8 @@ class HeartFlowEvolution {
     const iterations = [];
 
     for (let i = 0; i < maxIterations; i++) {
-      // 1. 生成反馈
-      const feedback = this._generateFeedback(selfRefinePrompts.feedback(query, current));
+      // 1. 生成反馈 (使用外部LLM或回退到规则)
+      const feedback = this._generateFeedback(selfRefinePrompts.feedback(query, current), llmComplete);
 
       // 2. 检查是否需要精炼
       if (this._isFeedbackPositive(feedback)) {
@@ -488,8 +490,8 @@ class HeartFlowEvolution {
         break;
       }
 
-      // 3. 精炼响应
-      const refined = this._refineResponse(selfRefinePrompts.refine(query, feedback));
+      // 3. 精炼响应 (使用外部LLM或回退到规则)
+      const refined = this._refineResponse(selfRefinePrompts.refine(query, feedback), llmComplete);
 
       iterations.push({ iteration: i + 1, feedback, refined });
       current = refined;
@@ -504,14 +506,17 @@ class HeartFlowEvolution {
   }
 
   /**
-   * 生成反馈 (STUB - 接口已设计，等待LLM集成)
-   * 接口设计完成，LLM集成后替换为真实调用
+   * Generate feedback via LLM (requires external integration).
+   * @param {string} feedbackPrompt - The feedback prompt for LLM
+   * @param {Function} llmComplete - External LLM completion function (optional)
+   * @returns {string} Generated feedback
    */
-  _generateFeedback(feedbackPrompt) {
-    // STUB: 基于规则生成反馈，不使用真实LLM
-    // TODO: 替换为 LLM 调用: llm.complete(`分析以下反馈并生成改进建议: ${feedbackPrompt}`)
+  _generateFeedback(feedbackPrompt, llmComplete = null) {
+    if (llmComplete) {
+      return llmComplete(`分析以下反馈并生成改进建议: ${feedbackPrompt}`);
+    }
+    // Fallback: rule-based feedback when no LLM available
     const prompt = feedbackPrompt.toLowerCase();
-
     if (prompt.includes('错误') || prompt.includes('error')) {
       return '反馈: 回答中存在事实错误，需要核实数据来源。';
     }
@@ -525,12 +530,16 @@ class HeartFlowEvolution {
   }
 
   /**
-   * 精炼响应 (STUB - 接口已设计，等待LLM集成)
-   * 接口设计完成，LLM集成后替换为真实调用
+   * Refine response via LLM (requires external integration).
+   * @param {string} refinePrompt - The refinement prompt for LLM
+   * @param {Function} llmComplete - External LLM completion function (optional)
+   * @returns {string} Refined response
    */
-  _refineResponse(refinePrompt) {
-    // STUB: 返回原始提示，不使用真实LLM
-    // TODO: 替换为 LLM 调用: llm.complete(`精炼以下响应: ${refinePrompt}`)
+  _refineResponse(refinePrompt, llmComplete = null) {
+    if (llmComplete) {
+      return llmComplete(`精炼以下响应: ${refinePrompt}`);
+    }
+    // Fallback: return prompt as-is when no LLM available
     return refinePrompt;
   }
 
@@ -615,8 +624,11 @@ class HeartFlowEvolution {
   _selectHealStrategy(pattern) {
     const map = this._getHealMap(pattern);
 
-    if (Math.random() < this._EPSILON) {
-      const idx = Math.floor(Math.random() * this._STRATEGIES.length);
+    const randBytes = crypto.randomBytes(4);
+    const randValue = randBytes.readUInt32LE(0) / 0xFFFFFFFF;
+    if (randValue < this._EPSILON) {
+      const idxBytes = crypto.randomBytes(4);
+      const idx = Math.floor((idxBytes.readUInt32LE(0) / 0xFFFFFFFF) * this._STRATEGIES.length);
       return this._STRATEGIES[idx];
     }
 

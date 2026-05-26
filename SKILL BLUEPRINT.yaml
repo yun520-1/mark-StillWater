@@ -1533,7 +1533,7 @@ skills:
         regex: "sk-[a-zA-Z0-9]{48}"
         severity: critical
       email:
-        regex: "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+        regex: "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"
         severity: medium
       phone:
         regex: "1[3-9]\\d{9}"
@@ -2467,7 +2467,7 @@ design_principles:
   - text: "Skill 是增强层，不是替代品"
     reason: "告诉 AI 如何利用已有能力，而非实现所有功能"
   - text: "静水深流。Still water runs deep。"
-    reason: "深层理解，表面平静
+    reason: "深层理解，表面平静"
   - text: "理解用户意图是第一步，不是全部"
     reason: "意图理解导向正确的处理方式"
   - text: "实际执行交给 Claude Code 本身"
