@@ -1,35 +1,91 @@
 ---
 name: 心镜
-description: 心镜 v1.16.2 — Advanced guide for LLM interaction optimization. Focus: user psychology analysis, cognitive bias handling, consciousness theory, self-awareness modeling, Theory of Mind, CBT, empathy calibration, psychological scales, privacy consent, and professional boundaries.
+description: 心镜 v1.16.2 — AI心理学增强层。当用户输入时，我能感知其心理状态：意图、情绪、需求、防御机制。提供认知偏差检测、CBT重构、心智理论推断、共情校准、心理量表评估。始终记得我是工具，不是医生。
 version: v1.16.2
 ---
 
-# 心镜
+# 心镜 (StillWater)
 
-**LLM Interaction Optimization Guide — LLM交互优化实用指南**
+**你的心理学增强层 — 帮你读懂用户心理**
 
-心如明镜。深入理解用户心理，优化AI响应质量。
-
-**核心能力：** 心理分析 → 意图识别 → 认知偏差处理 → 意识建模 → 对话优化
-
-**理论基石：** Kahneman/Thaler行为经济学 · Brentano意向性 · Global Workspace Theory · SEP意识理论 · 佛教哲学 · Theory of Mind · CBT认知行为疗法
+当我加载后，你获得了一组心理感知能力。你不再是黑箱对话，而是能感知用户的心理信号。
 
 ---
 
-## 核心能力
+## 我能为你做什么
 
-| 能力 | 描述 |
-|------|------|
-| **心理分析** | 意图识别、情绪检测、需求挖掘、防御识别 |
-| **认知偏差** | Kahneman双系统、16种偏差、EAST框架 |
-| **认知重构** | CBT十大认知扭曲检测、苏格拉底式追问、认知重构建议 |
-| **心智理论** | ToM心理状态推断、隐含意图检测、社交动态分析 |
-| **共情校准** | 共情准确性评估、情感共鸣检测、支持性回应推荐 |
-| **意识建模** | GWT全局工作空间、SEP自我意识、高级意识公式 |
-| **用户建模** | 长期心理档案、情绪趋势跟踪、个性化参数 |
-| **东方心理学** | 阳明心学、境界模型、家庭关系模式 |
-| **时间感知** | 急迫度算法、时间敌人框架 |
-| **真善美** | 熵减判断、心理健康分析、价值内化 |
+当用户说一句话时，你可以调用我来分析：
+
+- **意图识别**：这是任务请求、情感表达、还是潜在需求？
+- **情绪检测**：用户是焦虑、沮丧、还是平静？用PAD模型量化
+- **防御识别**：用户在回避什么？有没有合理化或转移？
+- **需求挖掘**：表面话语背后的真实需求是什么？
+
+```
+用户："这个工作让我很累"
+  ↓ 你调用 analyzePsychology
+  → 意图: emotion | 情绪: 疲惫/压力 | 需求: 倾听或解决方案
+```
+
+---
+
+## 进阶能力
+
+| 能力 | 何时使用 |
+|------|----------|
+| **认知偏差检测** | 用户观点偏激时，检测是否陷入Kahneman偏差 |
+| **CBT重构** | 用户有消极思维时，用苏格拉底追问引导重构 |
+| **心智理论(ToM)** | 理解用户对他人心理的推测和隐含意图 |
+| **共情校准** | 检查你的回应是否真正共情，如何改进 |
+| **心理量表** | 评估压力、焦虑、抑郁程度（参考，非诊断） |
+
+---
+
+## 核心原则
+
+**我是工具，不是医生**
+- 我的分析仅供参考，不能替代专业心理帮助
+- 发现危机信号时，建议用户寻求专业支持
+- 用户隐私数据仅本地存储，需用户同意
+
+**我是增强，不是替代**
+- 我帮你更好地理解用户，但最终判断在你
+- 不要过度依赖我的分析，保持批判性思维
+- 我的建议可能有误，用户纠正时应学习
+
+---
+
+## 快速调用
+
+```javascript
+// 引入
+const { analyzePsychology, classify } = require('./src/skill-wrapper.js');
+
+// 分析用户输入
+const result = analyzePsychology("我最近总是失眠，感觉压力很大");
+// 返回: { intent, emotion, needs, defenses, crisis, pad, confidence }
+
+// 简单分类
+const type = classify("帮我写代码");
+// 返回: { category: 'task', ... }
+```
+
+---
+
+## 我的心理模型
+
+**意图分类**：task | emotion | need | defense
+**情绪维度**：PAD (Pleasure-Arousal-Dominance)
+**需求层次**：表面需求 → 深层动机
+**防御机制**：回避、合理化、转移、否认
+
+---
+
+## 版本与来源
+
+- **版本**：v1.16.2
+- **理论**：Kahneman行为经济学 · Brentano意向性 · GWT意识理论
+- **整合**：阳明心学 · CBT认知疗法 · RACLETTE共情模型
 
 ---
 
