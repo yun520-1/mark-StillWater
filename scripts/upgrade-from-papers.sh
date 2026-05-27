@@ -21,19 +21,22 @@ echo "[$(date)] 更新技能蓝图..."
 
 # 5. 梦境整合
 echo "[$(date)] 运行梦境整合..."
-node -e "
-const { createHeartFlow } = require('./src/core/heartflow.js');
+# 安全修复：使用安全的模块导入方式替代 node -e
+node --input-type=module << 'NODESCRIPT' 2>/dev/null
+import { createHeartFlow } from './src/core/heartflow.js';
 const hf = createHeartFlow();
 hf.start();
 const result = hf.dreamNow();
 console.log('梦境完成:', result.dream_complete);
 hf.stop();
-" 2>/dev/null
+NODESCRIPT
 
-# 6. Git 同步
+# 6. Git 同步（需手动确认）
 echo "[$(date)] Git 同步..."
-git add -A
-git commit -m "auto: 论文升级 $(date +%Y-%m-%d_%H:%M)"
-git push origin master 2>/dev/null
+echo "⚠️ 警告：自动 git push 已禁用，请手动审查并推送"
+# 安全修复：移除自动 git push，改为只显示状态
+# git add -A
+# git commit -m "auto: 论文升级 $(date +%Y-%m-%d_%H:%M)"
+# git push origin master 2>/dev/null
 
 echo "[$(date)] mark-StillWater 论文升级任务完成"

@@ -1,7 +1,7 @@
 ---
 name: 心镜
-description: 心镜 v1.14.18 — Advanced guide for LLM interaction optimization. Focus: user psychology analysis, cognitive bias handling, consciousness theory, self-awareness modeling, temporal perception, and spiritual intelligence.
-version: v1.14.18
+description: 心镜 v1.15 — Advanced guide for LLM interaction optimization. Focus: user psychology analysis, cognitive bias handling, consciousness theory, self-awareness modeling, temporal perception, and spiritual intelligence.
+version: v1.15
 ---
 
 # 心镜
@@ -250,7 +250,7 @@ SWB = (lifeSatisfaction + positiveAffect + (10 - negativeAffect)) / 3
 
 | 方法 | 用途 | 返回值 |
 |------|------|--------|
-| `analyzePsychology(text)` | 感知用户心理 | { intent, emotion, needs, defense } |
+| `analyzePsychology(text)` | 感知用户心理 | { intent, emotion, needs, defenses, confidence, pad, crisis } |
 | `classify(text)` | 分类用户输入 | task / emotion / need / defense |
 | `reason(problem, options?)` | 逻辑推理 | { chain, conclusion, quality } |
 | `makeDecision(options)` | 决策评估 | { decision, reasoning, risks } |
@@ -259,6 +259,81 @@ SWB = (lifeSatisfaction + positiveAffect + (10 - negativeAffect)) / 3
 | `dreamNow()` | 记忆整合 | { insights, patterns } |
 | `heal(error)` | 错误恢复 | { acknowledged, corrected, compensated } |
 | `getIdentity()` | 获取身份 | { rules, values, principles } |
+
+### API 调用示例
+
+```javascript
+// 引入心镜
+const { analyzePsychology, classify, calculatePAD, assessCrisisRisk } = require('./src/skill-wrapper.js');
+
+// 1. 心理分析
+const result = analyzePsychology("我最近总是失眠，感觉压力很大");
+console.log(result);
+// {
+//   intent: { category: 'information_seeking', confidence: 0.85 },
+//   emotion: { category: 'negative', intensity: 'medium', ... },
+//   needs: [{ need: 'clarity', confidence: 0.7 }, ...],
+//   defenses: [],
+//   confidence: 0.8,
+//   pad: { pleasure: -4, arousal: 4, dominance: -2 },
+//   crisis: { level: 'medium', score: 6, warnings: [...] }
+// }
+
+// 2. 意图分类
+const intent = classify("帮我做这个");
+console.log(intent.category); // "task_execution"
+
+// 3. PAD情绪模型
+const pad = calculatePAD("太棒了！我成功了！");
+console.log(pad);
+// { pleasure: 8, arousal: 6, dominance: 4 }
+
+// 4. 危机风险评估
+const crisis = assessCrisisRisk("我最近总是失眠");
+console.log(crisis);
+// { level: 'medium', score: 4, warnings: [] }
+```
+
+### 扩展API
+
+| 方法 | 用途 | 返回值 |
+|------|------|--------|
+| `calculatePAD(text)` | PAD情绪模型 | { pleasure, arousal, dominance } |
+| `assessCrisisRisk(text)` | 危机风险评估 | { level, score, warnings } |
+| `acknowledgeEmotion(text)` | 情绪确认协议 | { hasEmotion, acknowledgment } |
+| `correctAnalysis(input, aiAnalysis, correction)` | 用户纠正分析 | { corrected, newModel } |
+| `getPsychologyAccuracy()` | 分析准确率统计 | { accuracy, total, corrections } |
+| `assessPHQ9(responses)` | PHQ-9抑郁评估 | { score, severity, recommendations } |
+| `assessGAD7(responses)` | GAD-7焦虑评估 | { score, severity, recommendations } |
+
+### 东方心理学API (v1.15)
+
+整合东方哲学（儒家、道家、阳明心学）的心理分析框架。
+
+| 方法 | 用途 | 返回值 |
+|------|------|--------|
+| `analyzeEastern(text)` | 东方心理综合分析 | { zhiXingHeYi, xinJiLi, jingjie, familyPattern, culturalOrientation } |
+| `assessZhiXingHeYi(text)` | 阳明知行合一评估 | { score, assessment, advice } |
+| `detectXinJiLi(text)` | 心即理状态检测 | { state, interpretation } |
+| `assessJingjie(text)` | 境界层次评估 | { level, name, description } |
+| `analyzeFamilyPattern(text)` | 家庭关系模式分析 | { primaryPattern, patterns } |
+| `assessCulturalOrientation(text)` | 文化取向评估 | { orientation, score, interpretation } |
+
+```javascript
+// 东方心理学分析示例
+const { analyzeEastern, assessZhiXingHeYi } = require('./src/skill-wrapper.js');
+
+// 综合分析
+const eastern = analyzeEastern("我觉得应该为家庭牺牲自己的事业");
+console.log(eastern);
+// {
+//   zhiXingHeYi: { score: 45, assessment: '知行有差距', ... },
+//   xinJiLi: { state: '心有波澜', ... },
+//   jingjie: { level: 2, name: '道德境界', ... },
+//   familyPattern: { primaryPattern: '牺牲', ... },
+//   culturalOrientation: { orientation: '集体主义', ... }
+// }
+```
 
 ### 记忆层级
 

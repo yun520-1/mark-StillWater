@@ -30,11 +30,18 @@ const ENCRYPTION_CONFIG = {
   getKey: function() {
     const key = process.env[this.keyEnvVar];
     if (!key) return null;
-    // Key should be 32 bytes (256 bits), hex encoded (64 chars) or raw 32 bytes
-    if (key.length === 64) {
+    // Key must be 64 hex chars (256 bits) for proper AES-256
+    // 安全修复：拒绝格式不正确的弱密钥
+    if (key.length === 64 && /^[a-fA-F0-9]+$/.test(key)) {
       return Buffer.from(key, 'hex');
     }
-    return Buffer.from(key.slice(0, 32), 'utf8');
+    // 如果密钥不是64字符，拒绝使用并警告
+    if (key.length > 0 && key.length < 64) {
+      logError('getKey', 'memory', new Error('Encryption key too short - must be 64 hex characters'));
+      return null;
+    }
+    // 其他情况（空密钥等）返回null
+    return null;
   }
 };
 

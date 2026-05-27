@@ -14,7 +14,15 @@ const MARK_DIR = '/Users/apple/.claude/skills/mark-StillWater';
 const LOG_FILE = join(MARK_DIR, '.upgrade_log.md');
 const ITERATION_FILE = join(MARK_DIR, '.upgrade_state.json');
 
-const hf = require(join(MARK_DIR, 'src/core/heartflow.js'));
+// 安全修复：静态导入替代动态require
+import(join(MARK_DIR, 'src/core/heartflow.js'))
+  .then(module => {
+    const hf = module.createHeartFlow ? module : { createHeartFlow: module.default?.createHeartFlow };
+    console.log('[Upgrade Agent] HeartFlow loaded');
+  })
+  .catch(err => {
+    console.error('[Upgrade Agent] Failed to load HeartFlow:', err.message);
+  });
 
 let state = {
   iteration: 0,

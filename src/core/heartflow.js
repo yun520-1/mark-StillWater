@@ -43,14 +43,30 @@ const { createDualProcessCognition } = require('./dual-process.js');
 const { GlobalWorkspace } = require('./global-workspace.js');
 const { Attention } = require('./attention.js');
 const { HeartFlowLoop } = require('./heart-loop.js');
+const { EasternPsychology } = require('./eastern-psychology.js');
 
 const VERSION = '1.6.0';
 
 // TTL constants
 const TTL_4_HOURS = 4 * 60 * 60 * 1000; // 14400000ms
 
+// 安全修复：验证路径在预期基础目录内
+function validatePath(unsafePath, basePath) {
+  const resolved = path.resolve(unsafePath);
+  const baseResolved = path.resolve(basePath);
+  // 检查解析后的路径是否在基础目录内
+  if (!resolved.startsWith(baseResolved + path.sep) && resolved !== baseResolved) {
+    return basePath; // 如果不安全，返回基础路径
+  }
+  return resolved;
+}
+
 function createHeartFlow(config = {}) {
-  const rootPath = config.rootPath || __dirname;
+  // 安全修复：使用__dirname作为基础路径，限制用户传入的rootPath
+  const basePath = __dirname;
+  const rootPath = config.rootPath
+    ? validatePath(config.rootPath, basePath)
+    : basePath;
 
   // Instantiate memory first (shared across modules)
   const memory = new HeartFlowMemory(rootPath);
@@ -107,6 +123,9 @@ function createHeartFlow(config = {}) {
   // Instantiate attention
   const attention = new Attention();
 
+  // Instantiate Eastern psychology
+  const easternPsych = new EasternPsychology(memory);
+
   // MindSpace: working mental state
   const _mindSpace = {
     rules: [],
@@ -119,6 +138,12 @@ function createHeartFlow(config = {}) {
     _sessionId: null,
     version: VERSION,
     rootPath,
+
+    // ─── 模块引用 ──────────────────────────────────────────
+    // 暴露内部模块供skill-wrapper直接访问
+    _psychology: psychology,
+    _easternPsych: easternPsych,
+    _memory: memory,
 
     // ─── Lifecycle ──────────────────────────────────────────
 
@@ -320,6 +345,57 @@ function createHeartFlow(config = {}) {
     analyzeStatisticalClaim(claim) {
       this._ensureStarted();
       return philosophy.analyzeStatisticalClaim(claim);
+    },
+
+    // ─── Eastern Psychology (v1.15) ─────────────────────────
+
+    /**
+     * 东方心理学综合分析
+     * 整合阳明心学、境界模型、家庭关系模式
+     */
+    analyzeEastern(text) {
+      this._ensureStarted();
+      return easternPsych.analyzeEastern(text);
+    },
+
+    /**
+     * 评估知行合一程度
+     */
+    assessZhiXingHeYi(text) {
+      this._ensureStarted();
+      return easternPsych.assessZhiXingHeYi(text);
+    },
+
+    /**
+     * 检测心即理状态
+     */
+    detectXinJiLi(text) {
+      this._ensureStarted();
+      return easternPsych.detectXinJiLi(text);
+    },
+
+    /**
+     * 评估境界层次
+     */
+    assessJingjie(text) {
+      this._ensureStarted();
+      return easternPsych.assessJingjie(text);
+    },
+
+    /**
+     * 分析家庭关系模式
+     */
+    analyzeFamilyPattern(text) {
+      this._ensureStarted();
+      return easternPsych.analyzeFamilyPattern(text);
+    },
+
+    /**
+     * 评估文化取向
+     */
+    assessCulturalOrientation(text) {
+      this._ensureStarted();
+      return easternPsych.assessCulturalOrientation(text);
     },
 
     // ─── Identity ───────────────────────────────────────────

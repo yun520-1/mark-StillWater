@@ -233,6 +233,328 @@ class HeartFlowPsychology {
   }
 
   /**
+   * 意图推理链 — 多步推导而非简单关键词匹配
+   * 1. 检测表面意图（task/emotion/need/defense）
+   * 2. 检测深层动机（回避/追求/确认）
+   * 3. 生成置信度+推理链摘要
+   */
+  _inferIntentWithChain(lower, words, input) {
+    // 第一步：基础意图识别
+    const basicIntent = this._inferIntent(lower, words, input);
+
+    // 第二步：深层动机检测
+    const motivations = [];
+
+    // 回避动机：用户想逃避什么
+    const avoidancePatterns = ['不要', '不用', '不用了', '算了', '算了算了', '别', '不要了', '不想'];
+    const hasAvoidance = avoidancePatterns.some(p => lower.includes(p));
+    if (hasAvoidance) {
+      motivations.push({ type: 'avoidance', label: '回避', confidence: 0.7 });
+    }
+
+    // 追求动机：用户想要什么
+    const pursuitPatterns = ['想要', '希望', '需要', '能帮我', '可以帮我', '给我', '想让你'];
+    const hasPursuit = pursuitPatterns.some(p => lower.includes(p));
+    if (hasPursuit) {
+      motivations.push({ type: 'pursuit', label: '追求', confidence: 0.7 });
+    }
+
+    // 确认动机：用户想确认什么
+    const confirmationPatterns = ['对吗', '对不对', '是不是', '真的吗', '确定吗', '对吧'];
+    const hasConfirmation = confirmationPatterns.some(p => lower.includes(p));
+    if (hasConfirmation) {
+      motivations.push({ type: 'confirmation', label: '确认', confidence: 0.6 });
+    }
+
+    // 第三步：生成推理链
+    const chain = [];
+
+    // 添加意图推断步骤
+    chain.push({
+      step: 1,
+      type: 'intent_detection',
+      finding: `检测到${basicIntent.category}意图`,
+      confidence: basicIntent.confidence,
+    });
+
+    // 添加动机推断步骤
+    if (motivations.length > 0) {
+      motivations.forEach((mot, idx) => {
+        chain.push({
+          step: idx + 2,
+          type: 'motivation_inference',
+          finding: `推断${mot.label}动机`,
+          confidence: mot.confidence,
+        });
+      });
+    }
+
+    // 综合置信度
+    const totalMotivationConfidence = motivations.length > 0
+      ? motivations.reduce((sum, m) => sum + m.confidence, 0) / motivations.length
+      : 0;
+    const finalConfidence = (basicIntent.confidence * 0.7) + (totalMotivationConfidence * 0.3);
+
+    return {
+      category: basicIntent.category,
+      confidence: Math.min(finalConfidence, 1),
+      chain,
+      motivations,
+      surface_intent: basicIntent,
+    };
+  }
+
+  /**
+   * 用户纠正API — 允许用户纠正AI的分析
+   * @param {string} input - 用户原始输入
+   * @param {Object} wrongAnalysis - AI的错误分析
+   * @param {string} correction - 用户的纠正
+   */
+  correctAnalysis(input, wrongAnalysis, correction) {
+    // 解析用户纠正
+    const correctionLower = correction.toLowerCase();
+
+    // 检测纠正的是什么：情绪/意图/需求/防御
+    const correctionType = this._detectCorrectionType(input, wrongAnalysis, correctionLower);
+    const correctionValue = this._extractCorrectionValue(correctionLower);
+
+    // 记录纠正到记忆（使用LEARNED层）
+    if (this.memory) {
+      const correctionRecord = {
+        input: input.substring(0, 200),
+        wrongAnalysis: wrongAnalysis,
+        correction: correction,
+        correctionType,
+        correctionValue,
+        timestamp: Date.now(),
+      };
+
+      this.memory.remember(
+        `correction:${Date.now()}`,
+        JSON.stringify(correctionRecord),
+        'learned'
+      );
+    }
+
+    return {
+      corrected: true,
+      correctionType,
+      correctionValue,
+      message: `已记录纠正：您认为${correctionType}应该是"${correctionValue}"而非"${this._getWrongValue(wrongAnalysis, correctionType)}"`,
+    };
+  }
+
+  _detectCorrectionType(input, wrongAnalysis, correctionLower) {
+    // 检测纠正类型
+    if (correctionLower.includes('不是') || correctionLower.includes('不是') || correctionLower.includes('没') || correctionLower.includes('不是')) {
+      // 可能是情绪纠正
+      if (wrongAnalysis.emotion) {
+        return 'emotion';
+      }
+    }
+    if (correctionLower.includes('是') && correctionLower.includes('想') || correctionLower.includes('应该')) {
+      return 'intent';
+    }
+    return 'emotion'; // 默认
+  }
+
+  _extractCorrectionValue(correctionLower) {
+    // 提取纠正后的值
+    const emotionKeywords = ['累', '困', '开心', '生气', '难过', '焦虑', '平静', '兴奋', '担心'];
+    for (const kw of emotionKeywords) {
+      if (correctionLower.includes(kw)) {
+        return kw;
+      }
+    }
+    return 'unknown';
+  }
+
+  _getWrongValue(analysis, type) {
+    if (type === 'emotion' && analysis.emotion) {
+      return analysis.emotion.category;
+    }
+    if (type === 'intent' && analysis.intent) {
+      return analysis.intent.category;
+    }
+    return 'unknown';
+  }
+
+  /**
+   * 分析准确率统计
+   * 对比：AI分析 vs 用户纠正记录
+   */
+  getPsychologyAccuracy() {
+    let total = 0;
+    let corrections = 0;
+
+    // 从记忆获取所有纠正记录
+    if (this.memory) {
+      const learnedRecords = this.memory.listLearned();
+      const correctionRecords = learnedRecords.filter(r => r.key.startsWith('correction:'));
+
+      total = correctionRecords.length;
+
+      // 假设每次纠正都是AI错了
+      corrections = total;
+    }
+
+    // 计算准确率：没有纠正的占比
+    const accuracy = total > 0 ? (total - corrections) / total : 1.0;
+
+    return {
+      accuracy: Math.round(accuracy * 100) / 100, // 保留两位小数
+      total,
+      corrections,
+      message: total > 0
+        ? `总分析${total}次，用户纠正${corrections}次，准确率${(accuracy * 100).toFixed(1)}%`
+        : '暂无纠正数据',
+    };
+  }
+
+  /**
+   * PHQ-9 抑郁评估
+   * @param {number[]} responses - 9个问题的得分(0-3)
+   * @returns {Object} { score, severity, recommendations }
+   */
+  assessPHQ9(responses) {
+    if (!Array.isArray(responses) || responses.length !== 9) {
+      return { error: 'PHQ-9需要9个问题的回答' };
+    }
+
+    const score = responses.reduce((sum, r) => sum + Math.min(Math.max(r, 0), 3), 0);
+
+    let severity, recommendations;
+
+    if (score <= 4) {
+      severity = '极轻或无';
+      recommendations = ['常规关注', '保持健康生活习惯'];
+    } else if (score <= 9) {
+      severity = '轻度';
+      recommendations = ['观察等待', '建议咨询心理医生'];
+    } else if (score <= 14) {
+      severity = '中度';
+      recommendations = ['制定计划', '强烈建议咨询心理医生', '可能需要药物治疗'];
+    } else if (score <= 19) {
+      severity = '中重度';
+      recommendations = ['积极治疗', '立即咨询心理医生', '药物治疗可能有效'];
+    } else {
+      severity = '重度';
+      recommendations = ['立即干预', '紧急咨询心理医生', '药物治疗合并心理治疗'];
+    }
+
+    return {
+      score,
+      maxScore: 27,
+      severity,
+      recommendations,
+      interpretation: this._interpretPHQ9(score),
+    };
+  }
+
+  _interpretPHQ9(score) {
+    const interpretations = {
+      0: '没有抑郁症状',
+      5: '可能轻度抑郁，需关注',
+      10: '中度抑郁，建议寻求帮助',
+      15: '中重度抑郁，需要专业干预',
+      20: '重度抑郁，需要立即专业帮助',
+    };
+
+    if (score <= 4) return interpretations[0];
+    if (score <= 9) return interpretations[5];
+    if (score <= 14) return interpretations[10];
+    if (score <= 19) return interpretations[15];
+    return interpretations[20];
+  }
+
+  /**
+   * GAD-7 焦虑评估
+   * @param {number[]} responses - 7个问题的得分(0-3)
+   * @returns {Object} { score, severity, recommendations }
+   */
+  assessGAD7(responses) {
+    if (!Array.isArray(responses) || responses.length !== 7) {
+      return { error: 'GAD-7需要7个问题的回答' };
+    }
+
+    const score = responses.reduce((sum, r) => sum + Math.min(Math.max(r, 0), 3), 0);
+
+    let severity, recommendations;
+
+    if (score <= 4) {
+      severity = '极轻';
+      recommendations = ['常规关注'];
+    } else if (score <= 9) {
+      severity = '轻度';
+      recommendations = ['观察等待', '放松技巧可能有用'];
+    } else if (score <= 14) {
+      severity = '中度';
+      recommendations = ['建议咨询心理医生', '学习焦虑管理技巧'];
+    } else {
+      severity = '重度';
+      recommendations = ['立即咨询心理医生', '可能需要药物治疗'];
+    }
+
+    return {
+      score,
+      maxScore: 21,
+      severity,
+      recommendations,
+      interpretation: this._interpretGAD7(score),
+    };
+  }
+
+  _interpretGAD7(score) {
+    const interpretations = {
+      0: '没有焦虑症状',
+      5: '可能轻度焦虑',
+      10: '中度焦虑，建议寻求帮助',
+      15: '重度焦虑，需要专业干预',
+    };
+
+    if (score <= 4) return interpretations[0];
+    if (score <= 9) return interpretations[5];
+    if (score <= 14) return interpretations[10];
+    return interpretations[15];
+  }
+
+  /**
+   * 综合心理健康评分
+   * 结合PHQ-9和GAD-7
+   */
+  getMentalHealthScore(phqResponses, gadResponses) {
+    const phqResult = this.assessPHQ9(phqResponses);
+    const gadResult = this.assessGAD7(gadResponses);
+
+    // 综合评分（各占50%）
+    const phqScore = phqResult.score || 0;
+    const gadScore = gadResult.score || 0;
+    const combinedScore = (phqScore / 27) * 50 + (gadScore / 21) * 50;
+
+    let overall;
+    if (combinedScore < 25) {
+      overall = '良好';
+    } else if (combinedScore < 50) {
+      overall = '需要注意';
+    } else if (combinedScore < 75) {
+      overall = '需要关注';
+    } else {
+      overall = '需要专业帮助';
+    }
+
+    return {
+      combinedScore: Math.round(combinedScore * 100) / 100,
+      phq: phqResult,
+      gad: gadResult,
+      overall,
+      recommendations: [
+        ...phqResult.recommendations || [],
+        ...gadResult.recommendations || [],
+      ],
+    };
+  }
+
+  /**
    * Full psychology analysis
    */
   analyzePsychology(input) {
