@@ -366,23 +366,32 @@ class SelfCritique {
    * @returns {string} 改进prompt
    */
   generateRefinementPrompt(critique) {
+    // 安全检查：critique 对象或 needsImprovement 属性不存在
+    if (!critique || critique.needsImprovement === undefined) {
+      return '无法生成改进提示：批评结果无效。';
+    }
+
     if (!critique.needsImprovement) {
       return '当前分析质量良好，可以直接使用。';
     }
 
+    const issues = critique.issues || [];
+    const missedSignals = critique.missedSignals || [];
+    const suggestions = critique.suggestions || [];
+
     return `【分析需要改进】
 
 发现的问题：
-${critique.issues.map((issue, i) => `${i + 1}. ${issue}`).join('\n')}
+${issues.length > 0 ? issues.map((issue, i) => `${i + 1}. ${issue}`).join('\n') : '无'}
 
 可能的遗漏信号：
-${critique.missedSignals.length > 0
-      ? critique.missedSignals.map(s => `- ${s.pattern}: ${s.likelyMissing}`).join('\n')
+${missedSignals.length > 0
+      ? missedSignals.map(s => `- ${s.pattern}: ${s.likelyMissing}`).join('\n')
       : '无'
     }
 
 建议：
-${critique.suggestions.join('\n')}
+${suggestions.length > 0 ? suggestions.join('\n') : '无'}
 
 请基于以上反馈重新分析用户输入，生成改进后的分析结果。`;
   }

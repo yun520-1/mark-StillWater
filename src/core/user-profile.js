@@ -146,9 +146,19 @@ class UserProfile {
 
   /**
    * 删除所有档案数据
+   * @param {boolean} requireConsent - 是否要求同意检查（默认true）
    * @returns {object} 删除结果
    */
-  deleteAllData() {
+  deleteAllData(requireConsent = true) {
+    // 安全检查：要求同意
+    if (requireConsent && !this.consentGiven) {
+      return {
+        success: false,
+        message: '需要用户同意才能删除数据。请先调用 setConsent(true) 获取同意。',
+        code: 'CONSENT_REQUIRED',
+      };
+    }
+
     try {
       if (fs.existsSync(this.profileFile)) {
         fs.unlinkSync(this.profileFile);

@@ -35,6 +35,7 @@
  * v1.18: 模型级联路由 + Tree-of-Thoughts推理 + 提示词进化 + 多agent协调
  */
 
+const path = require('path');
 const { HeartFlowMemory } = require('./memory.js');
 const { HeartFlowIdentity } = require('./identity.js');
 const { HeartFlowPsychology } = require('./psychology.js');

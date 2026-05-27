@@ -274,10 +274,19 @@ class HeartFlowLogic {
 
   _classifyProblem(problem) {
     const lower = problem.toLowerCase();
+
+    // 英文问题类型检测
     if (lower.includes('why')) return 'diagnostic';
     if (lower.includes('how to') || lower.includes('solve')) return 'procedural';
     if (lower.includes('what if') || lower.includes('would')) return 'hypothetical';
     if (lower.includes('which') || lower.includes('best')) return 'evaluative';
+
+    // 中文问题类型检测
+    if (lower.includes('为什么') || lower.includes('为何') || lower.includes('原因')) return 'diagnostic';
+    if (lower.includes('如何') || lower.includes('怎么办') || lower.includes('怎么') && !lower.includes('怎么样') || lower.includes('解决方法') || lower.includes('解决')) return 'procedural';
+    if (lower.includes('如果') || lower.includes('假如') || lower.includes('要是') || lower.includes('会不会') || lower.includes('会怎样')) return 'hypothetical';
+    if (lower.includes('哪个') || lower.includes('哪个好') || lower.includes('最好') || lower.includes('选择') || lower.includes('应该')) return 'evaluative';
+
     return 'general';
   }
 }

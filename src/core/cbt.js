@@ -173,7 +173,7 @@ class CBTModule {
   generateSocraticQuestions(text, detectedDistortions) {
     const questions = [];
 
-    if (detectedDistortions.length === 0) {
+    if (!detectedDistortions || detectedDistortions.length === 0) {
       // 没有明显扭曲，提供一般性反思问题
       return {
         type: 'reflective',
@@ -242,7 +242,7 @@ class CBTModule {
    * @returns {object} 重构建议
    */
   generateRestructuringAdvice(text, detectedDistortions) {
-    if (detectedDistortions.length === 0) {
+    if (!detectedDistortions || detectedDistortions.length === 0) {
       return {
         hasAdvice: false,
         message: '未检测到需要重构的认知模式',
@@ -328,8 +328,8 @@ class CBTModule {
    */
   analyze(text) {
     const distortions = this.detectDistortions(text);
-    const questions = this.generateSocraticQuestions(text, distortions.detortions);
-    const advice = this.generateRestructuringAdvice(text, distortions.detortions);
+    const questions = this.generateSocraticQuestions(text, distortions.distortions);
+    const advice = this.generateRestructuringAdvice(text, distortions.distortions);
 
     return {
       distortions,

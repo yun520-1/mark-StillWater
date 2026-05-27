@@ -463,5 +463,15 @@
     },
     "tags": [],
     "createdAt": 1779876455076
+  },
+  "test-core-1": {
+    "value": "Upgrade is supreme directive",
+    "tags": [],
+    "createdAt": 1779898994923
+  },
+  "test:core": {
+    "value": "核心测试数据",
+    "tags": [],
+    "createdAt": 1779900622132
   }
 }

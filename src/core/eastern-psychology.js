@@ -27,13 +27,13 @@ class EasternPsychology {
       '孝道': ['孝顺', '孝敬', '父母', '长辈', '传统'],
       '期待': ['应该', '必须', '要求', '期望', '指望'],
       '愧疚': ['对不起', '愧疚', '不安', '自责', '对不起'],
-      '牺牲': ['为了', '牺牲', '放弃', '委屈', '成全'],
+      '牺牲': ['牺牲', '奉献', '放弃', '委屈', '成全', '为了家庭'],
       '控制': ['管', '听话', '不许', '不要', '应该要'],
     };
 
     // 集体主义vs个人主义信号
-    this.collectivismSignals = ['我们', '大家', '集体', '家庭', '家族', '传统', '应该', '礼'];
-    this.individualismSignals = ['我', '我的', '想要', '我觉得', '个人', '自由', '选择'];
+    this.collectivismSignals = ['我们', '大家', '集体', '家庭', '家族', '传统', '应该', '礼', '天下', '匹夫', '兴亡', '苍生', '社会责任', '父母', '要求', '长辈', '听话', '顺从'];
+    this.individualismSignals = ['我的', '想要', '我觉得', '个人', '自由', '选择', '自己', '梦想', '追求'];
 
     // 阳明心学关键词
     this.yangmingSignals = {
@@ -52,23 +52,39 @@ class EasternPsychology {
     const lower = text.toLowerCase();
 
     // 检测"知"的信号（认知、知道、理解）
-    const zhiSignals = ['知道', '理解', '明白', '懂', '了解', '认为', '理解到', '说', '道理'];
+    const zhiSignals = ['知道', '理解', '明白', '懂', '了解', '认为', '道理', '良知', '知行合一', '遵循', '应该', '理论', '认知', '观念', '思想'];
     const zhiCount = zhiSignals.filter(s => lower.includes(s)).length;
 
     // 检测"行"的信号（行动、实践、执行）
-    const xingSignals = ['做', '行动', '实践', '执行', '去', '开始', '已经', '完成', '到', '到'];
+    const xingSignals = ['做', '行动', '实践', '执行', '去', '开始', '已经', '完成', '坚持', '努力', '联系', '应用', '实际', '落实'];
     const xingCount = xingSignals.filter(s => lower.includes(s)).length;
 
     // 检测知行脱节的信号
-    const gapSignals = ['但是', '却', '还是', '一直没', '想但不', '知道但', '但不'];
+    const gapSignals = ['但是', '却', '还是', '一直没', '想但不', '知道但', '但不', '仍然', '但'];
     const hasGap = gapSignals.some(s => lower.includes(s));
 
     // 计算知行分数
+    // 如果提到"知行合一"，同时增加知和行的基础分
+    const hasZhiXingHeYi = lower.includes('知行合一');
+    const hasZhiXing = lower.includes('知行') || hasZhiXingHeYi;
+
     let zhiScore = Math.min(zhiCount / 3, 1) * 50;
     let xingScore = Math.min(xingCount / 3, 1) * 50;
     let gapPenalty = hasGap ? -20 : 0;
 
-    let totalScore = Math.max(0, Math.min(100, zhiScore + xingScore + gapPenalty));
+    // 知行合一提到时，给予更高的平衡加分
+    let balanceBonus = 0;
+    if (hasZhiXingHeYi) {
+      // 明确提到"知行合一"，给予最高加分
+      balanceBonus = 30;
+      zhiScore = Math.max(zhiScore, 33); // 至少33分
+      xingScore = Math.max(xingScore, 17); // 至少17分
+    } else if (hasZhiXing && (zhiScore > 0 || xingScore > 0)) {
+      // 提到"知行"但没有完整词组
+      balanceBonus = 15;
+    }
+
+    let totalScore = Math.max(0, Math.min(100, zhiScore + xingScore + gapPenalty + balanceBonus));
 
     let assessment;
     if (hasGap || totalScore < 40) {
@@ -156,8 +172,8 @@ class EasternPsychology {
     const daodeSignals = ['应该', '道德', '责任', '义务', '帮人', '帮助', '善', '义', '利他', '奉献'];
     const daodeCount = daodeSignals.filter(s => lower.includes(s)).length;
 
-    // 天地境界信号
-    const tiandiSignals = ['自然', '道', '天下', '苍生', '万物', '宇宙', '天道'];
+    // 天地境界信号（避免单独"道"匹配"道德"等词语）
+    const tiandiSignals = ['自然', '天下', '苍生', '万物', '宇宙', '天道', '天人合一', '天理', '大道', '天命', '与道合一', '天人'];
     const tiandiCount = tiandiSignals.filter(s => lower.includes(s)).length;
 
     let currentLevel;
@@ -195,13 +211,21 @@ class EasternPsychology {
     const lower = text.toLowerCase();
     const detected = [];
 
+    // 模式优先级（牺牲最重要，其次是愧疚，然后是控制、期待、孝道）
+    const patternPriority = { '牺牲': 5, '愧疚': 4, '控制': 3, '期待': 2, '孝道': 1 };
+
     for (const [pattern, keywords] of Object.entries(this.familyPatterns)) {
       const count = keywords.filter(k => lower.includes(k)).length;
       if (count > 0) {
+        // confidence = 关键词匹配数/2，上限1；然后加上优先级权重
+        const baseConfidence = Math.min(count / 2, 1);
+        const priorityBonus = (patternPriority[pattern] || 0) * 0.1;
+        const totalConfidence = Math.min(baseConfidence + priorityBonus, 1);
+
         detected.push({
           pattern,
           count,
-          confidence: Math.min(count / 2, 1),
+          confidence: totalConfidence,
         });
       }
     }

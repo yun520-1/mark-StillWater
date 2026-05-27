@@ -172,6 +172,28 @@ const skillAPI = {
     return engine.search(query);
   },
 
+  // ─── Security API ─────────────────────────────────
+
+  /**
+   * 安全扫描文本
+   * @param {string} text - 待扫描文本
+   * @returns {Object} 安全扫描结果
+   */
+  scanSecurity(text) {
+    const engine = getEngine();
+    return engine.scanSecurity(text);
+  },
+
+  /**
+   * 安全脱敏文本
+   * @param {string} text - 待脱敏文本
+   * @returns {Object} 脱敏结果
+   */
+  redactSecurity(text) {
+    const engine = getEngine();
+    return engine.redactSecurity(text);
+  },
+
   // ─── P1扩展API ────────────────────────────────────
 
   /**
@@ -646,6 +668,8 @@ const {
   healthCheck,
   getMemoryStats,
   search,
+  scanSecurity,
+  redactSecurity,
   correctAnalysis,
   getPsychologyAccuracy,
   assessPHQ9,
@@ -711,6 +735,8 @@ module.exports = {
   healthCheck,
   getMemoryStats,
   search,
+  scanSecurity,
+  redactSecurity,
   correctAnalysis,
   getPsychologyAccuracy,
   assessPHQ9,

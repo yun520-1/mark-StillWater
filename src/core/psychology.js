@@ -20,7 +20,7 @@ class HeartFlowPsychology {
         low: ['okay', 'fine', 'neutral', 'mildly interested', '还好', '还行', '不错', '挺好的'],
       },
       negative: {
-        high: ['frustrated', 'angry', 'furious', 'devastated', 'overwhelmed', 'panicked', 'terrified', '愤怒', '生气', '气愤', '恼火', '火大', '暴怒', '抓狂', '崩溃', '绝望', '受够了', '焦虑', '恐慌', '恐惧', '害怕', '恐怖', '崩溃了', '受不了', '压力', '压力大', '气死了', '怒了', '烦死了', '死心了'],
+        high: ['frustrated', 'angry', 'furious', 'devastated', 'overwhelmed', 'panicked', 'terrified', '愤怒', '生气', '气愤', '恼火', '火大', '暴怒', '抓狂', '崩溃', '绝望', '受够了', '焦虑', '恐慌', '恐惧', '害怕', '恐怖', '崩溃了', '受不了', '压力', '压力大', '气死了', '怒了', '烦死了', '死心了', '活着没意思', '活着真没意思', '活着没意义', '不想活了', '真没意思', '没意思', '没意义', '活着好累', '太痛苦了', '好累', '活不下去', '活着好苦', '总失败', '总是失败', '总是输', '一直失败'],
         medium: ['annoyed', 'upset', 'disappointed', 'worried', 'anxious', 'sad', 'confused', '难过', '伤心', '失望', '沮丧', '郁闷', '烦躁', '烦恼', '担心', '担忧', '不安', '紧张', '忧郁', '失落', '委屈', '失落感', '心塞'],
         low: ['uneasy', 'bored', 'tired', 'mildly frustrated', '累', '疲惫', '疲倦', '无聊', '郁闷', '不爽', '不太高兴', '有点累'],
       },
@@ -387,6 +387,12 @@ class HeartFlowPsychology {
    */
   _getCorrectionCache(input) {
     if (!this.memory) return null;
+
+    // 确保 learned store 已加载
+    if (this.memory._ensureLearnedLoaded) {
+      this.memory._ensureLearnedLoaded();
+    }
+
     const inputHash = this._hashInput(input);
     // 尝试从_learnedStore获取
     const store = this.memory._learnedStore;
@@ -400,6 +406,30 @@ class HeartFlowPsychology {
       }
     }
     return null;
+  }
+
+  /**
+   * 增加分析计数（用于准确率统计）
+   */
+  _incrementAnalysisCount() {
+    if (!this.memory) return;
+
+    // 确保 learned store 已加载
+    if (this.memory._ensureLearnedLoaded) {
+      this.memory._ensureLearnedLoaded();
+    }
+
+    const store = this.memory._learnedStore;
+    if (!store) return;
+
+    // 读取当前计数
+    const currentEntry = store['analysis_count'];
+    const currentCount = currentEntry ? (currentEntry.value || 0) : 0;
+
+    // 更新计数
+    store['analysis_count'] = { value: currentCount + 1, updatedAt: Date.now() };
+    this.memory._markLearnedDirty?.();
+    this.memory._saveLearned?.();
   }
 
   /**
@@ -417,8 +447,11 @@ class HeartFlowPsychology {
       '焦虑': { category: 'negative', intensity: 'high' },
       '担心': { category: 'negative', intensity: 'medium' },
       '平静': { category: 'neutral', intensity: 'low' },
-      '平静': { category: 'positive', intensity: 'low' },
       '兴奋': { category: 'positive', intensity: 'high' },
+      // 支持英文情绪类别（直接映射）
+      'negative': { category: 'negative', intensity: 'medium' },
+      'positive': { category: 'positive', intensity: 'medium' },
+      'neutral': { category: 'neutral', intensity: 'low' },
     };
 
     const correctedEmotion = emotionMap[correctionValue] || { category: 'neutral', intensity: 'low' };
@@ -437,26 +470,49 @@ class HeartFlowPsychology {
 
   _detectCorrectionType(input, wrongAnalysis, correctionLower) {
     // 检测纠正类型
-    if (correctionLower.includes('不是') || correctionLower.includes('不是') || correctionLower.includes('没') || correctionLower.includes('不是')) {
+    if (correctionLower.includes('不是') || correctionLower.includes('没')) {
       // 可能是情绪纠正
       if (wrongAnalysis.emotion) {
         return 'emotion';
       }
     }
-    if (correctionLower.includes('是') && correctionLower.includes('想') || correctionLower.includes('应该')) {
+    if ((correctionLower.includes('是') && correctionLower.includes('想')) || correctionLower.includes('应该')) {
       return 'intent';
     }
     return 'emotion'; // 默认
   }
 
   _extractCorrectionValue(correctionLower) {
-    // 提取纠正后的值
-    const emotionKeywords = ['累', '困', '开心', '生气', '难过', '焦虑', '平静', '兴奋', '担心'];
+    // 首先处理"不是X是Y"格式
+    // 匹配模式：不是...是Y，或 不是X是Y（直接是Y）
+    const notXisYPattern = /不是.+?是([^，,。！!？?\s]+)/;
+    const notXisYMatch = correctionLower.match(notXisYPattern);
+    if (notXisYMatch && notXisYMatch[1]) {
+      const extractedValue = notXisYMatch[1].trim();
+      // 清理可能的标点符号
+      const cleanedValue = extractedValue.replace(/[，。！？、]/g, '').trim();
+      if (cleanedValue.length > 0) {
+        return cleanedValue;
+      }
+    }
+
+    // 支持英文情绪类别关键词
+    const englishCategories = ['negative', 'positive', 'neutral', 'angry', 'sad', 'happy', 'tired', 'anxious', 'fear', 'disgust', 'surprise'];
+    for (const cat of englishCategories) {
+      // 匹配 "是negative" 或 "应该是negative" 等模式
+      if (correctionLower.includes('是' + cat) || correctionLower.includes('应该是' + cat) || correctionLower.endsWith(cat)) {
+        return cat;
+      }
+    }
+
+    // 提取纠正后的值（支持中英文情绪关键词）
+    const emotionKeywords = ['累', '困', '开心', '生气', '难过', '焦虑', '平静', '兴奋', '担心', '沮丧', '绝望', '恐惧', '害怕', '感动', '温暖', '轻松', '无聊', '疲惫'];
     for (const kw of emotionKeywords) {
       if (correctionLower.includes(kw)) {
         return kw;
       }
     }
+
     return 'unknown';
   }
 
@@ -473,32 +529,39 @@ class HeartFlowPsychology {
   /**
    * 分析准确率统计
    * 对比：AI分析 vs 用户纠正记录
+   *
+   * 注意：此方法只统计有纠正记录的分析。
+   * 准确率 = 1 - (纠正次数 / 总分析次数)
+   * 其中总分析次数 = 纠正次数 + 未纠正次数（通过记录所有分析来计算）
    */
   getPsychologyAccuracy() {
-    let total = 0;
+    let totalAnalyses = 0;
     let corrections = 0;
 
     // 从记忆获取所有纠正记录
     if (this.memory) {
+      // 获取纠正记录数量
       const learnedRecords = this.memory.listLearned();
       const correctionRecords = learnedRecords.filter(r => r.key.startsWith('correction:'));
+      corrections = correctionRecords.length;
 
-      total = correctionRecords.length;
-
-      // 假设每次纠正都是AI错了
-      corrections = total;
+      // 获取分析记录数量（记录在 analysis_count 中）
+      const analysisCountEntry = learnedRecords.find(r => r.key === 'analysis_count');
+      totalAnalyses = analysisCountEntry ? (analysisCountEntry.value || 0) : corrections;
     }
 
     // 计算准确率：没有纠正的占比
-    const accuracy = total > 0 ? (total - corrections) / total : 1.0;
+    // 如果没有分析记录，使用纠正记录作为基数（保守估计）
+    if (totalAnalyses === 0) totalAnalyses = corrections;
+    const accuracy = totalAnalyses > 0 ? (totalAnalyses - corrections) / totalAnalyses : 1.0;
 
     return {
       accuracy: Math.round(accuracy * 100) / 100, // 保留两位小数
-      total,
+      total: totalAnalyses,
       corrections,
-      message: total > 0
-        ? `总分析${total}次，用户纠正${corrections}次，准确率${(accuracy * 100).toFixed(1)}%`
-        : '暂无纠正数据',
+      message: totalAnalyses > 0
+        ? `总分析${totalAnalyses}次，用户纠正${corrections}次，准确率${(accuracy * 100).toFixed(1)}%`
+        : '暂无分析数据',
     };
   }
 
@@ -651,6 +714,9 @@ class HeartFlowPsychology {
    * 第二步：提示词优化 + 自我批评验证
    */
   analyzePsychology(input) {
+    // 记录分析次数（用于准确率统计）
+    this._incrementAnalysisCount();
+
     // 第一步：规则分析（获取初步结果）
     let ruleBasedResult = this.perceive(input);
 
@@ -813,12 +879,26 @@ class HeartFlowPsychology {
   }
 
   acknowledgeEmotion(input) {
-    const EMOTIONAL_KEYWORDS = [
-      '害怕', '恐惧', '无奈', '痛苦', '伤心', '失望', '沮丧',
-      '焦虑', '不安', '累', '压力', '委屈',
-    ];
+    // 复用 _detectEmotion 的关键词检测逻辑以保持一致性
     const lower = input.toLowerCase();
-    const detected = EMOTIONAL_KEYWORDS.filter(kw => lower.includes(kw));
+    const detected = [];
+
+    // 从 emotionMap 中提取所有负面情绪关键词（高强度）
+    const highIntensityNegative = this.emotionMap.negative?.high || [];
+    const mediumIntensityNegative = this.emotionMap.negative?.medium || [];
+    const highIntensityPositive = this.emotionMap.positive?.high || [];
+
+    const emotionalKeywords = [
+      ...highIntensityNegative,
+      ...mediumIntensityNegative,
+      ...highIntensityPositive,
+    ];
+
+    for (const kw of emotionalKeywords) {
+      if (lower.includes(kw)) {
+        detected.push(kw);
+      }
+    }
 
     if (detected.length === 0) {
       return { hasEmotion: false, acknowledgment: null, canAnalyze: false };
@@ -837,6 +917,26 @@ class HeartFlowPsychology {
       '累': '我听到了，你感到累了。',
       '压力': '我听到了，你感到压力很大。',
       '委屈': '我听到了，你感到委屈。',
+      '绝望': '我听到了，你感到绝望。',
+      '崩溃': '我听到了，你感到崩溃。',
+      '生气': '我听到了，你感到生气。',
+      '愤怒': '我听到了，你感到愤怒。',
+      '难过': '我听到了，你感到难过。',
+      '担心': '我听到了，你感到担心。',
+      '恐慌': '我听到了，你感到恐慌。',
+      '烦死了': '我听到了，你感到非常烦躁。',
+      '受不了': '我听到了，你感到无法承受。',
+      '压力大': '我听到了，你感到压力很大。',
+      '气死了': '我听到了，你感到非常愤怒。',
+      '开心': '我听到了，你感到开心。',
+      '高兴': '我听到了，你感到高兴。',
+      '快乐': '我听到了，你感到快乐。',
+      '兴奋': '我听到了，你感到兴奋。',
+      '激动': '我听到了，你感到激动。',
+      '感动': '我听到了，你感到感动。',
+      '感激': '我听到了，你感到感激。',
+      '满足': '我听到了，你感到满足。',
+      '温暖': '我听到了，你感到温暖。',
     };
 
     const emotion = detected[0];
@@ -844,6 +944,7 @@ class HeartFlowPsychology {
       hasEmotion: true,
       acknowledgment: acknowledgments[emotion] || `我听到了，你感到${emotion}。`,
       canAnalyze: true,
+      detectedEmotions: detected.slice(0, 3), // 返回最多3个检测到的情绪关键词
     };
   }
 
@@ -891,7 +992,7 @@ class HeartFlowPsychology {
   // Crisis keywords in order of severity
   // Note: Context-aware scoring is applied - single keywords are weighted lower
   static CRISIS_KEYWORDS = {
-    critical: ['我不想活了', '活着没意思', '活着真没意思', '活着没意义', 'suicide', 'kill myself', '自残', '自杀'],
+    critical: ['我不想活了', '不想活了', '活着没意思', '活着真没意思', '活着没意义', '我想死', '我要死', 'suicide', 'kill myself', '自残', '自杀'],
     high: ['活着好累', '太痛苦了', '绝望', 'hopeless'],
     medium: ['好沮丧', '好焦虑', '好压力', '难过', 'depressed', '焦虑', '压力'],
     low: ['有点累', '不太高兴', '无聊', '失落'],

@@ -17,9 +17,29 @@
         "未考虑替代推理路径"
       ],
       "timestamp": 1779108608161
+    },
+    {
+      "reasoning": "因为下雨，地面是湿的",
+      "conclusion": "地面是湿的",
+      "issues": [
+        "结论与推理逻辑不匹配",
+        "可能存在隐藏假设",
+        "未考虑替代推理路径"
+      ],
+      "timestamp": 1779898527434
+    },
+    {
+      "reasoning": "我们应该发布，因为它能工作",
+      "conclusion": "发布它",
+      "issues": [
+        "结论与推理逻辑不匹配",
+        "可能存在隐藏假设",
+        "未考虑替代推理路径"
+      ],
+      "timestamp": 1779898527435
     }
   ],
-  "totalVerified": 2,
+  "totalVerified": 4,
   "passes": 0,
-  "fails": 2
+  "fails": 4
 }
