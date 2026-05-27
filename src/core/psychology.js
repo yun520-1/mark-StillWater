@@ -7,8 +7,10 @@
  */
 
 class HeartFlowPsychology {
-  constructor(memory) {
+  constructor(memory, promptOptimizer = null, selfCritique = null) {
     this.memory = memory;
+    this.promptOptimizer = promptOptimizer;
+    this.selfCritique = selfCritique;
     
     // Emotion categories — Chinese + English, high/medium/low
     this.emotionMap = {
@@ -132,14 +134,30 @@ class HeartFlowPsychology {
     let intensity = 'low';
     let detected = [];
 
-    // Check emotional keywords with word boundary awareness
+    // Check emotional keywords
+    // 中文：直接匹配（无词边界概念）
+    // 英文：使用词边界避免误匹配
     for (const [cat, intensities] of Object.entries(this.emotionMap)) {
       for (const [level, keywords] of Object.entries(intensities)) {
         for (const kw of keywords) {
-          // Use word boundary matching to avoid substring false positives
-          const escapedKw = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-          const regex = new RegExp(`\\b${escapedKw}\\b`, 'i');
-          if (regex.test(lower)) {
+          let matched = false;
+
+          // 判断是否是中文关键词
+          const isChinese = /[一-龥]/.test(kw);
+
+          if (isChinese) {
+            // 中文关键词：直接包含匹配
+            if (lower.includes(kw)) {
+              matched = true;
+            }
+          } else {
+            // 英文关键词：使用词边界匹配
+            const escapedKw = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(`\\b${escapedKw}\\b`, 'i');
+            matched = regex.test(lower);
+          }
+
+          if (matched) {
             detected.push({ keyword: kw, level, category: cat });
             if (cat === 'positive' && level === 'high') { maxIntensity = 3; category = cat; intensity = level; }
             else if (cat === 'negative' && level === 'high') { maxIntensity = 3; category = cat; intensity = level; }
@@ -555,10 +573,120 @@ class HeartFlowPsychology {
   }
 
   /**
-   * Full psychology analysis
+   * Full psychology analysis — 两步式分析
+   * 第一步：规则分析（快速、确定性）
+   * 第二步：提示词优化 + 自我批评验证
    */
   analyzePsychology(input) {
-    return this.perceive(input);
+    // 第一步：规则分析（获取初步结果）
+    const ruleBasedResult = this.perceive(input);
+
+    // 计算PAD情绪坐标（用于自我批评验证）
+    const pad = this._calculatePAD(input, ruleBasedResult.emotion);
+
+    // 计算危机风险（用于自我批评验证）
+    const crisis = this.assessCrisisRisk(input);
+
+    // 如果没有配置优化器和批评器，直接返回规则分析结果
+    if (!this.promptOptimizer && !this.selfCritique) {
+      return {
+        ...ruleBasedResult,
+        pad,
+        crisis,
+        analysisMode: 'rule-based',
+      };
+    }
+
+    // 构建完整分析结果（包含PAD和crisis）用于自我批评
+    const completeResult = {
+      ...ruleBasedResult,
+      pad,
+      crisis,
+    };
+
+    // 第二步：构建优化提示词（用于LLM调用）
+    let reasoningChain = null;
+    let optimizedPrompts = null;
+    if (this.promptOptimizer) {
+      optimizedPrompts = this.promptOptimizer.optimizePsychologyPrompt(input, completeResult);
+      reasoningChain = optimizedPrompts.reasoningChain;
+    }
+
+    // 第三步：自我批评验证（使用完整结果）
+    let critique = null;
+    if (this.selfCritique) {
+      critique = this.selfCritique.critiqueAnalysis(completeResult, input);
+    }
+
+    // 组装最终结果
+    const result = {
+      ...completeResult,
+      analysisMode: 'rule-based-enhanced',
+      reasoningChain,
+      critique,
+      optimizedPrompts: optimizedPrompts ? {
+        systemPrompt: optimizedPrompts.systemPrompt,
+        userPrompt: optimizedPrompts.userPrompt,
+        metacognitionPrompt: optimizedPrompts.metacognitionPrompt,
+      } : null,
+      needsRefinement: critique?.needsImprovement || false,
+    };
+
+    // 如果需要改进，添加改进建议
+    if (critique?.needsImprovement && critique.suggestions?.length > 0) {
+      result.refinementSuggestions = critique.suggestions;
+    }
+
+    return result;
+  }
+
+  /**
+   * 计算PAD情绪坐标
+   */
+  _calculatePAD(input, emotion) {
+    // 基于情绪类别和强度计算PAD值
+    // PAD: Pleasure, Arousal, Dominance (-10 to +10)
+    const lower = input.toLowerCase();
+
+    let pleasure = 0;
+    let arousal = 0;
+    let dominance = 0;
+
+    // 根据情绪类别调整愉悦度
+    if (emotion?.category === 'positive') {
+      pleasure = emotion?.intensity === 'high' ? 7 : emotion?.intensity === 'medium' ? 5 : 3;
+      arousal = emotion?.intensity === 'high' ? 6 : emotion?.intensity === 'medium' ? 4 : 2;
+      dominance = 4;
+    } else if (emotion?.category === 'negative') {
+      pleasure = emotion?.intensity === 'high' ? -7 : emotion?.intensity === 'medium' ? -5 : -3;
+      // 高负面情绪通常伴随高激活
+      arousal = emotion?.intensity === 'high' ? 7 : emotion?.intensity === 'medium' ? 5 : 3;
+      dominance = -2;
+    } else {
+      // 中性情绪
+      pleasure = 0;
+      arousal = 0;
+      dominance = 5;
+    }
+
+    // 检测强度词微调
+    const intensityBoost = {
+      '非常': 2, '特别': 2, '极其': 3, '超': 2,
+      '有点': -1, '稍微': -1, '略微': -1, '不太': -1,
+    };
+    for (const [word, boost] of Object.entries(intensityBoost)) {
+      if (lower.includes(word)) {
+        pleasure = Math.max(-10, Math.min(10, pleasure + boost));
+        arousal = Math.max(-10, Math.min(10, arousal + boost));
+        break;
+      }
+    }
+
+    return {
+      pleasure: Math.round(pleasure),
+      arousal: Math.round(arousal),
+      dominance: Math.round(dominance),
+    };
   }
 
   /**

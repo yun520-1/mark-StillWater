@@ -23,10 +23,7 @@
  *   - PsychologicalScales: 心理评估量表
  *   - PromptOptimizer: 提示词优化（第一步小模型分析）
  *   - SelfCritique: 自我批评校准（分析结果验证）
- *   - ModelRouter: 模型级联路由（三级复杂度处理）
- *   - TreeOfThoughts: 多路径推理+多数表决
- *   - AnalysisTrace: ReAct风格分析轨迹
- *   - PromptEvolution: 提示词进化引擎
+ *   - LLMClient: 大模型调用集成（第二步执行）
  *   - ProfileEvolution: 用户档案自我进化
  *   - ContextAware: 上下文感知处理
  *   - MultiAgentCoordinator: 多agent协调器
@@ -65,13 +62,8 @@ const { EmpathyCalibration } = require('./empathy-calibration.js');
 const { PsychologicalScales } = require('./psychological-scales.js');
 const { PromptOptimizer } = require('./prompt-optimizer.js');
 const { SelfCritique } = require('./self-critique.js');
-const { ModelRouter } = require('./model-router.js');
-const { TreeOfThoughts } = require('./tree-of-thoughts.js');
-const { createTrace } = require('./analysis-trace.js');
-const { PromptEvolutionEngine, PromptPool } = require('./prompt-evolution.js');
+const { LLMClient } = require('./llm-client.js');
 const { ProfileEvolution } = require('./profile-evolution.js');
-const { ContextAware } = require('./context-aware.js');
-const { MultiAgentCoordinator } = require('./multi-agent-coordinator.js');
 
 const VERSION = '1.18.0';
 
@@ -102,8 +94,14 @@ function createHeartFlow(config = {}) {
   // Instantiate identity (needs memory)
   const identity = new HeartFlowIdentity(memory);
 
-  // Instantiate psychology (needs memory)
-  const psychology = new HeartFlowPsychology(memory);
+  // Instantiate Prompt Optimizer (v1.17) - 第一步提示词优化
+  const promptOptimizer = new PromptOptimizer();
+
+  // Instantiate Self Critique (v1.17) - 自我批评校准
+  const selfCritique = new SelfCritique();
+
+  // Instantiate psychology (needs memory + promptOptimizer + selfCritique)
+  const psychology = new HeartFlowPsychology(memory, promptOptimizer, selfCritique);
 
   // Instantiate logic (needs memory)
   const logic = new HeartFlowLogic(memory);
@@ -169,32 +167,16 @@ function createHeartFlow(config = {}) {
   // Instantiate Psychological Scales (v1.16.1)
   const psychologicalScales = new PsychologicalScales();
 
-  // Instantiate Prompt Optimizer (v1.17) - 第一步提示词优化
-  const promptOptimizer = new PromptOptimizer();
-
-  // Instantiate Self Critique (v1.17) - 自我批评校准
-  const selfCritique = new SelfCritique();
-
-  // Instantiate Model Router (v1.18) - 模型级联路由
-  const modelRouter = new ModelRouter();
-
-  // Instantiate Tree of Thoughts (v1.18) - 多路径推理
-  const treeOfThoughts = new TreeOfThoughts();
-
-  // Instantiate Analysis Trace (v1.18) - ReAct分析轨迹
-  const analysisTrace = createTrace();
-
-  // Instantiate Prompt Evolution (v1.18) - 提示词进化
-  const promptEvolution = new PromptEvolutionEngine();
+  // Instantiate LLM Client (v1.18) - 大模型调用集成
+  const llmClient = new LLMClient({
+    openaiApiKey: config.openaiApiKey || process.env.OPENAI_API_KEY,
+    anthropicApiKey: config.anthropicApiKey || process.env.ANTHROPIC_API_KEY,
+    provider: config.llmProvider || 'openai',
+    enabled: config.enableLLM !== false,
+  });
 
   // Instantiate Profile Evolution (v1.18) - 档案自我进化
   const profileEvolution = new ProfileEvolution();
-
-  // Instantiate Context Aware (v1.18) - 上下文感知
-  const contextAware = new ContextAware();
-
-  // Instantiate Multi-Agent Coordinator (v1.18) - 多agent协调
-  const multiAgentCoordinator = new MultiAgentCoordinator();
 
   // MindSpace: working mental state
   const _mindSpace = {
@@ -221,13 +203,8 @@ function createHeartFlow(config = {}) {
     _scales: psychologicalScales,
     _promptOptimizer: promptOptimizer,
     _selfCritique: selfCritique,
-    _modelRouter: modelRouter,
-    _treeOfThoughts: treeOfThoughts,
-    _analysisTrace: analysisTrace,
-    _promptEvolution: promptEvolution,
+    _llmClient: llmClient,
     _profileEvolution: profileEvolution,
-    _contextAware: contextAware,
-    _multiAgentCoordinator: multiAgentCoordinator,
 
     // ─── Lifecycle ──────────────────────────────────────────
 
@@ -292,15 +269,8 @@ function createHeartFlow(config = {}) {
         this._psychBridge(input, result);
       }
 
-      // Add PAD emotion model (v1.4.1)
-      result.pad = psychology.calculatePAD(input);
-
-      // Add crisis risk assessment (v1.4.1)
-      const crisis = psychology.assessCrisisRisk(input);
-      result.crisis = crisis;
-      if (crisis.level !== 'none') {
-        result.crisisResponse = psychology.getCrisisResponse(crisis.level);
-      }
+      // analyzePsychology already returns pad and crisis from v1.18 enhanced mode
+      // No need to overwrite here
 
       return result;
     },

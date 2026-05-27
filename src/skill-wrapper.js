@@ -536,6 +536,97 @@ const skillAPI = {
     const engine = getEngine();
     return engine._selfCritique.calibrateConfidence(rawConfidence, signals);
   },
+
+  // ─── LLM调用API (v1.18) ──────────────────
+
+  /**
+   * 检查LLM是否可用
+   */
+  isLLMAvailable() {
+    const engine = getEngine();
+    return engine._llmClient?.isAvailable() || false;
+  },
+
+  /**
+   * 配置LLM provider
+   * @param {string} provider - 'openai' 或 'anthropic'
+   * @param {object} config - provider配置
+   */
+  configureLLM(provider, config) {
+    const engine = getEngine();
+    if (engine._llmClient) {
+      return engine._llmClient.configureProvider(provider, config);
+    }
+    return false;
+  },
+
+  /**
+   * 设置LLM provider
+   */
+  setLLMProvider(provider) {
+    const engine = getEngine();
+    if (engine._llmClient) {
+      return engine._llmClient.setProvider(provider);
+    }
+    return false;
+  },
+
+  /**
+   * 调用LLM生成文本
+   * @param {string} systemPrompt - 系统提示词
+   * @param {string} userPrompt - 用户提示词
+   * @param {object} options - 额外选项
+   */
+  async generateWithLLM(systemPrompt, userPrompt, options = {}) {
+    const engine = getEngine();
+    if (!engine._llmClient) {
+      return { success: false, error: 'LLM客户端未初始化' };
+    }
+    return engine._llmClient.generate(systemPrompt, userPrompt, options);
+  },
+
+  /**
+   * 使用LLM进行心理分析（增强模式）
+   * @param {string} text - 用户输入
+   * @returns {Promise<object>} 分析结果
+   */
+  async analyzePsychologyWithLLM(text) {
+    const engine = getEngine();
+
+    // 第一步：规则分析 + 提示词优化
+    const ruleResult = engine.analyzePsychology(text);
+    const prompts = ruleResult.optimizedPrompts;
+
+    if (!prompts) {
+      return { ...ruleResult, llmEnhanced: false };
+    }
+
+    // 第二步：调用LLM
+    const llmResponse = await engine._llmClient.generate(
+      prompts.systemPrompt,
+      prompts.userPrompt + '\n\n' + (prompts.metacognitionPrompt || ''),
+      { temperature: 0.3, maxTokens: 1500 }
+    );
+
+    if (!llmResponse.success) {
+      return {
+        ...ruleResult,
+        llmEnhanced: false,
+        llmError: llmResponse.error,
+      };
+    }
+
+    // 第三步：解析LLM响应
+    const llmAnalysis = engine._llmClient.parsePsychologyResponse(llmResponse.content);
+
+    return {
+      ...ruleResult,
+      llmEnhanced: true,
+      llmResponse: llmResponse.content,
+      llmAnalysis,
+      llmProvider: llmResponse.provider,
+    };
+  },
 };
 
 // 便捷函数：直接解构使用
@@ -594,6 +685,11 @@ const {
   critiqueAnalysis,
   generateRefinementPrompt,
   calibrateConfidence,
+  isLLMAvailable,
+  configureLLM,
+  setLLMProvider,
+  generateWithLLM,
+  analyzePsychologyWithLLM,
 } = skillAPI;
 
 module.exports = {
@@ -654,4 +750,10 @@ module.exports = {
   critiqueAnalysis,
   generateRefinementPrompt,
   calibrateConfidence,
+  // LLM API
+  isLLMAvailable,
+  configureLLM,
+  setLLMProvider,
+  generateWithLLM,
+  analyzePsychologyWithLLM,
 };

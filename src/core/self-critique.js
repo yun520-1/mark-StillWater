@@ -19,26 +19,31 @@ class SelfCritique {
     // 批评维度
     this.critiqueDimensions = [
       {
+        key: 'signalCompleteness',
         name: '信号完整性',
         description: '是否遗漏了重要的心理信号',
         weight: 0.2,
       },
       {
+        key: 'emotionAccuracy',
         name: '情绪准确性',
         description: '情绪分类是否准确',
         weight: 0.25,
       },
       {
+        key: 'intentValidity',
         name: '意图合理性',
         description: '意图判断是否合理',
         weight: 0.2,
       },
       {
+        key: 'defenseDetection',
         name: '防御检测',
         description: '防御机制是否被正确识别',
         weight: 0.15,
       },
       {
+        key: 'confidenceCalibration',
         name: '置信度匹配',
         description: '置信度是否与信号强度匹配',
         weight: 0.2,
@@ -114,7 +119,7 @@ class SelfCritique {
     // 计算总体评分
     let totalScore = 0;
     for (const dim of this.critiqueDimensions) {
-      totalScore += scores[dim.name.replace(/[^a-zA-Z]/g, '').toLowerCase()] * dim.weight;
+      totalScore += (scores[dim.key] || 0) * dim.weight;
     }
 
     // 检测常见遗漏模式
