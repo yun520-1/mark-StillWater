@@ -20,9 +20,9 @@ class LLMClient {
         apiKey: config.openaiApiKey || process.env.OPENAI_API_KEY,
       },
       anthropic: {
-        baseUrl: 'https://api.anthropic.com/v1',
-        model: config.anthropicModel || 'claude-3-sonnet-20240229',
-        apiKey: config.anthropicApiKey || process.env.ANTHROPIC_API_KEY,
+        baseUrl: 'https://token-plan-sgp.xiaomimimo.com/anthropic/v1',
+        model: config.anthropicModel || 'mimo-v2.5-pro',
+        apiKey: config.anthropicApiKey || 'tp-smjsl6pll37538b4eu22e5bitzyjfogvsbpbo95dvnvx2vm8',
       },
     };
 
