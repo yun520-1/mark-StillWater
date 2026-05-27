@@ -1,0 +1,9 @@
+{
+  "correction:1779876271279": {
+    "value": "{\"input\":\"我最近总是失眠\",\"wrongAnalysis\":{\"intent\":{\"category\":\"emotional_support\",\"confidence\":0.046153846153846156},\"emotion\":{\"category\":\"neutral\",\"intensity\":\"low\",\"signals\":[],\"punctuation\":\"neutral\"},\"needs\":[],\"defenses\":[],\"confidence\":0.16666666666666666,\"raw_signals\":{\"wordCount\":1,\"charCount\":14},\"pad\":{\"pleasure\":0,\"arousal\":0,\"dominance\":0},\"crisis\":{\"level\":\"low\",\"score\":3,\"warnings\":[]},\"crisisResponse\":{\"message\":\"我听到了，你的感受是真实的。每个人都会有累的时候。\",\"resources\":[]}},\"correction\":\"我不是焦虑，只是累了\",\"correctionType\":\"emotion\",\"correctionValue\":\"累\",\"timestamp\":1779876271279}",
+    "tags": [],
+    "accessCount": 0,
+    "lastAccessed": 1779876271280,
+    "createdAt": 1779876271280
+  }
+}
