@@ -1,7 +1,7 @@
 ---
 name: 心镜
-description: 心镜 v1.15 — Advanced guide for LLM interaction optimization. Focus: user psychology analysis, cognitive bias handling, consciousness theory, self-awareness modeling, temporal perception, and spiritual intelligence.
-version: v1.15
+description: 心镜 v1.16.2 — Advanced guide for LLM interaction optimization. Focus: user psychology analysis, cognitive bias handling, consciousness theory, self-awareness modeling, Theory of Mind, CBT, empathy calibration, psychological scales, privacy consent, and professional boundaries.
+version: v1.16.2
 ---
 
 # 心镜
@@ -12,7 +12,7 @@ version: v1.15
 
 **核心能力：** 心理分析 → 意图识别 → 认知偏差处理 → 意识建模 → 对话优化
 
-**理论基石：** Kahneman/Thaler行为经济学 · Brentano意向性 · Global Workspace Theory · SEP意识理论 · 佛教哲学
+**理论基石：** Kahneman/Thaler行为经济学 · Brentano意向性 · Global Workspace Theory · SEP意识理论 · 佛教哲学 · Theory of Mind · CBT认知行为疗法
 
 ---
 
@@ -22,7 +22,12 @@ version: v1.15
 |------|------|
 | **心理分析** | 意图识别、情绪检测、需求挖掘、防御识别 |
 | **认知偏差** | Kahneman双系统、16种偏差、EAST框架 |
+| **认知重构** | CBT十大认知扭曲检测、苏格拉底式追问、认知重构建议 |
+| **心智理论** | ToM心理状态推断、隐含意图检测、社交动态分析 |
+| **共情校准** | 共情准确性评估、情感共鸣检测、支持性回应推荐 |
 | **意识建模** | GWT全局工作空间、SEP自我意识、高级意识公式 |
+| **用户建模** | 长期心理档案、情绪趋势跟踪、个性化参数 |
+| **东方心理学** | 阳明心学、境界模型、家庭关系模式 |
 | **时间感知** | 急迫度算法、时间敌人框架 |
 | **真善美** | 熵减判断、心理健康分析、价值内化 |
 
@@ -335,6 +340,160 @@ console.log(eastern);
 // }
 ```
 
+### Theory of Mind API (v1.16)
+
+基于论文: A Survey of Theory of Mind in LLMs, SymbolicToM
+
+| 方法 | 用途 | 返回值 |
+|------|------|--------|
+| `inferMentalState(text, context?)` | 推断心理状态 | { level, beliefs, desires, intentions, implicitIntent, confidence } |
+
+```javascript
+// ToM心理状态推断
+const { inferMentalState } = require('./src/skill-wrapper.js');
+
+const tom = inferMentalState("我觉得她肯定不喜欢我");
+console.log(tom);
+// {
+//   level: 4,
+//   levelName: '隐含意图检测',
+//   beliefs: { count: 1, signals: ['觉得'], detected: true },
+//   implicitIntent: {
+//     detected: true,
+//     intents: [{ type: 'jumping-conclusions', description: '跳跃式结论', ... }]
+//   },
+//   confidence: 0.5
+// }
+```
+
+### CBT认知重构 API (v1.16)
+
+基于Beck和Ellis的认知行为疗法理论
+
+| 方法 | 用途 | 返回值 |
+|------|------|--------|
+| `detectDistortions(text)` | 检测认知扭曲 | { hasDistortions, distortions, severity } |
+| `generateSocraticQuestions(text)` | 苏格拉底式追问 | { type, questions, focus } |
+| `analyzeCBT(text)` | 综合CBT分析 | { distortions, questions, advice } |
+
+```javascript
+// CBT认知重构
+const { detectDistortions, generateSocraticQuestions } = require('./src/skill-wrapper.js');
+
+const distortions = detectDistortions("我总是失败，我永远都不可能成功");
+console.log(distortions);
+// {
+//   hasDistortions: true,
+//   distortions: [
+//     { type: 'overgeneralization', name: '过度概括', confidence: 0.8, ... },
+//     { type: 'all-or-nothing', name: '全或无思维', confidence: 0.6, ... }
+//   ],
+//   severity: 'high'
+// }
+
+const questions = generateSocraticQuestions("我总是失败");
+console.log(questions);
+// {
+//   type: 'socratic',
+//   questions: ['有没有相反的证据？', '这种情况还有哪些其他角度？', ...],
+//   focus: '通过追问帮助你发现新的观点'
+// }
+```
+
+### 用户心理档案 API (v1.16)
+
+基于EmoSApp长期用户建模研究
+
+| 方法 | 用途 | 返回值 |
+|------|------|--------|
+| `getUserProfile()` | 获取用户档案 | { id, emotionalTendency, commonDistortions, recentMood, crisisRisk } |
+| `updateUserProfile(analysis)` | 更新档案 | { updated } |
+| `getPersonalization()` | 获取个性化参数 | { commonDistortions, emotionalTendency, recommendedTone } |
+
+```javascript
+// 用户档案
+const { getUserProfile, updateUserProfile } = require('./src/skill-wrapper.js');
+
+// 获取档案摘要
+const profile = getUserProfile();
+console.log(profile);
+// {
+//   id: 'user-xxx',
+//   sessions: 15,
+//   emotionalTendency: [{ emotion: 'negative', count: 8 }],
+//   commonDistortions: [{ type: 'overgeneralization', count: 5 }],
+//   recentMood: { trend: 'stable', direction: 'neutral', recentAvg: 4.2 },
+//   crisisRisk: { level: 'low', recentCrises: 0 }
+// }
+```
+
+### 共情校准 API (v1.16.1)
+
+基于RACLETTE系统的共情准确性评估
+
+| 方法 | 用途 | 返回值 |
+|------|------|--------|
+| `assessEmpathyAccuracy(aiResponse, userInput, userEmotion)` | 评估共情准确性 | { accuracy, level, components, suggestions } |
+| `detectResonance(text)` | 检测情感共鸣 | { dominantEmotion, intensity, level } |
+| `recommendSupportiveResponse(context)` | 推荐支持性回应 | { recommendations, byType } |
+| `assessEmpathyFatigue(stats)` | 评估共情疲劳风险 | { risk, level, suggestions } |
+
+```javascript
+// 共情校准
+const { assessEmpathyAccuracy, detectResonance } = require('./src/skill-wrapper.js');
+
+// 评估AI回应的共情准确性
+const empathy = assessEmpathyAccuracy(
+  "我能理解你感到沮丧，这在生活中很常见",
+  "我最近总是失败，感觉自己很没用",
+  "negative"
+);
+console.log(empathy);
+// { accuracy: 0.8, level: 'good', components: { validation: true, reflection: false, ... } }
+
+// 检测情感共鸣
+const resonance = detectResonance("听到这个消息，我真的很为你难过");
+console.log(resonance);
+// { dominantEmotion: 'negative', intensity: 2, level: 'medium' }
+```
+
+### 心理评估量表 API (v1.16.1)
+
+基于临床心理学标准量表
+
+| 方法 | 用途 | 返回值 |
+|------|------|--------|
+| `assessEmotionRegulation(userResponses)` | 评估情绪调节策略 | { healthyScore, unhealthyScore, assessment } |
+| `assessStress(responses)` | PSS-10压力量表 | { totalScore, severity, interpretation } |
+| `assessSocialSupport(ssrsScores)` | 社会支持评估 | { total, level, suggestions } |
+| `assessQualityOfLife(domainScores)` | 生活质量评估 | { qualityOfLifePercent, level } |
+| `comprehensivePsychologyAssessment(assessments)` | 综合心理健康评估 | { overallLevel, factors, recommendations } |
+
+```javascript
+// 心理评估
+const { assessEmotionRegulation, assessStress, comprehensivePsychologyAssessment } = require('./src/skill-wrapper.js');
+
+// 评估情绪调节策略（4-5个策略的评分1-5）
+const regulation = assessEmotionRegulation([4, 2, 5, 3, 2]);
+console.log(regulation);
+// {
+//   healthyScore: 4.0,
+//   unhealthyScore: 2.0,
+//   ratio: 2.0,
+//   assessment: '情绪调节能力良好'
+// }
+
+// 综合评估
+const comprehensive = comprehensivePsychologyAssessment({
+  emotionRegulation: regulation,
+  stress: { valid: true, totalScore: 18, severity: 'medium' },
+  socialSupport: { valid: true, level: '中' },
+  qualityOfLife: { valid: true, qualityOfLifePercent: 65, level: '中等' },
+});
+console.log(comprehensive);
+// { overallLevel: '中度困扰', concernCount: 2, ... }
+```
+
 ### 记忆层级
 
 | 层级 | 内容 | 持久性 |
@@ -392,6 +551,90 @@ Beauty (美): 表达优雅、结构清晰、体验美好
 | 5-9 | 轻度 |
 | 10-14 | 中度 |
 | 15-21 | 重度 |
+
+---
+
+## 隐私与专业边界声明
+
+> **重要提醒：** 心镜为AI辅助工具，不能替代专业心理咨询或医学诊断。
+
+### 隐私原则
+
+| 原则 | 说明 |
+|------|------|
+| **本地存储** | 用户档案数据仅存储在本地设备，不会上传至任何服务器 |
+| **知情同意** | 档案功能需用户明确同意才能启用 |
+| **数据控制** | 用户可随时撤回同意并删除档案数据 |
+| **最小收集** | 仅收集分析所需的最少数据 |
+
+### 专业边界
+
+| 边界 | 说明 |
+|------|------|
+| **非诊断工具** | 所有评估结果仅供参考，不构成医学或心理健康诊断 |
+| **非治疗替代** | 不能替代持证心理咨询师或精神科医生的专业治疗 |
+| **辅助参考** | 危机评估、情绪分析仅作为辅助参考 |
+| **及时转介** | 发现高风险情况时应建议用户寻求专业帮助 |
+
+### 用户档案隐私API
+
+```javascript
+// 检查同意状态
+const { hasConsent } = require('./src/skill-wrapper.js');
+console.log(hasConsent()); // false
+
+// 设置隐私同意
+const { setConsent } = require('./src/skill-wrapper.js');
+setConsent(true);
+
+// 获取隐私声明
+const { getPrivacyNotice } = require('./src/skill-wrapper.js');
+console.log(getPrivacyNotice());
+// {
+//   notice: '心镜用户档案为辅助工具...',
+//   dataStorage: '所有数据仅存储在本地设备...',
+//   ...
+// }
+
+// 删除所有档案数据
+const { deleteAllData } = require('./src/skill-wrapper.js');
+deleteAllData();
+// { success: true, message: '所有档案数据已删除' }
+```
+
+### 共情校准专业声明
+
+```javascript
+// 获取专业边界声明
+const { getProfessionalDisclaimer } = require('./src/skill-wrapper.js');
+console.log(getProfessionalDisclaimer());
+// {
+//   toolNature: 'AI共情校准为辅助工具...',
+//   limitation: 'AI无法完全理解人类情感...',
+//   recommendation: '如有心理健康问题，建议寻求持证心理咨询师...',
+//   crisisNote: '如遇心理危机，请立即拨打心理援助热线',
+//   resources: [
+//     { name: '全国心理援助热线', phone: '400-161-9995' },
+//     ...
+//   ]
+// }
+
+// 检查是否需要建议寻求专业帮助
+const { suggestProfessionalHelp } = require('./src/skill-wrapper.js');
+const suggestion = suggestProfessionalHelp({
+  crisisLevel: 'high',
+  stressScore: 8,
+  emotionIntensity: 'high',
+  conversationRounds: 15,
+});
+console.log(suggestion);
+// {
+//   shouldRecommend: true,
+//   reason: '检测到高危机风险',
+//   message: '我建议你考虑寻求专业心理咨询师的帮助...',
+//   resources: [...]
+// }
+```
 
 ---
 

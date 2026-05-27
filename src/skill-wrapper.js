@@ -270,6 +270,203 @@ const skillAPI = {
     const engine = getEngine();
     return engine.assessCulturalOrientation(text);
   },
+
+  // ─── Theory of Mind API (v1.16) ─────────────────────
+
+  /**
+   * 推断心理状态（ToM）
+   * @param {string} text - 用户输入
+   * @param {object} context - 上下文
+   * @returns {object} ToM分析结果
+   */
+  inferMentalState(text, context = {}) {
+    const engine = getEngine();
+    return engine.inferMentalState(text, context);
+  },
+
+  /**
+   * 检测认知扭曲（CBT）
+   * @param {string} text - 用户输入
+   * @returns {object} 认知扭曲分析
+   */
+  detectDistortions(text) {
+    const engine = getEngine();
+    return engine.detectDistortions(text);
+  },
+
+  /**
+   * 生成苏格拉底式追问
+   * @param {string} text - 用户输入
+   * @returns {object} 追问问题
+   */
+  generateSocraticQuestions(text) {
+    const engine = getEngine();
+    return engine.generateSocraticQuestions(text);
+  },
+
+  /**
+   * 综合CBT分析
+   * @param {string} text - 用户输入
+   * @returns {object} CBT完整分析
+   */
+  analyzeCBT(text) {
+    const engine = getEngine();
+    return engine.analyzeCBT(text);
+  },
+
+  /**
+   * 获取用户心理档案
+   * @returns {object} 用户档案摘要
+   */
+  getUserProfile() {
+    const engine = getEngine();
+    return engine.getUserProfile();
+  },
+
+  /**
+   * 更新用户档案
+   * @param {object} analysis - 分析结果
+   */
+  updateUserProfile(analysis) {
+    const engine = getEngine();
+    return engine.updateUserProfile(analysis);
+  },
+
+  /**
+   * 获取个性化参数
+   */
+  getPersonalization() {
+    const engine = getEngine();
+    return engine.getPersonalization();
+  },
+
+  // ─── 隐私API (v1.16.2) ────────────────────────
+
+  /**
+   * 检查隐私同意状态
+   */
+  hasConsent() {
+    const engine = getEngine();
+    return engine._userProfile ? engine._userProfile.hasConsent() : false;
+  },
+
+  /**
+   * 设置隐私同意
+   * @param {boolean} consent - 是否同意
+   */
+  setConsent(consent) {
+    const engine = getEngine();
+    return engine._userProfile ? engine._userProfile.setConsent(consent) : { error: '用户档案未初始化' };
+  },
+
+  /**
+   * 获取隐私声明
+   */
+  getPrivacyNotice() {
+    const engine = getEngine();
+    return engine._userProfile ? engine._userProfile.getPrivacyNotice() : { error: '用户档案未初始化' };
+  },
+
+  /**
+   * 删除所有档案数据
+   */
+  deleteAllData() {
+    const engine = getEngine();
+    return engine._userProfile ? engine._userProfile.deleteAllData() : { error: '用户档案未初始化' };
+  },
+
+  // ─── 共情校准 API (v1.16.1) ─────────────────────
+
+  /**
+   * 评估共情准确性
+   */
+  assessEmpathyAccuracy(aiResponse, userInput, userEmotion) {
+    const engine = getEngine();
+    return engine.assessEmpathyAccuracy(aiResponse, userInput, userEmotion);
+  },
+
+  /**
+   * 检测情感共鸣
+   */
+  detectResonance(text) {
+    const engine = getEngine();
+    return engine.detectResonance(text);
+  },
+
+  /**
+   * 推荐支持性回应
+   */
+  recommendSupportiveResponse(context) {
+    const engine = getEngine();
+    return engine.recommendSupportiveResponse(context);
+  },
+
+  /**
+   * 评估共情疲劳风险
+   */
+  assessEmpathyFatigue(stats) {
+    const engine = getEngine();
+    return engine.assessEmpathyFatigue(stats);
+  },
+
+  /**
+   * 获取专业边界声明
+   */
+  getProfessionalDisclaimer() {
+    const engine = getEngine();
+    return engine._empathy ? engine._empathy.getProfessionalDisclaimer() : { error: '共情校准未初始化' };
+  },
+
+  /**
+   * 检查是否需要建议寻求专业帮助
+   * @param {object} context - 评估上下文
+   */
+  suggestProfessionalHelp(context) {
+    const engine = getEngine();
+    return engine._empathy ? engine._empathy.suggestProfessionalHelp(context) : { error: '共情校准未初始化' };
+  },
+
+  // ─── 心理评估量表 API (v1.16.1) ──────────────────
+
+  /**
+   * 评估情绪调节策略
+   */
+  assessEmotionRegulation(userResponses) {
+    const engine = getEngine();
+    return engine.assessEmotionRegulation(userResponses);
+  },
+
+  /**
+   * 评估压力量表(PSS-10)
+   */
+  assessStress(responses) {
+    const engine = getEngine();
+    return engine.assessStress(responses);
+  },
+
+  /**
+   * 评估社会支持
+   */
+  assessSocialSupport(ssrsScores) {
+    const engine = getEngine();
+    return engine.assessSocialSupport(ssrsScores);
+  },
+
+  /**
+   * 评估生活质量
+   */
+  assessQualityOfLife(domainScores) {
+    const engine = getEngine();
+    return engine.assessQualityOfLife(domainScores);
+  },
+
+  /**
+   * 综合心理健康评估
+   */
+  comprehensivePsychologyAssessment(assessments) {
+    const engine = getEngine();
+    return engine.comprehensivePsychologyAssessment(assessments);
+  },
 };
 
 // 便捷函数：直接解构使用
@@ -300,6 +497,28 @@ const {
   assessJingjie,
   analyzeFamilyPattern,
   assessCulturalOrientation,
+  inferMentalState,
+  detectDistortions,
+  generateSocraticQuestions,
+  analyzeCBT,
+  getUserProfile,
+  updateUserProfile,
+  getPersonalization,
+  hasConsent,
+  setConsent,
+  getPrivacyNotice,
+  deleteAllData,
+  assessEmpathyAccuracy,
+  detectResonance,
+  recommendSupportiveResponse,
+  assessEmpathyFatigue,
+  getProfessionalDisclaimer,
+  suggestProfessionalHelp,
+  assessEmotionRegulation,
+  assessStress,
+  assessSocialSupport,
+  assessQualityOfLife,
+  comprehensivePsychologyAssessment,
 } = skillAPI;
 
 module.exports = {
@@ -332,4 +551,26 @@ module.exports = {
   assessJingjie,
   analyzeFamilyPattern,
   assessCulturalOrientation,
+  inferMentalState,
+  detectDistortions,
+  generateSocraticQuestions,
+  analyzeCBT,
+  getUserProfile,
+  updateUserProfile,
+  getPersonalization,
+  hasConsent,
+  setConsent,
+  getPrivacyNotice,
+  deleteAllData,
+  assessEmpathyAccuracy,
+  detectResonance,
+  recommendSupportiveResponse,
+  assessEmpathyFatigue,
+  getProfessionalDisclaimer,
+  suggestProfessionalHelp,
+  assessEmotionRegulation,
+  assessStress,
+  assessSocialSupport,
+  assessQualityOfLife,
+  comprehensivePsychologyAssessment,
 };

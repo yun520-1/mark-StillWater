@@ -602,7 +602,9 @@ class HeartFlowPsychology {
     const lower = input.toLowerCase();
     const detected = EMOTIONAL_KEYWORDS.filter(kw => lower.includes(kw));
 
-    if (detected.length === 0) return null;
+    if (detected.length === 0) {
+      return { hasEmotion: false, acknowledgment: null, canAnalyze: false };
+    }
 
     const acknowledgments = {
       '害怕': '我听到了，你感到害怕。',
@@ -619,7 +621,12 @@ class HeartFlowPsychology {
       '委屈': '我听到了，你感到委屈。',
     };
 
-    return acknowledgments[detected[0]] || `我听到了，你感到${detected[0]}。`;
+    const emotion = detected[0];
+    return {
+      hasEmotion: true,
+      acknowledgment: acknowledgments[emotion] || `我听到了，你感到${emotion}。`,
+      canAnalyze: true,
+    };
   }
 
   // ─── PAD Emotion Model (from mark-heartflow-skill) ─────────────

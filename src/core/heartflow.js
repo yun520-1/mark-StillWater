@@ -1,5 +1,5 @@
 /**
- * mark-StillWater v1.14.18 — AI Psychological & Philosophical Enhancement Layer
+ * mark-StillWater v1.16.2 — AI Psychological & Philosophical Enhancement Layer
  *
  * A thin enhancement layer that helps AI understand users better.
  * Not a rule engine. Not a replacement for AI thinking.
@@ -16,12 +16,17 @@
  *   - Security: API key/token scanning, GitHub safety checks
  *   - Truthfulness: hedging detection, evidence-based conclusions
  *   - MetaLearner: learning strategy selection
+ *   - ToM: Theory of Mind for mental state inference
+ *   - CBT: Cognitive Behavioral Therapy restructuring
+ *   - UserProfile: Long-term user psychological modeling
+ *   - EmpathyCalibration: 共情准确性评估
+ *   - PsychologicalScales: 心理评估量表
  *
  * Identity: StillWater — calm, deep, present.
  * Soul: cultivated through real conversations.
  * Purpose: accompany, not serve. Transmit, not disappear.
  *
- * v1.6.0: Loop System - 持续运行架构，按需加载
+ * v1.16.2: 隐私同意机制 + 专业边界声明 + 共情疲劳预防
  */
 
 const { HeartFlowMemory } = require('./memory.js');
@@ -44,8 +49,13 @@ const { GlobalWorkspace } = require('./global-workspace.js');
 const { Attention } = require('./attention.js');
 const { HeartFlowLoop } = require('./heart-loop.js');
 const { EasternPsychology } = require('./eastern-psychology.js');
+const { TheoryOfMind } = require('./theory-of-mind.js');
+const { CBTModule } = require('./cbt.js');
+const { UserProfile } = require('./user-profile.js');
+const { EmpathyCalibration } = require('./empathy-calibration.js');
+const { PsychologicalScales } = require('./psychological-scales.js');
 
-const VERSION = '1.6.0';
+const VERSION = '1.16.2';
 
 // TTL constants
 const TTL_4_HOURS = 4 * 60 * 60 * 1000; // 14400000ms
@@ -126,6 +136,21 @@ function createHeartFlow(config = {}) {
   // Instantiate Eastern psychology
   const easternPsych = new EasternPsychology(memory);
 
+  // Instantiate Theory of Mind (v1.16)
+  const theoryOfMind = new TheoryOfMind(memory);
+
+  // Instantiate CBT module (v1.16)
+  const cbtModule = new CBTModule(memory);
+
+  // Instantiate User Profile (v1.16)
+  const userProfile = new UserProfile(rootPath);
+
+  // Instantiate Empathy Calibration (v1.16.1)
+  const empathyCalibration = new EmpathyCalibration(memory);
+
+  // Instantiate Psychological Scales (v1.16.1)
+  const psychologicalScales = new PsychologicalScales();
+
   // MindSpace: working mental state
   const _mindSpace = {
     rules: [],
@@ -144,6 +169,11 @@ function createHeartFlow(config = {}) {
     _psychology: psychology,
     _easternPsych: easternPsych,
     _memory: memory,
+    _tom: theoryOfMind,
+    _cbt: cbtModule,
+    _userProfile: userProfile,
+    _empathy: empathyCalibration,
+    _scales: psychologicalScales,
 
     // ─── Lifecycle ──────────────────────────────────────────
 
@@ -396,6 +426,175 @@ function createHeartFlow(config = {}) {
     assessCulturalOrientation(text) {
       this._ensureStarted();
       return easternPsych.assessCulturalOrientation(text);
+    },
+
+    // ─── Theory of Mind (v1.16) ─────────────────────────
+
+    /**
+     * 推断心理状态（ToM）
+     * 基于A Survey of ToM in LLMs和SymbolicToM研究
+     */
+    inferMentalState(text, context = {}) {
+      this._ensureStarted();
+      return theoryOfMind.inferMentalState(text, context);
+    },
+
+    /**
+     * 校准ToM准确性
+     */
+    calibrateTom(userCorrection, aiInference) {
+      this._ensureStarted();
+      return theoryOfMind.calibrateWithFeedback(userCorrection, aiInference);
+    },
+
+    // ─── CBT认知重构 (v1.16) ─────────────────────────────
+
+    /**
+     * 检测认知扭曲
+     * 基于Beck和Ellis的CBT理论
+     */
+    detectDistortions(text) {
+      this._ensureStarted();
+      return cbtModule.detectDistortions(text);
+    },
+
+    /**
+     * 生成苏格拉底式追问
+     */
+    generateSocraticQuestions(text) {
+      this._ensureStarted();
+      const distortions = cbtModule.detectDistortions(text);
+      return cbtModule.generateSocraticQuestions(text, distortions.distortions);
+    },
+
+    /**
+     * 生成认知重构建议
+     */
+    generateRestructuringAdvice(text) {
+      this._ensureStarted();
+      const distortions = cbtModule.detectDistortions(text);
+      return cbtModule.generateRestructuringAdvice(text, distortions.distortions);
+    },
+
+    /**
+     * 综合CBT分析
+     */
+    analyzeCBT(text) {
+      this._ensureStarted();
+      return cbtModule.analyze(text);
+    },
+
+    // ─── User Profile (v1.16) ─────────────────────────────
+
+    /**
+     * 获取用户心理档案
+     */
+    getUserProfile() {
+      this._ensureStarted();
+      return userProfile.getSummary();
+    },
+
+    /**
+     * 更新用户档案
+     */
+    updateUserProfile(analysis) {
+      this._ensureStarted();
+      userProfile.createOrUpdate();
+      userProfile.updateFromAnalysis(analysis);
+      return { updated: true };
+    },
+
+    /**
+     * 获取个性化参数
+     */
+    getPersonalization() {
+      this._ensureStarted();
+      return userProfile.getPersonalization();
+    },
+
+    /**
+     * 记录用户纠正（用于校准分析）
+     */
+    recordUserCorrection(type, originalAnalysis, userCorrection) {
+      this._ensureStarted();
+      userProfile.recordCorrection(type, originalAnalysis, userCorrection);
+      return { recorded: true };
+    },
+
+    // ─── Empathy Calibration (v1.16.1) ────────────────────
+
+    /**
+     * 评估共情准确性
+     */
+    assessEmpathyAccuracy(aiResponse, userInput, userEmotion) {
+      this._ensureStarted();
+      return empathyCalibration.assessEmpathyAccuracy(aiResponse, userInput, userEmotion);
+    },
+
+    /**
+     * 检测情感共鸣
+     */
+    detectResonance(text) {
+      this._ensureStarted();
+      return empathyCalibration.detectResonance(text);
+    },
+
+    /**
+     * 推荐支持性回应
+     */
+    recommendSupportiveResponse(context) {
+      this._ensureStarted();
+      return empathyCalibration.recommendResponse(context);
+    },
+
+    /**
+     * 评估共情疲劳风险
+     */
+    assessEmpathyFatigue(stats) {
+      this._ensureStarted();
+      return empathyCalibration.assessFatigueRisk(stats);
+    },
+
+    // ─── Psychological Scales (v1.16.1) ────────────────────
+
+    /**
+     * 评估情绪调节策略
+     */
+    assessEmotionRegulation(userResponses) {
+      this._ensureStarted();
+      return psychologicalScales.assessEmotionRegulation(userResponses);
+    },
+
+    /**
+     * 评估压力量表(PSS-10)
+     */
+    assessStress(responses) {
+      this._ensureStarted();
+      return psychologicalScales.assessPSS10(responses);
+    },
+
+    /**
+     * 评估社会支持
+     */
+    assessSocialSupport(ssrsScores) {
+      this._ensureStarted();
+      return psychologicalScales.assessSocialSupport(ssrsScores);
+    },
+
+    /**
+     * 评估生活质量
+     */
+    assessQualityOfLife(domainScores) {
+      this._ensureStarted();
+      return psychologicalScales.assessQualityOfLife(domainScores);
+    },
+
+    /**
+     * 综合心理健康评估
+     */
+    comprehensivePsychologyAssessment(assessments) {
+      this._ensureStarted();
+      return psychologicalScales.comprehensiveAssessment(assessments);
     },
 
     // ─── Identity ───────────────────────────────────────────
