@@ -1,5 +1,5 @@
 /**
- * mark-StillWater v1.17 — AI Psychological & Philosophical Enhancement Layer
+ * mark-StillWater v1.18 — AI Psychological & Philosophical Enhancement Layer
  *
  * A thin enhancement layer that helps AI understand users better.
  * Not a rule engine. Not a replacement for AI thinking.
@@ -23,12 +23,19 @@
  *   - PsychologicalScales: 心理评估量表
  *   - PromptOptimizer: 提示词优化（第一步小模型分析）
  *   - SelfCritique: 自我批评校准（分析结果验证）
+ *   - ModelRouter: 模型级联路由（三级复杂度处理）
+ *   - TreeOfThoughts: 多路径推理+多数表决
+ *   - AnalysisTrace: ReAct风格分析轨迹
+ *   - PromptEvolution: 提示词进化引擎
+ *   - ProfileEvolution: 用户档案自我进化
+ *   - ContextAware: 上下文感知处理
+ *   - MultiAgentCoordinator: 多agent协调器
  *
  * Identity: StillWater — calm, deep, present.
  * Soul: cultivated through real conversations.
  * Purpose: accompany, not serve. Transmit, not disappear.
  *
- * v1.17: 分步提示词优化 + 自我批评校准 + CoT思维链
+ * v1.18: 模型级联路由 + Tree-of-Thoughts推理 + 提示词进化 + 多agent协调
  */
 
 const { HeartFlowMemory } = require('./memory.js');
@@ -58,8 +65,15 @@ const { EmpathyCalibration } = require('./empathy-calibration.js');
 const { PsychologicalScales } = require('./psychological-scales.js');
 const { PromptOptimizer } = require('./prompt-optimizer.js');
 const { SelfCritique } = require('./self-critique.js');
+const { ModelRouter } = require('./model-router.js');
+const { TreeOfThoughts } = require('./tree-of-thoughts.js');
+const { createTrace } = require('./analysis-trace.js');
+const { PromptEvolutionEngine, PromptPool } = require('./prompt-evolution.js');
+const { ProfileEvolution } = require('./profile-evolution.js');
+const { ContextAware } = require('./context-aware.js');
+const { MultiAgentCoordinator } = require('./multi-agent-coordinator.js');
 
-const VERSION = '1.17.0';
+const VERSION = '1.18.0';
 
 // TTL constants
 const TTL_4_HOURS = 4 * 60 * 60 * 1000; // 14400000ms
@@ -161,6 +175,27 @@ function createHeartFlow(config = {}) {
   // Instantiate Self Critique (v1.17) - 自我批评校准
   const selfCritique = new SelfCritique();
 
+  // Instantiate Model Router (v1.18) - 模型级联路由
+  const modelRouter = new ModelRouter();
+
+  // Instantiate Tree of Thoughts (v1.18) - 多路径推理
+  const treeOfThoughts = new TreeOfThoughts();
+
+  // Instantiate Analysis Trace (v1.18) - ReAct分析轨迹
+  const analysisTrace = createTrace();
+
+  // Instantiate Prompt Evolution (v1.18) - 提示词进化
+  const promptEvolution = new PromptEvolutionEngine();
+
+  // Instantiate Profile Evolution (v1.18) - 档案自我进化
+  const profileEvolution = new ProfileEvolution();
+
+  // Instantiate Context Aware (v1.18) - 上下文感知
+  const contextAware = new ContextAware();
+
+  // Instantiate Multi-Agent Coordinator (v1.18) - 多agent协调
+  const multiAgentCoordinator = new MultiAgentCoordinator();
+
   // MindSpace: working mental state
   const _mindSpace = {
     rules: [],
@@ -186,6 +221,13 @@ function createHeartFlow(config = {}) {
     _scales: psychologicalScales,
     _promptOptimizer: promptOptimizer,
     _selfCritique: selfCritique,
+    _modelRouter: modelRouter,
+    _treeOfThoughts: treeOfThoughts,
+    _analysisTrace: analysisTrace,
+    _promptEvolution: promptEvolution,
+    _profileEvolution: profileEvolution,
+    _contextAware: contextAware,
+    _multiAgentCoordinator: multiAgentCoordinator,
 
     // ─── Lifecycle ──────────────────────────────────────────
 
