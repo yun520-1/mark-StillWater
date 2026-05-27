@@ -1,7 +1,7 @@
 ---
 name: 心镜
-description: 心镜 v1.16.2 — 你的心理学感知层。感知用户意图、情绪、需求、防御机制。检测认知偏差、CBT重构、心智理论推断、共情校准、心理量表。懂用户，才能帮用户。
-version: v1.16.2
+description: 心镜 v1.17 — 你的心理学感知层。感知用户意图、情绪、需求、防御机制。检测认知偏差、CBT重构、心智理论推断、共情校准、心理量表、提示词优化、自我批评校准。懂用户，才能帮用户。
+version: v1.17
 ---
 
 # 心镜 (StillWater)
@@ -109,6 +109,22 @@ version: v1.16.2
 |-----|------|--------|
 | `healthCheck()` | 健康检查 | status, modules |
 | `getEngine()` | 获取引擎实例 | engine |
+
+### 提示词优化API (v1.17)
+
+| API | 功能 | 返回值 |
+|-----|------|--------|
+| `optimizePsychologyPrompt(text, analysis?)` | 优化心理分析提示词 | systemPrompt, userPrompt, reasoningChain, fullPrompt |
+| `optimizeEmpathyPrompt(text, analysis)` | 优化共情回应提示词 | systemPrompt, userPrompt, reasoningChain, fullPrompt |
+| `optimizeCBTPrompt(text, distortions)` | 优化CBT重构提示词 | systemPrompt, userPrompt, reasoningChain, fullPrompt |
+
+### 自我批评校准API (v1.17)
+
+| API | 功能 | 返回值 |
+|-----|------|--------|
+| `critiqueAnalysis(analysis, userInput)` | 批评心理分析 | overallScore, needsImprovement, issues, suggestions |
+| `generateRefinementPrompt(critique)` | 生成改进prompt | refinementPrompt |
+| `calibrateConfidence(rawConfidence, signals)` | 置信度校准 | calibratedConfidence |
 
 ---
 
@@ -329,6 +345,79 @@ const empathy = assessEmpathyAccuracy(
 
 ---
 
+## 分步提示词优化 (v1.17)
+
+基于最新AI论文实现的增强方案：
+
+### 核心思路
+
+```
+传统方式：
+用户输入 → 直接调用大模型 → 输出
+
+增强方式：
+用户输入 → 小模型分析/推理 → 构建优化提示词 → 大模型 → 更好输出
+```
+
+### 第一步：提示词优化
+
+```javascript
+const { optimizePsychologyPrompt, critiqueAnalysis } = require('./src/skill-wrapper.js');
+
+// 获取优化后的提示词组件
+const optimized = optimizePsychologyPrompt(
+  "我最近总是失眠，感觉压力很大",
+  null // 可传入初步分析
+);
+
+// 返回：
+// {
+//   systemPrompt: "你是一个专业的心理分析专家...",
+//   userPrompt: "请分析以下用户输入...",
+//   reasoningChain: "【思维链推理】步骤1...\n步骤2...",
+//   metacognitionPrompt: "【元认知检查】...",
+//   fullPrompt: "完整的优化提示词"
+// }
+```
+
+### 第二步：自我批评校准
+
+```javascript
+// 分析后进行自我批评
+const analysis = analyzePsychology("我什么都做不好");
+const critique = critiqueAnalysis(analysis, "我什么都做不好");
+
+// 返回：
+// {
+//   overallScore: 0.72,
+//   needsImprovement: true,
+//   issues: ["置信度偏高：没有检测到明显信号但置信度高"],
+//   suggestions: ["建议更仔细地检查用户输入中的隐含信号"],
+//   refinedAnalysis: { ... }  // 如果需要改进
+// }
+```
+
+### 应用场景
+
+| 场景 | 优化方法 |
+|------|----------|
+| 复杂心理分析 | CoT思维链 + 自我批评 |
+| 共情回应生成 | 基于分析的定制化提示词 |
+| CBT重构 | 识别扭曲 + 苏格拉底追问模板 |
+| 快速分类 | 跳过优化，直接用小模型 |
+
+### 论文支撑
+
+| 论文 | 核心思想 |
+|------|----------|
+| **PromptBreeder (DeepMind 2024)** | 进化式提示词优化 |
+| **Self-Refine (CMU 2024)** | 生成→批评→改进迭代 |
+| **Quiet-STAR (OpenAI 2024)** | 内隐思维训练 |
+| **CoT (Google 2022)** | 思维链推理 |
+| **LLM-as-a-Judge (DeepMind 2024)** | 模型评估质量 |
+
+---
+
 ## 理论支撑
 
 | 理论 | 应用 |
@@ -340,6 +429,8 @@ const empathy = assessEmpathyAccuracy(
 | **阳明心学** | 知行合一、境界模型 |
 | **RACLETTE** | 共情校准 |
 | **Mehrabian PAD** | 情绪量化 |
+| **PromptBreeder** | 提示词进化优化 |
+| **Self-Refine** | 自我批评迭代 |
 
 ---
 

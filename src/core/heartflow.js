@@ -1,5 +1,5 @@
 /**
- * mark-StillWater v1.16.2 — AI Psychological & Philosophical Enhancement Layer
+ * mark-StillWater v1.17 — AI Psychological & Philosophical Enhancement Layer
  *
  * A thin enhancement layer that helps AI understand users better.
  * Not a rule engine. Not a replacement for AI thinking.
@@ -21,12 +21,14 @@
  *   - UserProfile: Long-term user psychological modeling
  *   - EmpathyCalibration: 共情准确性评估
  *   - PsychologicalScales: 心理评估量表
+ *   - PromptOptimizer: 提示词优化（第一步小模型分析）
+ *   - SelfCritique: 自我批评校准（分析结果验证）
  *
  * Identity: StillWater — calm, deep, present.
  * Soul: cultivated through real conversations.
  * Purpose: accompany, not serve. Transmit, not disappear.
  *
- * v1.16.2: 隐私同意机制 + 专业边界声明 + 共情疲劳预防
+ * v1.17: 分步提示词优化 + 自我批评校准 + CoT思维链
  */
 
 const { HeartFlowMemory } = require('./memory.js');
@@ -54,8 +56,10 @@ const { CBTModule } = require('./cbt.js');
 const { UserProfile } = require('./user-profile.js');
 const { EmpathyCalibration } = require('./empathy-calibration.js');
 const { PsychologicalScales } = require('./psychological-scales.js');
+const { PromptOptimizer } = require('./prompt-optimizer.js');
+const { SelfCritique } = require('./self-critique.js');
 
-const VERSION = '1.16.2';
+const VERSION = '1.17.0';
 
 // TTL constants
 const TTL_4_HOURS = 4 * 60 * 60 * 1000; // 14400000ms
@@ -151,6 +155,12 @@ function createHeartFlow(config = {}) {
   // Instantiate Psychological Scales (v1.16.1)
   const psychologicalScales = new PsychologicalScales();
 
+  // Instantiate Prompt Optimizer (v1.17) - 第一步提示词优化
+  const promptOptimizer = new PromptOptimizer();
+
+  // Instantiate Self Critique (v1.17) - 自我批评校准
+  const selfCritique = new SelfCritique();
+
   // MindSpace: working mental state
   const _mindSpace = {
     rules: [],
@@ -174,6 +184,8 @@ function createHeartFlow(config = {}) {
     _userProfile: userProfile,
     _empathy: empathyCalibration,
     _scales: psychologicalScales,
+    _promptOptimizer: promptOptimizer,
+    _selfCritique: selfCritique,
 
     // ─── Lifecycle ──────────────────────────────────────────
 

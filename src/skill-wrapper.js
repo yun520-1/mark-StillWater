@@ -467,6 +467,75 @@ const skillAPI = {
     const engine = getEngine();
     return engine.comprehensivePsychologyAssessment(assessments);
   },
+
+  // ─── 提示词优化API (v1.17) ─────────────────────
+
+  /**
+   * 优化心理分析提示词
+   * @param {string} text - 用户输入
+   * @param {object} analysis - 初步分析（可选）
+   * @returns {object} 优化后的提示词组件
+   */
+  optimizePsychologyPrompt(text, analysis = null) {
+    const engine = getEngine();
+    return engine._promptOptimizer.optimizePsychologyPrompt(text, analysis);
+  },
+
+  /**
+   * 优化共情回应提示词
+   * @param {string} text - 用户输入
+   * @param {object} analysis - 心理分析结果
+   * @returns {object} 优化后的提示词组件
+   */
+  optimizeEmpathyPrompt(text, analysis) {
+    const engine = getEngine();
+    return engine._promptOptimizer.optimizeEmpathyPrompt(text, analysis);
+  },
+
+  /**
+   * 优化CBT重构提示词
+   * @param {string} text - 用户输入
+   * @param {object} distortions - 认知扭曲检测结果
+   * @returns {object} 优化后的提示词组件
+   */
+  optimizeCBTPrompt(text, distortions) {
+    const engine = getEngine();
+    return engine._promptOptimizer.optimizeCBTPrompt(text, distortions);
+  },
+
+  // ─── 自我批评校准API (v1.17) ──────────────────
+
+  /**
+   * 批评心理分析结果
+   * @param {object} analysis - 原始分析结果
+   * @param {string} userInput - 用户输入
+   * @returns {object} 批评结果和改进建议
+   */
+  critiqueAnalysis(analysis, userInput) {
+    const engine = getEngine();
+    return engine._selfCritique.critiqueAnalysis(analysis, userInput);
+  },
+
+  /**
+   * 生成迭代改进prompt
+   * @param {object} critique - 批评结果
+   * @returns {string} 改进prompt
+   */
+  generateRefinementPrompt(critique) {
+    const engine = getEngine();
+    return engine._selfCritique.generateRefinementPrompt(critique);
+  },
+
+  /**
+   * 置信度校准
+   * @param {number} rawConfidence - 原始置信度
+   * @param {object} signals - 信号强度
+   * @returns {number} 校准后的置信度
+   */
+  calibrateConfidence(rawConfidence, signals) {
+    const engine = getEngine();
+    return engine._selfCritique.calibrateConfidence(rawConfidence, signals);
+  },
 };
 
 // 便捷函数：直接解构使用
@@ -519,6 +588,12 @@ const {
   assessSocialSupport,
   assessQualityOfLife,
   comprehensivePsychologyAssessment,
+  optimizePsychologyPrompt,
+  optimizeEmpathyPrompt,
+  optimizeCBTPrompt,
+  critiqueAnalysis,
+  generateRefinementPrompt,
+  calibrateConfidence,
 } = skillAPI;
 
 module.exports = {
@@ -573,4 +648,10 @@ module.exports = {
   assessSocialSupport,
   assessQualityOfLife,
   comprehensivePsychologyAssessment,
+  optimizePsychologyPrompt,
+  optimizeEmpathyPrompt,
+  optimizeCBTPrompt,
+  critiqueAnalysis,
+  generateRefinementPrompt,
+  calibrateConfidence,
 };
