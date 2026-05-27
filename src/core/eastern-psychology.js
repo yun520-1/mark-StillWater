@@ -52,15 +52,15 @@ class EasternPsychology {
     const lower = text.toLowerCase();
 
     // 检测"知"的信号（认知、知道、理解）
-    const zhiSignals = ['知道', '理解', '明白', '懂', '了解', '认为', '理解到'];
+    const zhiSignals = ['知道', '理解', '明白', '懂', '了解', '认为', '理解到', '说', '道理'];
     const zhiCount = zhiSignals.filter(s => lower.includes(s)).length;
 
     // 检测"行"的信号（行动、实践、执行）
-    const xingSignals = ['做', '行动', '实践', '执行', '去', '开始', '已经', '完成'];
+    const xingSignals = ['做', '行动', '实践', '执行', '去', '开始', '已经', '完成', '到', '到'];
     const xingCount = xingSignals.filter(s => lower.includes(s)).length;
 
     // 检测知行脱节的信号
-    const gapSignals = ['但是', '却', '还是', '一直没', '想但不', '知道但'];
+    const gapSignals = ['但是', '却', '还是', '一直没', '想但不', '知道但', '但不'];
     const hasGap = gapSignals.some(s => lower.includes(s));
 
     // 计算知行分数
@@ -71,14 +71,14 @@ class EasternPsychology {
     let totalScore = Math.max(0, Math.min(100, zhiScore + xingScore + gapPenalty));
 
     let assessment;
-    if (totalScore >= 80) {
+    if (hasGap || totalScore < 40) {
+      assessment = '知行有差距';
+    } else if (totalScore >= 80) {
       assessment = '知行高度合一';
     } else if (totalScore >= 60) {
       assessment = '知行基本合一';
-    } else if (totalScore >= 40) {
-      assessment = '知行有差距';
     } else {
-      assessment = '知行严重脱节';
+      assessment = '知行有差距';
     }
 
     return {
@@ -153,7 +153,7 @@ class EasternPsychology {
     const gongliCount = gongliSignals.filter(s => lower.includes(s)).length;
 
     // 道德境界信号
-    const daodeSignals = ['应该', '道德', '责任', '义务', '帮人', '善', '义'];
+    const daodeSignals = ['应该', '道德', '责任', '义务', '帮人', '帮助', '善', '义', '利他', '奉献'];
     const daodeCount = daodeSignals.filter(s => lower.includes(s)).length;
 
     // 天地境界信号
