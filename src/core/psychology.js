@@ -336,10 +336,14 @@ class HeartFlowPsychology {
     const correctionType = this._detectCorrectionType(input, wrongAnalysis, correctionLower);
     const correctionValue = this._extractCorrectionValue(correctionLower);
 
+    // 生成输入的hash作为缓存key
+    const inputHash = this._hashInput(input);
+
     // 记录纠正到记忆（使用LEARNED层）
     if (this.memory) {
       const correctionRecord = {
         input: input.substring(0, 200),
+        inputHash,
         wrongAnalysis: wrongAnalysis,
         correction: correction,
         correctionType,
@@ -347,11 +351,12 @@ class HeartFlowPsychology {
         timestamp: Date.now(),
       };
 
-      this.memory.remember(
-        `correction:${Date.now()}`,
-        JSON.stringify(correctionRecord),
-        'learned'
-      );
+      // 存储纠正到learned层
+      if (this.memory._learnedStore) {
+        this.memory._learnedStore[`correction:${Date.now()}`] = JSON.stringify(correctionRecord);
+        // 存储纠正缓存：同一input的后续分析将使用纠正后的值
+        this.memory._learnedStore[`correction_cache:${inputHash}`] = JSON.stringify({ correctionType, correctionValue, timestamp: Date.now() });
+      }
     }
 
     return {
@@ -359,6 +364,74 @@ class HeartFlowPsychology {
       correctionType,
       correctionValue,
       message: `已记录纠正：您认为${correctionType}应该是"${correctionValue}"而非"${this._getWrongValue(wrongAnalysis, correctionType)}"`,
+    };
+  }
+
+  /**
+   * 获取输入的hash
+   */
+  _hashInput(input) {
+    // 简单的hash：取前50字符的hash
+    const str = input.substring(0, 50).toLowerCase().trim();
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash;
+    }
+    return 'input_' + Math.abs(hash).toString(16);
+  }
+
+  /**
+   * 检查是否有针对此输入的用户纠正
+   */
+  _getCorrectionCache(input) {
+    if (!this.memory) return null;
+    const inputHash = this._hashInput(input);
+    // 尝试从_learnedStore获取
+    const store = this.memory._learnedStore;
+    if (!store) return null;
+    const cached = store[`correction_cache:${inputHash}`];
+    if (cached) {
+      try {
+        return JSON.parse(cached);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * 应用用户纠正到分析结果
+   */
+  _applyEmotionCorrection(result, correctionValue) {
+    // 将纠正后的情绪值应用到结果中
+    const emotionMap = {
+      '累': { category: 'negative', intensity: 'medium' },
+      '困': { category: 'negative', intensity: 'medium' },
+      '开心': { category: 'positive', intensity: 'high' },
+      '高兴': { category: 'positive', intensity: 'high' },
+      '生气': { category: 'negative', intensity: 'high' },
+      '难过': { category: 'negative', intensity: 'high' },
+      '焦虑': { category: 'negative', intensity: 'high' },
+      '担心': { category: 'negative', intensity: 'medium' },
+      '平静': { category: 'neutral', intensity: 'low' },
+      '平静': { category: 'positive', intensity: 'low' },
+      '兴奋': { category: 'positive', intensity: 'high' },
+    };
+
+    const correctedEmotion = emotionMap[correctionValue] || { category: 'neutral', intensity: 'low' };
+
+    return {
+      ...result,
+      emotion: {
+        ...result.emotion,
+        category: correctedEmotion.category,
+        intensity: correctedEmotion.intensity,
+        corrected: true,
+        originalKeyword: correctionValue,
+      },
     };
   }
 
@@ -579,7 +652,17 @@ class HeartFlowPsychology {
    */
   analyzePsychology(input) {
     // 第一步：规则分析（获取初步结果）
-    const ruleBasedResult = this.perceive(input);
+    let ruleBasedResult = this.perceive(input);
+
+    // 检查是否有用户纠正：同一input的后续分析将使用纠正后的值
+    const correctionCache = this._getCorrectionCache(input);
+    if (correctionCache) {
+      // 应用用户纠正
+      if (correctionCache.correctionType === 'emotion' && correctionCache.correctionValue) {
+        ruleBasedResult = this._applyEmotionCorrection(ruleBasedResult, correctionCache.correctionValue);
+      }
+      ruleBasedResult.wasCorrected = true;
+    }
 
     // 计算PAD情绪坐标（用于自我批评验证）
     const pad = this._calculatePAD(input, ruleBasedResult.emotion);
@@ -593,7 +676,7 @@ class HeartFlowPsychology {
         ...ruleBasedResult,
         pad,
         crisis,
-        analysisMode: 'rule-based',
+        userCorrected: correctionCache ? true : false,
       };
     }
 
@@ -631,6 +714,13 @@ class HeartFlowPsychology {
       } : null,
       needsRefinement: critique?.needsImprovement || false,
     };
+
+    // 如果需要改进，使用改进后的分析
+    if (critique?.needsImprovement && critique.refinedAnalysis) {
+      // 用改进后的分析覆盖原有结果
+      Object.assign(result, critique.refinedAnalysis);
+      result.analysisMode = 'rule-based-refined';
+    }
 
     // 如果需要改进，添加改进建议
     if (critique?.needsImprovement && critique.suggestions?.length > 0) {
