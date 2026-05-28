@@ -69,16 +69,28 @@ class HeartFlowPsychology {
       denial: ['no one', 'that\'s not true', 'i don\'t believe', 'impossible', '没人', '不是真的', '不可能'],
     };
 
-    // Needs patterns (Maslow-based)
+    // Needs patterns (Maslow-based) — 扩展版，覆盖心理支持场景
     this.needPatterns = [
-      { need: 'clarity', patterns: ['confused', 'unclear', 'don\'t understand', 'what do you mean', '?', '困惑', '不懂', '不明白', '什么意思'], weight: 1.0 },
-      { need: 'efficiency', patterns: ['too slow', 'takes too long', 'quick', 'fast', 'efficient', 'automate', '太慢', '快一点', '效率', '自动'], weight: 0.8 },
-      { need: 'reliability', patterns: ['keeps breaking', 'unreliable', 'buggy', 'error', 'crash', '总坏', '不可靠', '出错', '崩溃'], weight: 1.0 },
-      { need: 'understanding', patterns: ['explain', 'why', 'how', 'tell me', 'show me', '解释', '为什么', '怎么'], weight: 0.7 },
-      { need: 'autonomy', patterns: ['do it for me', 'just', 'automatically', 'without me', '帮我做', '自动', '不用我'], weight: 0.6 },
-      { need: 'recognition', patterns: ['i want', 'i need', 'i\'ve been', 'finally', '我想要', '我需要', '终于'], weight: 0.5 },
-      { need: 'safety', patterns: ['safe', 'secure', 'protect', 'danger', 'risk', '安全', '保护', '危险', '风险'], weight: 0.9 },
-      { need: 'connection', patterns: ['lonely', 'alone', 'together', 'belong', '孤独', '一个人', '一起', '归属'], weight: 0.7 },
+      // 认知需求
+      { need: 'clarity', patterns: ['confused', 'unclear', 'don\'t understand', 'what do you mean', '?', '困惑', '不懂', '不明白', '什么意思', '搞不懂', '不清楚', '怎么回事'], weight: 1.0 },
+      // 效率需求
+      { need: 'efficiency', patterns: ['too slow', 'takes too long', 'quick', 'fast', 'efficient', 'automate', '太慢', '快一点', '效率', '自动', '省时间', '快点'], weight: 0.8 },
+      // 可靠性需求
+      { need: 'reliability', patterns: ['keeps breaking', 'unreliable', 'buggy', 'error', 'crash', '总坏', '不可靠', '出错', '崩溃', '坏了', '不能用'], weight: 1.0 },
+      // 理解需求
+      { need: 'understanding', patterns: ['explain', 'why', 'how', 'tell me', 'show me', '解释', '为什么', '怎么', '理解', '想不通'], weight: 0.7 },
+      // 自主需求
+      { need: 'autonomy', patterns: ['do it for me', 'just', 'automatically', 'without me', '帮我做', '自动', '不用我', '不想管'], weight: 0.6 },
+      // 认可需求
+      { need: 'recognition', patterns: ['i want', 'i need', 'i\'ve been', 'finally', '我想要', '我需要', '终于', '渴望', '希望被'], weight: 0.5 },
+      // 安全需求
+      { need: 'safety', patterns: ['safe', 'secure', 'protect', 'danger', 'risk', '安全', '保护', '危险', '风险', '害怕', '担心'], weight: 0.9 },
+      // 联结需求
+      { need: 'connection', patterns: ['lonely', 'alone', 'together', 'belong', '孤独', '一个人', '一起', '归属', '没人', '没人理解', '不被理解'], weight: 0.7 },
+      // 情感支持需求（新增）
+      { need: 'emotional_support', patterns: ['很累', '压力大', '焦虑', '难受', '难过', '委屈', '沮丧', '绝望', '压抑', '喘不过气', '撑不住', '心累', 'burnout', 'exhausted', 'overwhelmed'], weight: 1.0 },
+      // 价值感需求（新增）
+      { need: 'self_worth', patterns: ['没用', '失败', '废物', '丢脸', '没用', '不行', 'loser', 'worthless', '一事无成'], weight: 0.9 },
     ];
   }
 
@@ -190,23 +202,65 @@ class HeartFlowPsychology {
     let bestIntent = 'unknown';
     let bestScore = 0;
 
-    for (const [intentName, config] of Object.entries(this.intentPatterns)) {
-      let matchCount = 0;
-      for (const pattern of config.patterns) {
-        if (lower.includes(pattern)) matchCount++;
-      }
-      const score = (matchCount / config.patterns.length) * config.confidence;
-      if (score > bestScore) {
-        bestScore = score;
-        bestIntent = intentName;
+    // Step 2: self-negative patterns (standalone, doesn't need Step 1)
+    // 直接检查自我否定关键词存在，存在即认为有负面情绪
+    const selfNeg = ['失败', '无用', '废物', '丢脸', '很差', 'loser', 'worthless'];
+    let selfNegScore = 0;
+    for (const w of selfNeg) { if (lower.includes(w)) selfNegScore++; }
+    if (selfNegScore > 0) {
+      bestIntent = 'emotional_support';
+      bestScore = Math.max(bestScore, 0.75);
+    }
+
+    // Step 3: emotional complaint patterns -> emotional_support
+    const complaints = ['委屈', '被骂', '骂我', '骂了', '伤心', '失落', '被冤枉', '被误解', '不被理解', '没人理解', '老板骂', '他说我', '朋友说我'];
+    let hasComplaint = false;
+    for (const w of complaints) { if (lower.includes(w)) { hasComplaint = true; break; } }
+    if (hasComplaint) {
+      bestIntent = 'emotional_support';
+      bestScore = Math.max(bestScore, 0.7);
+    }
+
+// Step 4: high-intensity negative emotion keyword (from emotionMap) → emotional_support
+    // 覆盖"不想活了" / "活着没意思" / "崩溃了"等高强度负面词
+    const highIntensityNeg = [
+      '不想活了', '活着没意思', '活着真没意思', '活着没意义',
+      '崩溃', '崩溃了', '绝望', '受够了', '活不下去',
+      '活着好累', '太痛苦了', '活着好苦', '好累', '死心了',
+    ];
+    let hasHighNeg = false;
+    for (const w of highIntensityNeg) { if (lower.includes(w)) { hasHighNeg = true; break; } }
+    if (hasHighNeg) {
+      bestIntent = 'emotional_support';
+      bestScore = Math.max(bestScore, 0.8);
+    }
+
+    // Step 5: first-person + emotion word + burden → emotional_support
+    const hasFirst = /我|I|me/.test(input);
+    const emotionWords = ['我很', '我', '感觉', '觉得', '感到', '内心', '心情', 'I feel', 'I am'];
+    const burdenWords = ['压力大', '焦虑', '累', '疲惫', '心累', '压抑', 'burnout', 'exhausted', 'overwhelmed'];
+    let hasEm = false;
+    for (const w of emotionWords) { if (lower.includes(w)) { hasEm = true; break; } }
+    let hasBurden = false;
+    for (const w of burdenWords) { if (lower.includes(w)) { hasBurden = true; break; } }
+    if (hasFirst && hasEm && hasBurden) {
+      bestIntent = 'emotional_support';
+      bestScore = Math.max(bestScore, 0.65);
+    }
+
+    // Step 5: standard pattern match (only if no emotion override)
+    if (bestScore < 0.3) {
+      for (const [name, cfg] of Object.entries(this.intentPatterns)) {
+        let cnt = 0;
+        for (const pat of cfg.patterns) { if (lower.includes(pat)) cnt++; }
+        const sc = (cnt / cfg.patterns.length) * cfg.confidence;
+        if (sc > bestScore) { bestScore = sc; bestIntent = name; }
       }
     }
 
-    return {
-      category: bestIntent,
-      confidence: Math.min(bestScore, 1),
-    };
+    return { category: bestIntent, confidence: Math.min(bestScore, 1) };
   }
+
 
   _detectNeeds(lower, words) {
     const needs = [];

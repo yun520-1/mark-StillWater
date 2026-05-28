@@ -738,7 +738,8 @@ class ProfileEvolution {
    * 生成唯一ID
    */
   _generateId() {
-    return `evo-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const crypto = require('crypto');
+    return `evo-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
   }
 
   /**

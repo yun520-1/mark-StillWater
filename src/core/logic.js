@@ -145,7 +145,7 @@ class HeartFlowLogic {
     const causes = [];
     const effects = [];
 
-    // Simple causal pattern matching
+    // English causal patterns
     const becausePatterns = lower.split(' because ');
     if (becausePatterns.length > 1) {
       causes.push(becausePatterns[1].trim());
@@ -165,10 +165,52 @@ class HeartFlowLogic {
       }
     }
 
+    // Chinese causal patterns: 因为...所以, ...导致..., ...引起..., ...因此...
+    const cnCausePatterns = [
+      /因为(.+?)[,，]所以(.+)/,
+      /由于(.+?)[,，]所以(.+)/,
+      /(.+?)导致了?(.+)/,
+      /(.+?)引起了?(.+)/,
+      /(.+?)造成了?(.+)/,
+      /因为(.+)/,
+      /由于(.+)/,
+    ];
+    for (const pattern of cnCausePatterns) {
+      const match = problem.match(pattern);
+      if (match) {
+        if (match[1] && !causes.some(c => c === match[1].trim())) {
+          causes.push(match[1].trim());
+        }
+        if (match[2] && !effects.some(e => e === match[2].trim())) {
+          effects.push(match[2].trim());
+        }
+        if (causes.length > 0) break;
+      }
+    }
+
+    // Chinese effect patterns: 所以..., 因此..., 结果...
+    const cnEffectPatterns = [
+      /所以(.+)/,
+      /因此(.+)/,
+      /结果(.+)/,
+      /于是(.+)/,
+    ];
+    if (effects.length === 0) {
+      for (const pattern of cnEffectPatterns) {
+        const match = problem.match(pattern);
+        if (match && match[1]) {
+          effects.push(match[1].trim());
+          break;
+        }
+      }
+    }
+
     return {
       identified_causes: causes.slice(0, 3),
       identified_effects: effects.slice(0, 3),
-      causal_chain: causes.length > 0 ? 'partial' : 'unknown',
+      causal_chain: causes.length > 0 && effects.length > 0 ? 'full'
+        : causes.length > 0 || effects.length > 0 ? 'partial'
+        : 'unknown',
     };
   }
 

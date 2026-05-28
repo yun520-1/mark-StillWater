@@ -66,7 +66,7 @@ const { SelfCritique } = require('./self-critique.js');
 const { LLMClient } = require('./llm-client.js');
 const { ProfileEvolution } = require('./profile-evolution.js');
 
-const VERSION = '1.18.0';
+const VERSION = '1.14.19';
 
 // TTL constants
 const TTL_4_HOURS = 4 * 60 * 60 * 1000; // 14400000ms

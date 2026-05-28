@@ -1,0 +1,156 @@
+{
+  "lesson:测试身份进化:1779898569144": {
+    "value": "Task failed: 测试身份进化 | Evidence: 测试过程中触发了错误处理 | Expected: 应该成功执行 | Re-examine the problem from first principles. | Break down the task into smaller, verifiable steps.",
+    "ttl": 86400000,
+    "createdAt": 1779898569144,
+    "_accessCount": 0,
+    "tags": []
+  },
+  "lesson:用户情绪分析:1779898569149": {
+    "value": "Partial success on \"用户情绪分析\": 识别出情绪但未完全理解需求. Need to investigate remaining gap.",
+    "ttl": 86400000,
+    "createdAt": 1779898569149,
+    "_accessCount": 0,
+    "tags": []
+  },
+  "lesson:危机评估:1779898569250": {
+    "value": "Task failed: 危机评估 | Evidence: 未能识别高风险信号 | Re-examine the problem from first principles. | Break down the task into smaller, verifiable steps.",
+    "ttl": 86400000,
+    "createdAt": 1779898569250,
+    "_accessCount": 0,
+    "tags": []
+  },
+  "lesson:共情回应:1779898569251": {
+    "value": "Partial success on \"共情回应\": 回应有共情但不够深入. Need to investigate remaining gap.",
+    "ttl": 86400000,
+    "createdAt": 1779898569251,
+    "_accessCount": 0,
+    "tags": []
+  },
+  "test:key2": {
+    "value": "测试值2",
+    "ttl": 3600000,
+    "createdAt": 1779898569252,
+    "_accessCount": 0,
+    "tags": []
+  },
+  "lesson:失败测试:1779898629796": {
+    "value": "Task failed: 失败测试 | Evidence: 测试失败 | Expected: 成功 | Re-examine the problem from first principles. | Break down the task into smaller, verifiable steps.",
+    "ttl": 86400000,
+    "createdAt": 1779898629796,
+    "_accessCount": 0,
+    "tags": []
+  },
+  "lesson:Fixed login bug — missed token expiry check:1779898994929": {
+    "value": "Task failed: Fixed login bug — missed token expiry check | Evidence: Did not check token before API call | Re-examine the problem from first principles. | Break down the task into smaller, verifiable steps.",
+    "ttl": 86400000,
+    "createdAt": 1779898994929,
+    "_accessCount": 0,
+    "tags": []
+  },
+  "lesson:Fixed login bug — missed token expiry check:1779899223573": {
+    "value": "Task failed: Fixed login bug — missed token expiry check | Evidence: Did not check token before API call | Re-examine the problem from first principles. | Break down the task into smaller, verifiable steps.",
+    "ttl": 86400000,
+    "createdAt": 1779899223573,
+    "_accessCount": 0,
+    "tags": []
+  },
+  "lesson:Fixed login bug — missed token expiry check:1779899229905": {
+    "value": "Task failed: Fixed login bug — missed token expiry check | Evidence: Did not check token before API call | Re-examine the problem from first principles. | Break down the task into smaller, verifiable steps.",
+    "ttl": 86400000,
+    "createdAt": 1779899229905,
+    "_accessCount": 0,
+    "tags": []
+  },
+  "lesson:失败测试:1779900123218": {
+    "value": "Task failed: 失败测试 | Evidence: 测试失败 | Expected: 成功 | Re-examine the problem from first principles. | Break down the task into smaller, verifiable steps.",
+    "ttl": 86400000,
+    "createdAt": 1779900123218,
+    "_accessCount": 0,
+    "tags": []
+  },
+  "lesson:Fixed login bug — missed token expiry check:1779900433234": {
+    "value": "Task failed: Fixed login bug — missed token expiry check | Evidence: Did not check token before API call | Re-examine the problem from first principles. | Break down the task into smaller, verifiable steps.",
+    "ttl": 86400000,
+    "createdAt": 1779900433234,
+    "_accessCount": 0,
+    "tags": []
+  },
+  "test:ephemeral": {
+    "value": "临时测试数据",
+    "ttl": 3600000,
+    "createdAt": 1779901442452,
+    "_accessCount": 0,
+    "tags": []
+  },
+  "lesson:失败测试:1779900723410": {
+    "value": "Task failed: 失败测试 | Evidence: 测试失败 | Expected: 成功 | Re-examine the problem from first principles. | Break down the task into smaller, verifiable steps.",
+    "ttl": 86400000,
+    "createdAt": 1779900723410,
+    "_accessCount": 0,
+    "tags": []
+  },
+  "lesson:登录认证失败:1779900982513": {
+    "value": "Task failed: 登录认证失败 | Evidence: 未检查token过期时间 | Re-examine the problem from first principles. | Break down the task into smaller, verifiable steps.",
+    "ttl": 86400000,
+    "createdAt": 1779900982513,
+    "_accessCount": 0,
+    "tags": []
+  },
+  "lesson:数据库连接问题:1779900982514": {
+    "value": "Task failed: 数据库连接问题 | Evidence: 连接池配置错误 | Re-examine the problem from first principles. | Break down the task into smaller, verifiable steps.",
+    "ttl": 86400000,
+    "createdAt": 1779900982514,
+    "_accessCount": 0,
+    "tags": []
+  },
+  "lesson:登录认证失败:1779901094799": {
+    "value": "Task failed: 登录认证失败 | Evidence: 未检查token过期时间 | Re-examine the problem from first principles. | Break down the task into smaller, verifiable steps.",
+    "ttl": 86400000,
+    "createdAt": 1779901094799,
+    "_accessCount": 0,
+    "tags": []
+  },
+  "lesson:Fixed login bug — missed token expiry check:1779901098301": {
+    "value": "Task failed: Fixed login bug — missed token expiry check | Evidence: Did not check token before API call | Re-examine the problem from first principles. | Break down the task into smaller, verifiable steps.",
+    "ttl": 86400000,
+    "createdAt": 1779901098301,
+    "_accessCount": 0,
+    "tags": []
+  },
+  "lesson:版本号更新失败:1779901333822": {
+    "value": "Task failed: 版本号更新失败 | Evidence: 只更新了VERSION文件 | Re-examine the problem from first principles. | Break down the task into smaller, verifiable steps.",
+    "ttl": 86400000,
+    "createdAt": 1779901333822,
+    "_accessCount": 0,
+    "tags": []
+  },
+  "lesson:版本号更新失败:1779901384596": {
+    "value": "Task failed: 版本号更新失败 | Evidence: 只更新了VERSION文件 | Re-examine the problem from first principles. | Break down the task into smaller, verifiable steps.",
+    "ttl": 86400000,
+    "createdAt": 1779901384596,
+    "_accessCount": 0,
+    "tags": []
+  },
+  "lesson:重构用户认证模块:1779901384660": {
+    "value": "Task failed: 重构用户认证模块 | Evidence: 未考虑第三方登录的会话管理 | Re-examine the problem from first principles. | Break down the task into smaller, verifiable steps.",
+    "ttl": 86400000,
+    "createdAt": 1779901384660,
+    "_accessCount": 0,
+    "tags": []
+  },
+  "lesson:版本号更新失败:1779901442454": {
+    "value": "Task failed: 版本号更新失败 | Evidence: 只更新了VERSION文件 | Re-examine the problem from first principles. | Break down the task into smaller, verifiable steps.",
+    "ttl": 86400000,
+    "createdAt": 1779901442454,
+    "_accessCount": 0,
+    "tags": []
+  },
+  "lesson:重构用户认证模块:1779901442580": {
+    "value": "Task failed: 重构用户认证模块 | Evidence: 未考虑第三方登录的会话管理 | Re-examine the problem from first principles. | Break down the task into smaller, verifiable steps.",
+    "ttl": 86400000,
+    "createdAt": 1779901442580,
+    "_accessCount": 0,
+    "tags": []
+  }
+}
