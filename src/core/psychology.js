@@ -34,11 +34,11 @@ class HeartFlowPsychology {
         confidence: 0.85,
       },
       task_execution: {
-        patterns: ['do it', 'make it', 'create', 'write', 'run', 'execute', 'build', 'build me', 'fix', 'solve', 'implement', 'make me', 'create me', '做', '执行', '创建', '写', '运行', '帮我', '给我'],
+        patterns: ['do it', 'make it', 'create', 'write', 'run', 'execute', 'build', 'build me', 'fix', 'solve', 'implement', 'make me', 'create me', '做', '执行', '创建', '写', '运行', '帮我', '给我', '修复', '解决', '部署', '测试'],
         confidence: 0.85,
       },
       troubleshooting: {
-        patterns: ['not working', 'error', 'bug', 'failed', 'broken', 'doesn\'t work', 'can\'t', 'unable to', 'issue', '坏了', '出错', '失败', '不能用', '问题', 'bug', '报错'],
+        patterns: ['not working', 'error', 'bug', 'failed', 'broken', 'doesn\'t work', 'can\'t', 'unable to', 'issue', '坏了', '出错', '失败', '不能用', '问题', '报错'],
         confidence: 0.8,
       },
       collaboration: {
