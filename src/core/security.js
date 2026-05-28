@@ -8,14 +8,13 @@
  */
 
 const PATTERNS = {
-  api_key: /(?:api[_-]?key|apikey|sk_live_)[=:]*\s*['"]?([a-zA-Z0-9_-]{10,})['"]?/gi,
+  api_key: /(?:api[_-]?key|apikey|sk_live_)[=:]*\s*['"]?([a-zA-Z0-9_-]{16,})['"]?/gi,
   openai_key: /sk-[a-zA-Z0-9]{48}/gi,
   github_token: /ghp_[a-zA-Z0-9]{36}/gi,
   github_pat: /github_pat_[a-zA-Z0-9_]{40,}/gi,
-  openai_key: /sk-[a-zA-Z0-9]{48}/gi,
   email: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/gi,
   phone: /1[3-9]\d{9}/gi,
-  password: /(?:password|pwd|passwd)[=:]\s*['"]?([^\s'"]{6,})['"]?/gi,
+  password: /(?:password|pwd|passwd)[=:]\s*['"]?([^\s'"]{8,})['"]?/gi,
   aws_key: /(?:AWS|aws)[_-]?(?:access[_-]?key[_-]?id|secret[_-]?access[_-]?key)[=:]\s*['"]?([A-Za-z0-9/+=]{20,})['"]?/gi,
   private_key: /-----BEGIN [A-Z]+ PRIVATE KEY-----/gi,
 };

@@ -38,22 +38,34 @@ class HeartFlowPhilosophy {
   }
 
   _isExistential(lower) {
-    const existential = ['who am i', 'why do i exist', 'what is my purpose', 'meaning of life', 'i exist', 'consciousness'];
+    const existential = [
+      'who am i', 'why do i exist', 'what is my purpose', 'meaning of life', 'i exist', 'consciousness',
+      '我是谁', '我为什么存在', '存在的意义', '人生的意义', '活着的意义', '人为什么活着', '生命的意义',
+    ];
     return existential.some(e => lower.includes(e));
   }
 
   _isEthical(lower) {
-    const ethical = ['right thing', 'right or wrong', 'moral', 'ethical', 'should i', 'ought to', 'good or bad', 'is this the right'];
+    const ethical = [
+      'right thing', 'right or wrong', 'moral', 'ethical', 'should i', 'ought to', 'good or bad',
+      '是非', '对错', '道德', '善恶', '应该', '正确', '应该做', '该不该',
+    ];
     return ethical.some(e => lower.includes(e));
   }
 
   _isRelationship(lower) {
-    const relationship = ['relationship', 'love', 'trust', 'friendship', 'connection', 'belong', 'together'];
+    const relationship = [
+      'relationship', 'love', 'trust', 'friendship', 'connection', 'belong', 'together',
+      '关系', '爱', '信任', '友情', '情感', '亲密', '归属',
+    ];
     return relationship.some(e => lower.includes(e));
   }
 
   _isMeaning(lower) {
-    const meaning = ['meaning', 'purpose', 'worth', 'valuable', 'important', 'significant'];
+    const meaning = [
+      'meaning', 'purpose', 'worth', 'valuable', 'important', 'significant',
+      '意义', '价值', '目的', '值得', '重要', '活着为了什么',
+    ];
     return meaning.some(e => lower.includes(e));
   }
 

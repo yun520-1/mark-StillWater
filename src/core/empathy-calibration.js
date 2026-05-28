@@ -182,9 +182,9 @@ class EmpathyCalibration {
     ];
 
     const hasValidation = validationPhrases.some(p => response.includes(p));
-    const emotionMatched = userEmotion && validationPhrases.some(p =>
-      response.includes(this._getEmotionWord(userEmotion))
-    );
+    // Fix: _getEmotionWord returns an array, must check if ANY emotion word is in response
+    const emotionWords = this._getEmotionWord(userEmotion);
+    const emotionMatched = userEmotion && emotionWords.some(w => w && response.includes(w));
 
     return hasValidation || emotionMatched;
   }
@@ -331,16 +331,30 @@ class EmpathyCalibration {
       responses.push({
         type: 'validation',
         response: template.replace('{emotion}', emotionWord),
-        suitable: userEmotion === 'negative',
+        suitable: userEmotion === 'negative' || userEmotion === 'neutral',
+      });
+    }
+
+    // 行动类（放在探索类之前，因为高强度情绪需要先给用户掌控感）
+    for (const template of this.supportiveResponses.action) {
+      responses.push({
+        type: 'action',
+        response: template,
+        suitable: true,
       });
     }
 
     // 反射类
     for (const template of this.supportiveResponses.reflection) {
       const summary = topic ? topic.slice(0, 20) : '这件事';
+      // 先替换{theme}（如果存在），再替换{topic}（如果存在），最后替换{summary}（如果存在）
+      let responseText = template
+        .replace('{theme}', topic || '这件事')
+        .replace('{topic}', topic || '这个')
+        .replace('{summary}', summary);
       responses.push({
         type: 'reflection',
-        response: template.replace('{theme}', topic || '这件事').replace('{summary}', summary),
+        response: responseText,
         suitable: empathyType === 'cognitive',
       });
     }
